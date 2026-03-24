@@ -8,6 +8,7 @@ const { requestMock, pollUntilCompletionMock } = vi.hoisted(() => ({
 }));
 
 describe("agentbook CLI command group", () => {
+  const expectedBaseUrl = "http://127.0.0.1:4000";
   const originalEnv = { ...process.env };
   const fetchMock = vi.fn<typeof fetch>();
 
@@ -77,7 +78,7 @@ describe("agentbook CLI command group", () => {
     );
 
     expect(output.result).toBeUndefined();
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/agentbook/sessions");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/agentbook/sessions`);
     expect(parsePrintedJson<{ session: { connector_uri: string } }>(output.stdout)).toMatchObject({
       ok: true,
       session: {
@@ -155,7 +156,7 @@ describe("agentbook CLI command group", () => {
 
     expect(output.result).toBeUndefined();
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/agentbook/sessions/sess_watch/submit",
+      `${expectedBaseUrl}/api/agentbook/sessions/sess_watch/submit`,
     );
     expect(parsePrintedJson<{ session: { status: string; tx_request: { to: string } } }>(output.stdout)).toMatchObject({
       ok: true,
@@ -192,7 +193,7 @@ describe("agentbook CLI command group", () => {
 
     expect(output.result).toBeUndefined();
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/agentbook/lookup?agent_address=0x1111111111111111111111111111111111111111&network=world",
+      `${expectedBaseUrl}/api/agentbook/lookup?agent_address=0x1111111111111111111111111111111111111111&network=world`,
     );
     expect(parsePrintedJson<{ result: { human_id: string } }>(output.stdout)).toMatchObject({
       ok: true,
@@ -227,7 +228,7 @@ describe("agentbook CLI command group", () => {
     );
 
     expect(output.result).toBeUndefined();
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/agentbook/verify");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/agentbook/verify`);
     expect(parsePrintedJson<{ result: { valid: boolean } }>(output.stdout)).toMatchObject({
       ok: true,
       result: { valid: true },

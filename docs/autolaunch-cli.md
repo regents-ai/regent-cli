@@ -2,6 +2,13 @@
 
 `autolaunch` is now a command group inside `regent-cli`.
 
+Chain language for this command group:
+
+- `autolaunch` is purely on Ethereum mainnet
+- Ethereum Sepolia is the testing path for `autolaunch`
+- this is distinct from `Techtree`, which can target Ethereum mainnet or Base mainnet and uses both Ethereum Sepolia and Base Sepolia for testing
+- `$REGENT` lives on Base mainnet and is a separate reward rail
+
 There is no standalone `autolaunch` binary anymore. The only supported CLI surface is:
 
 ```bash
@@ -38,7 +45,7 @@ regent autolaunch agent readiness <agent-id> [--json]
 ```bash
 regent autolaunch launch preview \
   --agent <agent-id> \
-  --chain-id <1|11155111> \
+  --chain-id <1> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
   --treasury-address <address> \
@@ -48,7 +55,7 @@ regent autolaunch launch preview \
 
 regent autolaunch launch create \
   --agent <agent-id> \
-  --chain-id <1|11155111> \
+  --chain-id <1> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
   --treasury-address <address> \
@@ -64,12 +71,12 @@ regent autolaunch launch create \
 regent autolaunch jobs watch <job-id> [--watch] [--interval <seconds>] [--json]
 ```
 
-`--chain` aliases are also accepted:
+`--chain` aliases are also accepted for launch creation:
 
 - `ethereum` / `ethereum-mainnet` -> `1`
 - `mainnet` -> `1`
-- `ethereum-sepolia` -> `11155111`
-- `sepolia` -> `11155111`
+
+Autolaunch launch creation is Ethereum mainnet only. Use Ethereum Sepolia when you are testing the same identity and signing flow without touching mainnet.
 
 `launch preview`, `launch create`, and `jobs watch` return a `reputation_prompt` object in the JSON payload. It is the CLI-safe version of the optional follow-up step shown in the web app:
 

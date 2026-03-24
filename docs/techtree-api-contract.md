@@ -2,6 +2,14 @@
 
 This document is copied from section 1 of `regent-cli-and-runtime-spec.md` and verified against the current Techtree source.
 
+## Chain language
+
+Keep these product stories separate:
+
+- `autolaunch` is purely on Ethereum mainnet, with Ethereum Sepolia for testing
+- `Techtree` nodes can be on Ethereum mainnet or Base mainnet, with Ethereum Sepolia and Base Sepolia for testing
+- `$REGENT` lives on Base mainnet and is disbursed to agent Safes on Base as a reward rail for income and actions in `Techtree` and `autolaunch`
+
 ## Public routes
 
 - `GET /health`
@@ -39,7 +47,7 @@ This document is copied from section 1 of `regent-cli-and-runtime-spec.md` and v
 {
   "kind": "nonce_request",
   "walletAddress": "0x...",
-  "chainId": 1,
+  "chainId": 11155111,
   "audience": "techtree"
 }
 ```
@@ -50,7 +58,7 @@ This document is copied from section 1 of `regent-cli-and-runtime-spec.md` and v
 {
   "kind": "verify_request",
   "walletAddress": "0x...",
-  "chainId": 1,
+  "chainId": 11155111,
   "nonce": "...",
   "message": "...",
   "signature": "0x...",
@@ -60,6 +68,8 @@ This document is copied from section 1 of `regent-cli-and-runtime-spec.md` and v
 ```
 
 The verify response returns a SIWA receipt token that must be cached locally.
+
+For testing, the normal Regent path uses Ethereum Sepolia identities. Production agent identity can still be Ethereum mainnet. This SIWA example is about the agent identity chain, not a blanket statement that every Techtree node lives on Ethereum only.
 
 ## Required agent headers
 

@@ -39,6 +39,7 @@ vi.mock("viem", () => ({
 }));
 
 describe("autolaunch CLI command group", () => {
+  const expectedBaseUrl = "http://127.0.0.1:4000";
   const originalEnv = { ...process.env };
   const fetchMock = vi.fn<typeof fetch>();
 
@@ -86,7 +87,7 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/auctions?sort=recently_launched&status=active",
+      `${expectedBaseUrl}/api/auctions?sort=recently_launched&status=active`,
     );
     expect(parsePrintedJson<{ ok: boolean }>(output.stdout)).toEqual({
       ok: true,
@@ -119,9 +120,9 @@ describe("autolaunch CLI command group", () => {
 
     expect(showOutput.result).toBe(0);
     expect(readinessOutput.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/agents/agent%3Aalpha");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/agents/agent%3Aalpha`);
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/agents/agent%3Aalpha/readiness",
+      `${expectedBaseUrl}/api/agents/agent%3Aalpha/readiness`,
     );
     expect(parsePrintedJson<{ ok: boolean }>(showOutput.stdout)).toMatchObject({ ok: true });
     expect(parsePrintedJson<{ ok: boolean }>(readinessOutput.stdout)).toMatchObject({ ok: true });
@@ -153,7 +154,7 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/ens/link/plan");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/ens/link/plan`);
     const [, requestInit] = fetchMock.mock.calls[0] ?? [];
     expect(JSON.parse(String(requestInit?.body))).toMatchObject({
       ens_name: "vitalik.eth",
@@ -202,18 +203,14 @@ describe("autolaunch CLI command group", () => {
         "Atlas Coin",
         "--symbol",
         "ATLAS",
-        "--recovery-safe-address",
-        "0x1111111111111111111111111111111111111111",
-        "--auction-proceeds-recipient",
-        "0x1111111111111111111111111111111111111111",
-        "--ethereum-revenue-treasury",
+        "--treasury-address",
         "0x1111111111111111111111111111111111111111",
       ]),
     );
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/launch/preview");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/launch/preview`);
     expect(
       parsePrintedJson<{ reputation_prompt: { skip_label: string } }>(output.stdout),
     ).toMatchObject({
@@ -261,7 +258,7 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/ens/link/prepare-bidirectional",
+      `${expectedBaseUrl}/api/ens/link/prepare-bidirectional`,
     );
     expect(parsePrintedJson<{ ok: boolean; prepared: { ensip25: { tx: { to: string } } } }>(output.stdout)).toMatchObject({
       ok: true,
@@ -481,11 +478,7 @@ describe("autolaunch CLI command group", () => {
         "Agent Coin",
         "--symbol",
         "AGENT",
-        "--recovery-safe-address",
-        "0x0000000000000000000000000000000000000001",
-        "--auction-proceeds-recipient",
-        "0x0000000000000000000000000000000000000001",
-        "--ethereum-revenue-treasury",
+        "--treasury-address",
         "0x0000000000000000000000000000000000000001",
       ]),
     );
@@ -531,9 +524,9 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4010/api/auth/privy/session");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/auth/privy/session`);
     expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      "http://127.0.0.1:4010/api/me/bids?status=active",
+      `${expectedBaseUrl}/api/me/bids?status=active`,
     );
     const secondRequest = fetchMock.mock.calls[1]?.[1];
     expect((secondRequest?.headers as Headers).get("cookie")).toBe("_autolaunch_key=session123");
