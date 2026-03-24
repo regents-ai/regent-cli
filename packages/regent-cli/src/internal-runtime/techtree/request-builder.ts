@@ -41,10 +41,24 @@ export interface AuthenticatedRequestInput {
   privateKey: `0x${string}`;
 }
 
+const serializeJsonBody = (body: unknown): string | undefined => (body === undefined ? undefined : JSON.stringify(body));
+
+const headerEntries = (headers: RequestInit["headers"]): [string, string][] => {
+  if (headers instanceof Headers) {
+    return [...headers.entries()];
+  }
+
+  if (Array.isArray(headers)) {
+    return headers.map(([key, value]) => [key, Array.isArray(value) ? value.join(", ") : String(value)]);
+  }
+
+  return Object.entries(headers ?? {}).map(([key, value]) => [key, Array.isArray(value) ? value.join(", ") : String(value)]);
+};
+
 export async function buildAuthenticatedFetchInit(
   input: AuthenticatedRequestInput,
 ): Promise<{ urlPath: string; serializedJsonBody?: string; init: RequestInit }> {
-  const serializedBody = input.body === undefined ? undefined : JSON.stringify(input.body);
+  const serializedBody = serializeJsonBody(input.body);
   const signedHeaders = await buildSignedAgentHeaders({
     method: input.method,
     path: input.path,
@@ -86,15 +100,8 @@ export const buildProtectedTechtreeAuthDebugSnapshot = (input: {
   serializedJsonBody?: string;
   headers: RequestInit["headers"];
 }): ProtectedTechtreeAuthDebugSnapshot => {
-  const headerEntries =
-    input.headers instanceof Headers
-      ? [...input.headers.entries()]
-      : Array.isArray(input.headers)
-        ? input.headers
-        : Object.entries(input.headers ?? {});
-
   const lowerCaseHeaders = new Map(
-    headerEntries.map(([key, value]) => [key.toLowerCase(), Array.isArray(value) ? value.join(", ") : String(value)]),
+    headerEntries(input.headers).map(([key, value]) => [key.toLowerCase(), value]),
   );
 
   return {

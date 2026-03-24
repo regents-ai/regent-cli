@@ -27,6 +27,15 @@ type NodeApiResponse = {
   };
 };
 
+const jsonRequestInit = (method: "GET" | "POST", body?: unknown): RequestInit => {
+  const serializedBody = body === undefined ? undefined : JSON.stringify(body);
+  return {
+    method,
+    headers: serializedBody === undefined ? undefined : { "content-type": "application/json" },
+    ...(serializedBody === undefined ? {} : { body: serializedBody }),
+  };
+};
+
 const materializeNode = async (
   materializeTo: string,
   nodeType: "artifact" | "run" | "review",
@@ -72,12 +81,7 @@ export class TechtreeV1Client {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), this.requestTimeoutMs);
     const url = `${this.baseUrl}${path}`;
-    const init: RequestInit = {
-      method,
-      signal: controller.signal,
-      headers: body === undefined ? undefined : { "content-type": "application/json" },
-      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
-    };
+    const init: RequestInit = { ...jsonRequestInit(method, body), signal: controller.signal };
 
     try {
       const response = await fetch(url, init);
@@ -114,9 +118,10 @@ export class TechtreeV1Client {
   async fetchNode(input: TechtreeFetchRequest): Promise<TechtreeFetchResponse> {
     const response = await this.requestJson<NodeApiResponse>("GET", `/api/v1/nodes/${encodeURIComponent(input.node_id)}`);
     const data = response.data;
-    const materializedTo = input.materialize_to && data.manifest && data.payload_index && data.header
-      ? await materializeNode(input.materialize_to, data.node_type, data.manifest, data.payload_index, data.header)
-      : null;
+    const materializedTo =
+      input.materialize_to && data.manifest && data.payload_index && data.header
+        ? await materializeNode(input.materialize_to, data.node_type, data.manifest, data.payload_index, data.header)
+        : null;
 
     return {
       ok: true,

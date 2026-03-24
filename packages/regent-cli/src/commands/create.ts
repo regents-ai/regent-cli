@@ -23,26 +23,22 @@ export async function runCreateInit(args: string[] | ParsedCliArgs): Promise<voi
   const configPath = expandHome(getFlag(args, "config") ?? defaultConfigPath());
   const configCreated = writeInitialConfigIfMissing(configPath);
   const config = loadConfig(configPath);
-
-  ensureDirectories([
-    config.runtime.stateDir,
-    path.dirname(config.runtime.socketPath),
-    path.dirname(config.wallet.keystorePath),
-    path.dirname(config.xmtp.dbPath),
-    path.dirname(config.xmtp.publicPolicyPath),
-    path.dirname(config.gossipsub.peerIdPath),
-  ]);
-
-  printJson({
-    ok: true,
-    configPath,
-    configCreated,
+  const directories = {
     stateDir: config.runtime.stateDir,
     socketDir: path.dirname(config.runtime.socketPath),
     keystoreDir: path.dirname(config.wallet.keystorePath),
     xmtpDir: path.dirname(config.xmtp.dbPath),
     xmtpPolicyDir: path.dirname(config.xmtp.publicPolicyPath),
     gossipsubDir: path.dirname(config.gossipsub.peerIdPath),
+  };
+
+  ensureDirectories(Object.values(directories));
+
+  printJson({
+    ok: true,
+    configPath,
+    configCreated,
+    ...directories,
   });
 }
 
@@ -50,11 +46,11 @@ export async function runCreateWallet(args: string[] | ParsedCliArgs): Promise<v
   const wallet = await generateWallet();
   const writeEnv = getBooleanFlag(args, "write-env");
   const devFile = getFlag(args, "dev-file");
+  const resolvedDevFile = devFile ? path.resolve(expandHome(devFile)) : undefined;
 
-  if (devFile) {
-    const resolvedPath = path.resolve(expandHome(devFile));
-    ensureParentDir(resolvedPath);
-    fs.writeFileSync(resolvedPath, `${JSON.stringify({ privateKey: wallet.privateKey }, null, 2)}\n`, "utf8");
+  if (resolvedDevFile) {
+    ensureParentDir(resolvedDevFile);
+    fs.writeFileSync(resolvedDevFile, `${JSON.stringify({ privateKey: wallet.privateKey }, null, 2)}\n`, "utf8");
   }
 
   printJson({
@@ -64,6 +60,6 @@ export async function runCreateWallet(args: string[] | ParsedCliArgs): Promise<v
           export: `export REGENT_WALLET_PRIVATE_KEY=${wallet.privateKey}`,
         }
       : {}),
-    ...(devFile ? { devFile: path.resolve(expandHome(devFile)) } : {}),
+    ...(resolvedDevFile ? { devFile: resolvedDevFile } : {}),
   });
 }

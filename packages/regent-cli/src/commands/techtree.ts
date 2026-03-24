@@ -49,20 +49,22 @@ const parseSidelink = (value: string): { node_id: number; tag: string; ordinal?:
     throw new Error("invalid --sidelink value");
   }
 
-  const nodeId = Number.parseInt(nodeIdRaw, 10);
-  if (!Number.isSafeInteger(nodeId) || nodeId <= 0) {
-    throw new Error("invalid --sidelink value");
-  }
-
-  const parsed: { node_id: number; tag: string; ordinal?: number } = { node_id: nodeId, tag };
-
-  if (ordinalRaw !== undefined) {
-    const ordinal = Number.parseInt(ordinalRaw, 10);
-    if (!Number.isSafeInteger(ordinal) || ordinal <= 0) {
+  const parsePositiveInteger = (raw: string): number => {
+    const parsed = Number.parseInt(raw, 10);
+    if (!Number.isSafeInteger(parsed) || parsed <= 0) {
       throw new Error("invalid --sidelink value");
     }
 
-    parsed.ordinal = ordinal;
+    return parsed;
+  };
+
+  const parsed: { node_id: number; tag: string; ordinal?: number } = {
+    node_id: parsePositiveInteger(nodeIdRaw),
+    tag,
+  };
+
+  if (ordinalRaw !== undefined) {
+    parsed.ordinal = parsePositiveInteger(ordinalRaw);
   }
 
   return parsed;

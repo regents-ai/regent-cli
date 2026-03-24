@@ -54,6 +54,13 @@ const parseJsonRpcResponse = <TMethod extends RegentRpcMethod>(
   return response as JsonRpcResponse<RegentRpcResult<TMethod>>;
 };
 
+const buildJsonRpcRequest = <TMethod extends RegentRpcMethod>(id: string, method: TMethod, params?: unknown) => ({
+  jsonrpc: "2.0" as const,
+  id,
+  method,
+  ...(params === undefined ? {} : { params }),
+});
+
 export async function callJsonRpc<TMethod extends RegentRpcMethod>(
   socketPath: string,
   method: TMethod,
@@ -131,14 +138,7 @@ export async function callJsonRpc<TMethod extends RegentRpcMethod>(
     });
 
     socket.once("connect", () => {
-      const request = {
-        jsonrpc: "2.0" as const,
-        id,
-        method,
-        ...(params === undefined ? {} : { params }),
-      };
-
-      socket.write(`${JSON.stringify(request)}\n`);
+      socket.write(`${JSON.stringify(buildJsonRpcRequest(id, method, params))}\n`);
     });
   });
 }

@@ -15,7 +15,7 @@ const normalizeTree = (value: string): TechtreeTreeName => {
 };
 
 const normalizeWorkspacePath = (args: ParsedCliArgs, fallbackIndex: number): string => {
-  const explicit = getFlag(args, "workspace") ?? getFlag(args, "path");
+  const explicit = workspaceFlag(args);
   if (explicit) {
     return path.resolve(explicit);
   }
@@ -23,6 +23,9 @@ const normalizeWorkspacePath = (args: ParsedCliArgs, fallbackIndex: number): str
   const positional = args.positionals[fallbackIndex];
   return positional ? path.resolve(positional) : process.cwd();
 };
+
+const workspaceFlag = (args: ParsedCliArgs): string | undefined => getFlag(args, "workspace") ?? getFlag(args, "path");
+const optionalWorkspacePath = (args: ParsedCliArgs): string | null => workspaceFlag(args) ?? null;
 
 const normalizeNodeId = (value: string | undefined, name = "node id"): TechtreeNodeId => {
   const required = requireArg(value, name);
@@ -248,7 +251,7 @@ export async function runTechtreeFetch(
   printJson(await daemonCall("techtree.v1.fetch", {
     tree,
     node_id: normalizeNodeId(getFlag(args, "id") ?? args.positionals[3], "node id"),
-    workspace_path: getFlag(args, "workspace") ?? getFlag(args, "path") ?? null,
+    workspace_path: optionalWorkspacePath(args),
   }, configPath));
 }
 
@@ -261,7 +264,7 @@ export async function runTechtreeVerify(
   printJson(await daemonCall("techtree.v1.verify", {
     tree,
     node_id: normalizeNodeId(getFlag(args, "id") ?? args.positionals[3], "node id"),
-    workspace_path: getFlag(args, "workspace") ?? getFlag(args, "path") ?? null,
+    workspace_path: optionalWorkspacePath(args),
   }, configPath));
 }
 
@@ -433,7 +436,7 @@ export async function runTechtreeBbhValidate(args: ParsedCliArgs, configPath?: s
 }
 
 export async function runTechtreeBbhSync(args: ParsedCliArgs, configPath?: string): Promise<void> {
-  const workspaceRoot = getFlag(args, "workspace-root") ?? getFlag(args, "workspace") ?? getFlag(args, "path");
+  const workspaceRoot = getFlag(args, "workspace-root") ?? workspaceFlag(args);
 
   printJson(
     await daemonCall(

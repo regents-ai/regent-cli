@@ -18,8 +18,7 @@ export class SessionStore {
   }
 
   clearSiwaSession(): void {
-    const current = this.stateStore.read();
-    this.stateStore.write({ ...current, siwa: undefined });
+    this.stateStore.patch({ siwa: undefined });
   }
 
   isReceiptExpired(nowUnixSeconds = Math.floor(Date.now() / 1000)): boolean {
@@ -29,10 +28,6 @@ export class SessionStore {
     }
 
     const expiresAtUnixSeconds = Math.floor(Date.parse(session.receiptExpiresAt) / 1000);
-    if (!Number.isFinite(expiresAtUnixSeconds)) {
-      return true;
-    }
-
-    return expiresAtUnixSeconds <= nowUnixSeconds;
+    return !Number.isFinite(expiresAtUnixSeconds) || expiresAtUnixSeconds <= nowUnixSeconds;
   }
 }

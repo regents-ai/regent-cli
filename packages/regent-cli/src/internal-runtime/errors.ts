@@ -3,12 +3,17 @@ export class RegentError extends Error {
   override readonly cause?: unknown;
 
   constructor(code: string, message: string, cause?: unknown) {
-    super(message, cause === undefined ? undefined : { cause });
+    super(message, withCause(cause));
     this.name = new.target.name;
     this.code = code;
     this.cause = cause;
   }
 }
+
+const withCause = (cause: unknown): ErrorOptions | undefined => (cause === undefined ? undefined : { cause });
+
+const messageFromUnknown = (error: { message?: unknown }): string | null =>
+  typeof error.message === "string" ? error.message : null;
 
 export class ConfigError extends RegentError {
   constructor(message: string, cause?: unknown) {
@@ -66,10 +71,9 @@ export const errorMessage = (error: unknown): string => {
   if (
     typeof error === "object" &&
     error !== null &&
-    "message" in error &&
-    typeof (error as { message?: unknown }).message === "string"
+    "message" in error
   ) {
-    return (error as { message: string }).message;
+    return messageFromUnknown(error as { message?: unknown }) ?? "unknown error";
   }
 
   return "unknown error";

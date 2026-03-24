@@ -5,17 +5,16 @@ import * as RegentRuntime from "../internal-runtime/index.js";
 import { getFlag, requireArg, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
 
-const resolveConfigPath = (args: ParsedCliArgs): string => {
-  return RegentRuntime.expandHome(getFlag(args, "config") ?? RegentRuntime.defaultConfigPath());
-};
+const resolveConfigPath = (args: ParsedCliArgs): string =>
+  RegentRuntime.expandHome(getFlag(args, "config") ?? RegentRuntime.defaultConfigPath());
 
 const readFileFlag = (value: string | undefined, name: string): string => {
-  const requiredValue = requireArg(value, name);
-  if (!requiredValue.startsWith("@")) {
+  const fileFlag = requireArg(value, name);
+  if (!fileFlag.startsWith("@")) {
     throw new Error(`--${name} must use @/absolute/or/relative/path.json syntax`);
   }
 
-  return fs.readFileSync(requiredValue.slice(1), "utf8");
+  return fs.readFileSync(fileFlag.slice(1), "utf8");
 };
 
 export async function runConfigRead(args: ParsedCliArgs): Promise<void> {

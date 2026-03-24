@@ -40,6 +40,22 @@ const jsonRpcSuccess = (id: string, result: unknown): JsonRpcSuccess<unknown> =>
   result,
 });
 
+const errorResponse = (requestId: string | null, error: unknown): JsonRpcFailure => {
+  if (error instanceof JsonRpcError) {
+    return jsonRpcError(requestId, error.rpcCode ?? -32000, error.message, { code: error.code });
+  }
+
+  if (error instanceof RegentError) {
+    return jsonRpcError(requestId, -32000, error.message, { code: error.code });
+  }
+
+  if (error instanceof SyntaxError) {
+    return jsonRpcError(null, -32700, "parse error");
+  }
+
+  return jsonRpcError(requestId, -32000, errorMessage(error));
+};
+
 export class JsonRpcServer {
   readonly socketPath: string;
   readonly handler: JsonRpcHandler;
@@ -123,20 +139,7 @@ export class JsonRpcServer {
       const result = await this.handler(request.method, request.params);
       socket.write(`${JSON.stringify(jsonRpcSuccess(request.id, result))}\n`);
     } catch (error) {
-      const response =
-        error instanceof JsonRpcError
-          ? jsonRpcError(request?.id ?? null, error.rpcCode ?? -32000, error.message, {
-              code: error.code,
-            })
-          : error instanceof RegentError
-            ? jsonRpcError(request?.id ?? null, -32000, error.message, {
-                code: error.code,
-              })
-          : error instanceof SyntaxError
-            ? jsonRpcError(null, -32700, "parse error")
-            : jsonRpcError(request?.id ?? null, -32000, errorMessage(error));
-
-      socket.write(`${JSON.stringify(response)}\n`);
+      socket.write(`${JSON.stringify(errorResponse(request?.id ?? null, error))}\n`);
     }
   }
 }
