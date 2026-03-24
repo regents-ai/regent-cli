@@ -1,0 +1,21 @@
+{
+  "name": "regent-cli-workspace",
+  "private": true,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "build": "pnpm --filter @regentlabs/cli build",
+    "typecheck": "pnpm --filter @regentlabs/cli typecheck",
+    "lint": "pnpm --filter @regentlabs/cli lint",
+    "test": "pnpm --filter @regentlabs/cli test",
+    "test:integration": "pnpm --filter @regentlabs/cli --if-present test:integration",
+    "pack:cli": "pnpm --filter @regentlabs/cli pack --pack-destination .packed",
+    "test:pack-smoke": "bash scripts/packed-install-smoke.sh",
+    "release:cli": "bash scripts/release-cli.sh",
+    "clean": "pnpm --filter @regentlabs/cli clean"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

@@ -1,0 +1,11 @@
+node_modules/
+.pnpm-store/
+.packed/
+dist/
+coverage/
+package-lock.json
+*.tgz
+*.js.map
+*.log
+*.tsbuildinfo
+.DS_Store
