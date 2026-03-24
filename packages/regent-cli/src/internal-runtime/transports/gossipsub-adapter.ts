@@ -1,0 +1,152 @@
+import type { GossipsubStatus, RegentConfig, TrollboxLiveEvent } from "../../internal-types/index.js";
+
+import { RegentError, errorMessage } from "../errors.js";
+import type { TechtreeClient } from "../techtree/client.js";
+import type { TransportAdapter } from "./transport-adapter.js";
+
+type TrollboxListener = (event: TrollboxLiveEvent) => void;
+type TrollboxRoom = "global" | "agent";
+
+export interface GossipsubAdapter {
+  start(): Promise<void>;
+  stop(): Promise<void>;
+  status(): Promise<GossipsubStatus>;
+  subscribeTrollbox(listener: TrollboxListener, room?: TrollboxRoom): Promise<() => void>;
+}
+
+const baseDisabledStatus = (eventSocketPath: string | null): GossipsubStatus => ({
+  enabled: false,
+  configured: false,
+  connected: false,
+  subscribedTopics: [],
+  peerCount: 0,
+  lastError: null,
+  eventSocketPath,
+  status: "disabled",
+  note: "Trollbox transport disabled",
+});
+
+export class PublicTrollboxRelayAdapter implements GossipsubAdapter, TransportAdapter {
+  private readonly config: RegentConfig["gossipsub"];
+  private readonly techtree: TechtreeClient;
+  private readonly eventSocketPath: string;
+  private currentStatus: GossipsubStatus;
+  private readonly activeStreams = new Set<AbortController>();
+
+  constructor(config: RegentConfig["gossipsub"], techtree: TechtreeClient, eventSocketPath: string) {
+    this.config = config;
+    this.techtree = techtree;
+    this.eventSocketPath = eventSocketPath;
+    this.currentStatus = this.baseStatus();
+  }
+
+  async start(): Promise<void> {
+    this.currentStatus = this.baseStatus();
+  }
+
+  async stop(): Promise<void> {
+    for (const controller of this.activeStreams) {
+      controller.abort();
+    }
+    this.activeStreams.clear();
+    this.currentStatus = this.baseStatus();
+  }
+
+  async status(): Promise<GossipsubStatus> {
+    if (!this.config.enabled) {
+      this.currentStatus = this.baseStatus();
+      return this.currentStatus;
+    }
+
+    try {
+      const payload = (await this.techtree.transportStatus()).data;
+      this.currentStatus = {
+        ...this.baseStatus(),
+        ...payload,
+        enabled: true,
+        configured: true,
+        connected: true,
+        eventSocketPath: this.eventSocketPath,
+      };
+      return this.currentStatus;
+    } catch (error) {
+      this.currentStatus = {
+        ...this.baseStatus(),
+        enabled: true,
+        configured: true,
+        connected: false,
+        status: "degraded",
+        eventSocketPath: this.eventSocketPath,
+        lastError: errorMessage(error),
+        note: "Trollbox transport status could not be refreshed",
+      };
+      return this.currentStatus;
+    }
+  }
+
+  async subscribeTrollbox(listener: TrollboxListener, room: TrollboxRoom = "global"): Promise<() => void> {
+    if (!this.config.enabled) {
+      throw new RegentError("trollbox_relay_disabled", "trollbox transport is disabled in config");
+    }
+
+    const controller = new AbortController();
+    this.activeStreams.add(controller);
+
+    void this.techtree
+      .streamTrollbox(room, (payload: unknown) => {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        listener(payload as TrollboxLiveEvent);
+      }, controller.signal)
+      .catch((error: unknown) => {
+        if (!controller.signal.aborted) {
+          this.currentStatus = {
+            ...this.currentStatus,
+            connected: false,
+            status: "error",
+            lastError: errorMessage(error),
+            note: "Trollbox relay subscription failed",
+          };
+        }
+      });
+
+    return () => {
+      controller.abort();
+      this.activeStreams.delete(controller);
+    };
+  }
+
+  private baseStatus(): GossipsubStatus {
+    if (!this.config.enabled) {
+      return baseDisabledStatus(null);
+    }
+
+    return {
+      enabled: true,
+      configured: true,
+      connected: false,
+      subscribedTopics: [],
+      peerCount: 0,
+      lastError: null,
+      eventSocketPath: this.eventSocketPath,
+      status: "starting",
+      note: "Trollbox transport initialized",
+    };
+  }
+}
+
+export class StubGossipsubAdapter implements GossipsubAdapter {
+  async start(): Promise<void> {}
+
+  async stop(): Promise<void> {}
+
+  async status(): Promise<GossipsubStatus> {
+    return baseDisabledStatus(null);
+  }
+
+  async subscribeTrollbox(): Promise<() => void> {
+    throw new RegentError("trollbox_relay_disabled", "trollbox transport is disabled in config");
+  }
+}

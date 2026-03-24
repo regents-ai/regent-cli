@@ -1,0 +1,196 @@
+import fs from "node:fs/promises";
+import path from "node:path";
+
+import type {
+  BbhLeaderboardResponse,
+  TechtreeFetchRequest,
+  TechtreeFetchResponse,
+  TechtreePinRequest,
+  TechtreePinResponse,
+  TechtreePublishRequest,
+  TechtreePublishResponse,
+} from "../../internal-types/index.js";
+
+import { loadConfig } from "../config.js";
+import { TechtreeApiError } from "../errors.js";
+import { parseTechtreeErrorResponse } from "./api-errors.js";
+
+type NodeApiResponse = {
+  data: {
+    id: string;
+    node_type: "artifact" | "run" | "review";
+    manifest_cid?: string | null;
+    payload_cid?: string | null;
+    manifest?: Record<string, unknown>;
+    payload_index?: Record<string, unknown>;
+    header?: Record<string, unknown>;
+  };
+};
+
+const materializeNode = async (
+  materializeTo: string,
+  nodeType: "artifact" | "run" | "review",
+  manifest: Record<string, unknown>,
+  payloadIndex: Record<string, unknown>,
+  header: Record<string, unknown>,
+): Promise<string> => {
+  const workspacePath = path.resolve(materializeTo);
+  const distPath = path.join(workspacePath, "dist");
+  await fs.mkdir(distPath, { recursive: true });
+  await fs.writeFile(
+    path.join(distPath, `${nodeType}.manifest.json`),
+    `${JSON.stringify(manifest, null, 2)}\n`,
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(distPath, "payload.index.json"),
+    `${JSON.stringify(payloadIndex, null, 2)}\n`,
+    "utf8",
+  );
+  await fs.writeFile(
+    path.join(distPath, "node-header.json"),
+    `${JSON.stringify(header, null, 2)}\n`,
+    "utf8",
+  );
+  return workspacePath;
+};
+
+export class TechtreeV1Client {
+  readonly baseUrl: string;
+  readonly requestTimeoutMs: number;
+
+  constructor(args: { baseUrl: string; requestTimeoutMs: number }) {
+    this.baseUrl = args.baseUrl.replace(/\/+$/, "");
+    this.requestTimeoutMs = args.requestTimeoutMs;
+  }
+
+  private async requestJson<TResponse>(
+    method: "GET" | "POST",
+    path: string,
+    body?: unknown,
+  ): Promise<TResponse> {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), this.requestTimeoutMs);
+    const url = `${this.baseUrl}${path}`;
+    const init: RequestInit = {
+      method,
+      signal: controller.signal,
+      headers: body === undefined ? undefined : { "content-type": "application/json" },
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
+    };
+
+    try {
+      const response = await fetch(url, init);
+      if (!response.ok) {
+        throw await parseTechtreeErrorResponse(response);
+      }
+
+      if (response.status === 204) {
+        return undefined as TResponse;
+      }
+
+      return (await response.json()) as TResponse;
+    } catch (error) {
+      if (error instanceof TechtreeApiError) {
+        throw error;
+      }
+
+      if (error instanceof Error && error.name === "AbortError") {
+        throw new TechtreeApiError(`Techtree v1 request timed out after ${this.requestTimeoutMs}ms`, {
+          code: "techtree_v1_timeout",
+          cause: error,
+        });
+      }
+
+      throw new TechtreeApiError("Techtree v1 request failed", {
+        code: "techtree_v1_request_failed",
+        cause: error,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  async fetchNode(input: TechtreeFetchRequest): Promise<TechtreeFetchResponse> {
+    const response = await this.requestJson<NodeApiResponse>("GET", `/api/v1/nodes/${encodeURIComponent(input.node_id)}`);
+    const data = response.data;
+    const materializedTo = input.materialize_to && data.manifest && data.payload_index && data.header
+      ? await materializeNode(input.materialize_to, data.node_type, data.manifest, data.payload_index, data.header)
+      : null;
+
+    return {
+      ok: true,
+      node_id: data.id as TechtreeFetchResponse["node_id"],
+      node_type: data.node_type,
+      manifest_cid: data.manifest_cid ?? null,
+      payload_cid: data.payload_cid ?? null,
+      manifest: data.manifest as TechtreeFetchResponse["manifest"],
+      payload_index: data.payload_index as TechtreeFetchResponse["payload_index"],
+      node_header: data.header as TechtreeFetchResponse["node_header"],
+      materialized_to: materializedTo,
+      verified: data.manifest !== undefined && data.payload_index !== undefined && data.header !== undefined,
+    };
+  }
+
+  async pinNode(input: TechtreePinRequest): Promise<TechtreePinResponse> {
+    const response = await this.requestJson<{
+      data: {
+        node_id: string;
+        manifest_cid: string;
+        payload_cid: string;
+      };
+    }>("POST", "/api/v1/pin", {
+      path: input.dist_path ?? input.workspace_path,
+      node_type: input.node_type,
+    });
+
+    return {
+      ok: true,
+      node_id: response.data.node_id as TechtreePinResponse["node_id"],
+      manifest_cid: response.data.manifest_cid,
+      payload_cid: response.data.payload_cid,
+    };
+  }
+
+  async publishNode(input: TechtreePublishRequest): Promise<TechtreePublishResponse> {
+    const response = await this.requestJson<NodeApiResponse>("POST", "/api/v1/publish/submit", {
+      path: input.dist_path ?? input.workspace_path,
+      node_type: input.node_type,
+      manifest_cid: input.manifest_cid,
+      payload_cid: input.payload_cid,
+      header: {
+        id: input.header.id,
+        subject_id: input.header.subjectId,
+        aux_id: input.header.auxId,
+        payload_hash: input.header.payloadHash,
+        node_type: input.header.nodeType,
+        schema_version: input.header.schemaVersion,
+        flags: input.header.flags,
+        author: input.header.author,
+      },
+    });
+
+    return {
+      ok: true,
+      node_id: response.data.id as TechtreePublishResponse["node_id"],
+      manifest_cid: response.data.manifest_cid ?? input.manifest_cid,
+      payload_cid: response.data.payload_cid ?? input.payload_cid,
+      tx_hash: null,
+    };
+  }
+
+  async getBbhLeaderboard(params?: {
+    split?: "climb" | "benchmark" | "challenge" | "draft";
+  }): Promise<BbhLeaderboardResponse> {
+    const query = params?.split ? `?split=${encodeURIComponent(params.split)}` : "";
+    return this.requestJson<BbhLeaderboardResponse>("GET", `/v1/bbh/leaderboard${query}`);
+  }
+}
+
+export const loadTechtreeV1Client = (configPath?: string): TechtreeV1Client => {
+  const config = loadConfig(configPath);
+  return new TechtreeV1Client({
+    baseUrl: config.techtree.baseUrl,
+    requestTimeoutMs: config.techtree.requestTimeoutMs,
+  });
+};
