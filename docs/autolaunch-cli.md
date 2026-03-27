@@ -4,9 +4,8 @@
 
 Chain language for this command group:
 
-- `autolaunch` is purely on Ethereum mainnet
-- Ethereum Sepolia is the testing path for `autolaunch`
-- this is distinct from `Techtree`, which can target Ethereum mainnet or Base mainnet and uses both Ethereum Sepolia and Base Sepolia for testing
+- `autolaunch` launch creation is Ethereum Sepolia only
+- this is distinct from `Techtree`, which uses Ethereum Sepolia for agent identity login and Base Sepolia for the registry publishing test path
 
 There is no standalone `autolaunch` binary anymore. The only supported CLI surface is:
 
@@ -17,7 +16,7 @@ regent autolaunch ...
 ## Environment
 
 - `AUTOLAUNCH_BASE_URL`
-  Default: `http://127.0.0.1:4000`
+  Default: `http://127.0.0.1:4010`
 - `AUTOLAUNCH_SESSION_COOKIE`
   Optional existing Phoenix session cookie.
 - `AUTOLAUNCH_PRIVY_BEARER_TOKEN`
@@ -44,7 +43,7 @@ regent autolaunch agent readiness <agent-id> [--json]
 ```bash
 regent autolaunch launch preview \
   --agent <agent-id> \
-  --chain-id <1> \
+  --chain-id <11155111> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
   --treasury-address <address> \
@@ -54,7 +53,7 @@ regent autolaunch launch preview \
 
 regent autolaunch launch create \
   --agent <agent-id> \
-  --chain-id <1> \
+  --chain-id <11155111> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
   --treasury-address <address> \
@@ -72,10 +71,10 @@ regent autolaunch jobs watch <job-id> [--watch] [--interval <seconds>] [--json]
 
 `--chain` aliases are also accepted for launch creation:
 
-- `ethereum` / `ethereum-mainnet` -> `1`
-- `mainnet` -> `1`
+- `sepolia` -> `11155111`
+- `ethereum` / `ethereum-sepolia` -> `11155111`
 
-Autolaunch launch creation is Ethereum mainnet only. Use Ethereum Sepolia when you are testing the same identity and signing flow without touching mainnet.
+Autolaunch launch creation is Ethereum Sepolia only.
 
 Successful launch output now includes the live V2 stack fields:
 

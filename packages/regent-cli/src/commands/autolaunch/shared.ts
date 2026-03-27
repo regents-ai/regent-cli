@@ -1,6 +1,6 @@
 import { getFlag, requireArg, type ParsedCliArgs } from "../../parse.js";
 
-const DEFAULT_BASE_URL = "http://127.0.0.1:4000";
+const DEFAULT_BASE_URL = "http://127.0.0.1:4010";
 const SESSION_COOKIE_ENV = "AUTOLAUNCH_SESSION_COOKIE";
 const PRIVY_TOKEN_ENV = "AUTOLAUNCH_PRIVY_BEARER_TOKEN";
 export const AGENT_PRIVATE_KEY_ENV = "AUTOLAUNCH_AGENT_PRIVATE_KEY";
@@ -16,13 +16,11 @@ export interface RequestOptions {
   readonly requireSession?: boolean;
 }
 
-export type AutolaunchChainId = "1" | "11155111";
+export type AutolaunchChainId = "11155111";
 
 const AUTOLAUNCH_CHAIN_IDS: Readonly<Record<string, string>> = {
-  mainnet: "1",
-  ethereum: "1",
-  "ethereum-mainnet": "1",
   sepolia: "11155111",
+  ethereum: "11155111",
   "ethereum-sepolia": "11155111",
 };
 
@@ -162,17 +160,17 @@ export const launchChainId = (args: ParsedCliArgs): string => {
     return explicit;
   }
 
-  const chain = (getFlag(args, "chain") ?? "ethereum").toLowerCase();
+  const chain = (getFlag(args, "chain") ?? "sepolia").toLowerCase();
   return AUTOLAUNCH_CHAIN_IDS[chain] ?? chain;
 };
 
 export const autolaunchChainId = (args: ParsedCliArgs): AutolaunchChainId => {
   const resolved = launchChainId(args);
-  if (resolved === "1" || resolved === "11155111") {
+  if (resolved === "11155111") {
     return resolved;
   }
 
-  throw new Error("autolaunch identities only support Ethereum mainnet or Ethereum Sepolia");
+  throw new Error("autolaunch only supports Ethereum Sepolia (11155111)");
 };
 
 export const requireLaunchIdentity = (args: ParsedCliArgs) => {

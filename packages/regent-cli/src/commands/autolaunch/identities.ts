@@ -7,7 +7,7 @@ import {
   type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { mainnet, sepolia } from "viem/chains";
+import { sepolia } from "viem/chains";
 
 import { getFlag, type ParsedCliArgs } from "../../parse.js";
 import { printJson } from "../../printer.js";
@@ -18,12 +18,9 @@ import {
 } from "./shared.js";
 
 const ERC8004_REGISTRIES: Readonly<Record<AutolaunchChainId, Address>> = {
-  "1": "0x8004A169FB4a3325136EB29fA0ceB6D2e539a432",
   "11155111": "0x8004A818BFB912233c491871b3d84c89A494BD9e",
 };
 const ERC8004_SUBGRAPHS: Readonly<Record<AutolaunchChainId, string>> = {
-  "1":
-    "https://gateway.thegraph.com/api/7fd2e7d89ce3ef24cd0d4590298f0b2c/subgraphs/id/FV6RR6y13rsnCxBAicKuQEwDp8ioEGiNaWaZUmvr1F8k",
   "11155111":
     "https://gateway.thegraph.com/api/00a452ad3cd1900273ea62c1bf283f93/subgraphs/id/6wQRC7geo9XYAhckfmfo8kbMRLeWU8KQd3XsJqFKmZLT",
 };
@@ -135,17 +132,12 @@ const rpcUrlForChain = (chainId: AutolaunchChainId, args: ParsedCliArgs): string
     return explicit;
   }
 
-  const envValue =
-    chainId === "1" ? process.env.ETH_MAINNET_RPC_URL : process.env.ETH_SEPOLIA_RPC_URL;
+  const envValue = process.env.ETH_SEPOLIA_RPC_URL;
   if (envValue) {
     return envValue;
   }
 
-  throw new Error(
-    chainId === "1"
-      ? "missing Ethereum mainnet RPC URL (--rpc-url or ETH_MAINNET_RPC_URL)"
-      : "missing Ethereum Sepolia RPC URL (--rpc-url or ETH_SEPOLIA_RPC_URL)",
-  );
+  throw new Error("missing Ethereum Sepolia RPC URL (--rpc-url or ETH_SEPOLIA_RPC_URL)");
 };
 
 const privateKeyForCommand = (args: ParsedCliArgs): Hex => {
@@ -188,22 +180,13 @@ const normalizeCliAddress = (value: string): Address => {
 };
 
 const subgraphUrlForChain = (chainId: AutolaunchChainId): string => {
-  if (chainId === "1") {
-    return process.env.ERC8004_MAINNET_SUBGRAPH_URL || ERC8004_SUBGRAPHS["1"];
-  }
-
   return process.env.ERC8004_SEPOLIA_SUBGRAPH_URL || ERC8004_SUBGRAPHS["11155111"];
 };
 
-const registryAddressForChain = (chainId: AutolaunchChainId): Address => {
-  if (chainId === "1") {
-    return ERC8004_REGISTRIES["1"];
-  }
+const registryAddressForChain = (_chainId: AutolaunchChainId): Address =>
+  ERC8004_REGISTRIES["11155111"];
 
-  return ERC8004_REGISTRIES["11155111"];
-};
-
-const chainForViem = (chainId: AutolaunchChainId) => (chainId === "1" ? mainnet : sepolia);
+const chainForViem = (_chainId: AutolaunchChainId) => sepolia;
 
 const fetchErc8004Agents = async (
   chainId: AutolaunchChainId,

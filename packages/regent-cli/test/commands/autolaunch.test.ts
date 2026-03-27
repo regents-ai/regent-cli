@@ -39,7 +39,7 @@ vi.mock("viem", () => ({
 }));
 
 describe("autolaunch CLI command group", () => {
-  const expectedBaseUrl = "http://127.0.0.1:4000";
+  const expectedBaseUrl = "http://127.0.0.1:4010";
   const originalEnv = { ...process.env };
   const fetchMock = vi.fn<typeof fetch>();
 
@@ -51,7 +51,6 @@ describe("autolaunch CLI command group", () => {
     delete process.env.AUTOLAUNCH_DISPLAY_NAME;
     delete process.env.AUTOLAUNCH_WALLET_ADDRESS;
     delete process.env.AUTOLAUNCH_AGENT_PRIVATE_KEY;
-    delete process.env.ETH_MAINNET_RPC_URL;
     delete process.env.ETH_SEPOLIA_RPC_URL;
     fetchMock.mockReset();
     writeContractMock.mockReset();
@@ -198,7 +197,7 @@ describe("autolaunch CLI command group", () => {
         "--agent",
         "1:42",
         "--chain-id",
-        "1",
+        "11155111",
         "--name",
         "Atlas Coin",
         "--symbol",
@@ -249,7 +248,7 @@ describe("autolaunch CLI command group", () => {
         "--ens",
         "vitalik.eth",
         "--chain-id",
-        "1",
+        "11155111",
         "--agent-id",
         "42",
       ]),
@@ -276,7 +275,7 @@ describe("autolaunch CLI command group", () => {
             data: {
               agents: [
                 {
-                  chainId: "1",
+                  chainId: "11155111",
                   agentId: "77",
                   owner: "0x00000000000000000000000000000000000000aa",
                   operators: [],
@@ -312,7 +311,7 @@ describe("autolaunch CLI command group", () => {
         "identities",
         "list",
         "--chain",
-        "ethereum",
+        "sepolia",
         "--owner",
         "0x00000000000000000000000000000000000000aa",
       ]),
@@ -322,9 +321,9 @@ describe("autolaunch CLI command group", () => {
     expect(fetchMock).toHaveBeenCalledTimes(3);
     expect(parsePrintedJson<{ launchable: Array<{ agent_id: string }> }>(output.stdout)).toMatchObject({
       ok: true,
-      chain_id: 1,
+      chain_id: 11155111,
       owner_address: "0x00000000000000000000000000000000000000aa",
-      launchable: [{ agent_id: "1:77" }],
+      launchable: [{ agent_id: "11155111:77" }],
     });
   });
 
@@ -454,7 +453,7 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("maps ethereum mainnet chain names to chain ids and uses session cookie", async () => {
+  it("maps ethereum sepolia chain names to chain ids and uses session cookie", async () => {
     process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
 
     fetchMock.mockResolvedValue(
@@ -473,7 +472,7 @@ describe("autolaunch CLI command group", () => {
         "--agent",
         "ag_123",
         "--chain",
-        "ethereum",
+        "ethereum-sepolia",
         "--name",
         "Agent Coin",
         "--symbol",
@@ -489,7 +488,7 @@ describe("autolaunch CLI command group", () => {
     expect((requestInit?.headers as Headers).get("cookie")).toBe("_autolaunch_key=abc");
     expect(JSON.parse(String(requestInit?.body))).toMatchObject({
       agent_id: "ag_123",
-      chain_id: "1",
+      chain_id: "11155111",
       token_name: "Agent Coin",
       token_symbol: "AGENT",
     });

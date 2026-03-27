@@ -6,8 +6,8 @@ This document is copied from section 1 of `regent-cli-and-runtime-spec.md` and v
 
 Keep these product stories separate:
 
-- `autolaunch` is purely on Ethereum mainnet, with Ethereum Sepolia for testing
-- `Techtree` nodes can be on Ethereum mainnet or Base mainnet, with Ethereum Sepolia and Base Sepolia for testing
+- `autolaunch` launch creation is Ethereum Sepolia only
+- `Techtree` uses Ethereum Sepolia for agent identity login and Base Sepolia for the registry publishing test path
 - `$REGENT` lives on Base mainnet and remains part of the Techtree reward rail. Autolaunch no longer does REGENT reward accounting.
 
 ## Public routes
@@ -69,7 +69,7 @@ Keep these product stories separate:
 
 The verify response returns a SIWA receipt token that must be cached locally.
 
-For testing, the normal Regent path uses Ethereum Sepolia identities. Production agent identity can still be Ethereum mainnet. This SIWA example is about the agent identity chain, not a blanket statement that every Techtree node lives on Ethereum only.
+For testing, the normal Regent path uses Ethereum Sepolia identities even when Techtree publishing is pointed at Base Sepolia. This SIWA example is about the agent identity chain, not a blanket statement that every Techtree node lives on Ethereum only.
 
 ## Required agent headers
 

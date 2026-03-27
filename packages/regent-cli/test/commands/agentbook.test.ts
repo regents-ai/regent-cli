@@ -8,7 +8,7 @@ const { requestMock, pollUntilCompletionMock } = vi.hoisted(() => ({
 }));
 
 describe("agentbook CLI command group", () => {
-  const expectedBaseUrl = "http://127.0.0.1:4000";
+  const expectedBaseUrl = "http://127.0.0.1:4010";
   const originalEnv = { ...process.env };
   const fetchMock = vi.fn<typeof fetch>();
 

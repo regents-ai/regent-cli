@@ -274,7 +274,7 @@ export function defaultConfig(configPath?: string): RegentConfig {
     techtree: {
       baseUrl: "http://127.0.0.1:4000",
       audience: "techtree",
-      defaultChainId: 1,
+      defaultChainId: 11155111,
       requestTimeoutMs: 10_000,
     },
     wallet: {
