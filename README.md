@@ -59,10 +59,16 @@ pnpm check:openapi
 pnpm build
 pnpm typecheck
 pnpm test
+pnpm check:pack-cli-contents
+pnpm pack:cli
 pnpm test:pack-smoke
 ```
 
 The packaged-install smoke test is part of the real release gate. A release is not ready unless the shipped tarball installs and completes the Techtree smoke flow.
+The packed-content audit proves the tarball only ships the package manifest, package docs, license, and built CLI output.
+
+The repo now includes GitHub Actions for required CI on pull requests and `main`, plus tag-based npm publishing for `@regentlabs/cli`. The human-facing release path is documented in [docs/release-runbook.md](docs/release-runbook.md).
+The local release helper now hard-fails on a dirty worktree before it bumps the package version, so release commits cannot quietly scoop up unrelated files.
 
 HTTP contract changes now follow a contract-first workflow. Edit the owning OpenAPI file first, regenerate the CLI contract types with `pnpm generate:openapi`, and let `pnpm check:openapi` enforce that the checked-in generated files stay in sync.
 
@@ -91,3 +97,4 @@ pnpm --filter @regentlabs/cli exec regent autolaunch ...
 - `techtree/` owns the server-side business logic and HTTP contracts
 - `regent-cli/` owns the single-package local agent/runtime install surface
 - packaged install proof is enforced here through `pnpm test:pack-smoke`
+- package tarball shape is enforced here through `pnpm check:pack-cli-contents`

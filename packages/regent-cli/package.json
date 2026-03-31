@@ -4,16 +4,28 @@
   "private": false,
   "type": "module",
   "description": "Regent CLI package for the published regent command.",
+  "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
     "regent": "./dist/index.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/regent-ai/regent-cli.git",
+    "directory": "packages/regent-cli"
+  },
+  "homepage": "https://github.com/regent-ai/regent-cli",
+  "bugs": {
+    "url": "https://github.com/regent-ai/regent-cli/issues"
   },
   "exports": {
     ".": {
@@ -22,13 +34,13 @@
     }
   },
   "dependencies": {
-    "@regentlabs/cli": "^0.1.0",
     "@worldcoin/idkit-core": "^4.0.15",
     "viem": "^2.38.2",
     "zod": "^4.1.11"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "rm -rf dist tsconfig.tsbuildinfo && tsc -p tsconfig.json",
+    "prepack": "pnpm build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run --passWithNoTests",

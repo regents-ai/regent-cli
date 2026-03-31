@@ -58,7 +58,7 @@ describe("techtree start wizard", () => {
         logLevel: "info",
       },
       techtree: {
-        baseUrl: "http://127.0.0.1:4000",
+        baseUrl: "http://127.0.0.1:4001",
         audience: "techtree",
         defaultChainId: 11155111,
         requestTimeoutMs: 1_000,

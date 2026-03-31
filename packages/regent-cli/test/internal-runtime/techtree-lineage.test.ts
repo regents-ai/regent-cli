@@ -41,7 +41,7 @@ const createClient = (baseUrl: string): { client: TechtreeClient; stateStore: St
     nonce: "nonce-test",
     keyId: "key-test",
     receipt: "receipt-test",
-    receiptExpiresAt: "2026-03-30T00:00:00.000Z",
+    receiptExpiresAt: "2026-04-30T00:00:00.000Z",
     audience: "techtree",
     registryAddress: TEST_REGISTRY,
     tokenId: "99",
@@ -71,7 +71,7 @@ describe("techtree lineage and cross-chain link wiring", () => {
   });
 
   it("targets the expected lineage and cross-chain routes", async () => {
-    const { client } = createClient("http://127.0.0.1:4000");
+    const { client } = createClient("http://127.0.0.1:4001");
 
     fetchMock.mockImplementation(async (input, init) => {
       const url = String(input);

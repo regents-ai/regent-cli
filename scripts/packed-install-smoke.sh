@@ -54,7 +54,7 @@ pack_workspace_package() {
   local package_dir="$1"
   (
     cd "${package_dir}"
-    pnpm pack --pack-destination "${PACK_DIR}" >/dev/null
+    npm pack --ignore-scripts --pack-destination "${PACK_DIR}" >/dev/null
   )
 }
 

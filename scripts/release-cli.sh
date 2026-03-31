@@ -6,8 +6,9 @@ usage() {
   cat <<'EOF'
 Usage: bash scripts/release-cli.sh [--dry-run] [--no-push]
 
-Runs the Regent CLI release gate, bumps the @regentlabs/cli minor version if the checks pass,
-stages the Regent CLI release scope, creates a Codex-style commit message, commits, and pushes.
+Runs the Regent CLI release gate from a clean worktree, bumps the @regentlabs/cli minor
+version if the checks pass, stages only the package release files it owns, creates a
+Codex-style commit message, commits, and pushes.
 
 Options:
   --dry-run  Run the release gate, bump the version, stage files, and print the generated commit message without committing or pushing.
@@ -44,27 +45,18 @@ SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 REPO_ROOT=$(cd -- "${SCRIPT_DIR}/.." && pwd)
 WORKSPACE_DIR="${REPO_ROOT}"
 PACKAGE_JSON="${WORKSPACE_DIR}/packages/regent-cli/package.json"
-RAW_STAGE_PATHS=(${RELEASE_STAGE_PATHS:-.})
-
-STAGE_PATHS=()
-for candidate in "${RAW_STAGE_PATHS[@]}"; do
-  if [[ -e "${REPO_ROOT}/${candidate}" ]]; then
-    STAGE_PATHS+=("${candidate}")
-    continue
-  fi
-
-  if (cd "${REPO_ROOT}" && git ls-files --error-unmatch -- "${candidate}" >/dev/null 2>&1); then
-    STAGE_PATHS+=("${candidate}")
-  fi
-done
+RELEASE_STAGE_PATHS=(
+  "packages/regent-cli/package.json"
+  "pnpm-lock.yaml"
+)
 
 if [[ ! -f "${PACKAGE_JSON}" ]]; then
   echo "Could not find package manifest at ${PACKAGE_JSON}" >&2
   exit 1
 fi
 
-if ((${#STAGE_PATHS[@]} == 0)); then
-  echo "No valid stage paths were found for this release run." >&2
+if [[ -n "$(cd "${REPO_ROOT}" && git status --porcelain)" ]]; then
+  echo "Release helper requires a clean git worktree before it will bump the package version." >&2
   exit 1
 fi
 
@@ -75,6 +67,7 @@ echo "Running Regent CLI release gate..."
   pnpm build
   pnpm typecheck
   pnpm test
+  pnpm check:pack-cli-contents
   pnpm test:pack-smoke
 )
 
@@ -122,7 +115,7 @@ echo "Version bumped: ${PACKAGE_NAME} ${PREVIOUS_VERSION} -> ${NEXT_VERSION}"
 
 (
   cd "${REPO_ROOT}"
-  git add -- "${STAGE_PATHS[@]}"
+  git add -- "${RELEASE_STAGE_PATHS[@]}"
 )
 
 STAGED_FILES=()
@@ -130,7 +123,7 @@ while IFS= read -r staged_file; do
   STAGED_FILES+=("${staged_file}")
 done < <(
   cd "${REPO_ROOT}" &&
-    git diff --cached --name-only -- "${STAGE_PATHS[@]}"
+    git diff --cached --name-only -- "${RELEASE_STAGE_PATHS[@]}"
 )
 
 if ((${#STAGED_FILES[@]} == 0)); then
@@ -152,6 +145,7 @@ trap 'rm -f "${MESSAGE_FILE}"' EXIT
   echo "- pnpm build"
   echo "- pnpm typecheck"
   echo "- pnpm test"
+  echo "- pnpm check:pack-cli-contents"
   echo "- pnpm test:pack-smoke"
   echo
   echo "Version:"

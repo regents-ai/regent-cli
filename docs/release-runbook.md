@@ -27,6 +27,7 @@ pnpm check:openapi
 pnpm build
 pnpm typecheck
 pnpm test
+pnpm check:pack-cli-contents
 pnpm test:pack-smoke
 ```
 
@@ -38,6 +39,7 @@ They prove:
 - the package builds
 - the TypeScript surface still checks
 - the unit and integration tests pass
+- the packed tarball only contains the intended package surface
 - the packed npm tarball can be installed and run through the clean-machine smoke path
 
 The packed-install smoke is especially important. A CLI release is not ready unless the tarball that would actually be published can install and complete the expected smoke flow.
@@ -46,25 +48,21 @@ The packed-install smoke is especially important. A CLI release is not ready unl
 
 The repo already has a local release helper:
 
-- [`scripts/release-cli.sh`](/Users/sean/Documents/regent/regent-cli/scripts/release-cli.sh)
+- [`scripts/release-cli.sh`](../scripts/release-cli.sh)
 
 That script:
 
 1. runs the release gate
-2. bumps the package version
-3. stages the release scope
-4. creates a release commit message
-5. commits
-6. optionally pushes
+2. requires a clean git worktree before it changes anything
+3. bumps the package version
+4. stages only the release-owned files
+5. creates a release commit message
+6. commits
+7. optionally pushes
 
 This is useful for a controlled local release.
 
-What it does not yet provide by itself is a full hosted CI/CD pipeline for:
-
-- git push
-- required checks
-- publish approval
-- npm publish
+What it does not do by itself is replace hosted CI and npm trusted-publisher setup. Those are now handled by GitHub Actions plus npm configuration.
 
 ## Before any release
 
@@ -73,8 +71,9 @@ Before treating a release candidate as publishable, confirm these conditions:
 1. The Techtree backend contract changes, if any, are already merged and stable.
 2. The Autolaunch backend contract changes, if any, are already merged and stable.
 3. `pnpm check:openapi` passes with no generated-file drift.
-4. `pnpm test:pack-smoke` passes from the package tarball, not just the workspace build.
-5. The release notes are clear about operator-facing changes.
+4. `pnpm check:pack-cli-contents` proves the tarball only contains the intended package files.
+5. `pnpm test:pack-smoke` passes from the package tarball, not just the workspace build.
+6. The release notes are clear about operator-facing changes.
 
 If the CLI contract changed, do not publish until the owning backend contract and generated CLI types agree.
 
@@ -92,6 +91,8 @@ pnpm check:openapi
 pnpm build
 pnpm typecheck
 pnpm test
+pnpm check:pack-cli-contents
+pnpm pack:cli
 pnpm test:pack-smoke
 ```
 
@@ -106,7 +107,8 @@ bash scripts/release-cli.sh --dry-run
 Use this to confirm:
 
 - the version bump is what you expect
-- the staged scope is correct
+- the worktree was clean before the helper ran
+- the staged files are only the release-owned files
 - the generated release commit message is sane
 
 ### 3. Run the local release helper
@@ -121,30 +123,47 @@ This creates the release commit locally without pushing.
 
 Only push after you have reviewed the resulting version bump and staged files.
 
-## What CI should do on every push
+## What CI does on every push
 
-For a published npm package, the minimum useful push pipeline is simple:
+This repo now has a checked-in CI workflow at:
+
+- [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)
+
+It runs on:
+
+- pull requests
+- pushes to `main`
+
+It does the full required gate:
 
 1. install dependencies
 2. run `pnpm check:openapi`
 3. run `pnpm build`
 4. run `pnpm typecheck`
 5. run `pnpm test`
-6. run `pnpm test:pack-smoke`
-
-This should run on every push and every pull request.
+6. run `pnpm check:pack-cli-contents`
+7. run `pnpm test:pack-smoke`
 
 If any of those fail, the branch should not be considered releasable.
 
-## What publish CI/CD should do
+## What publish CI/CD does
 
-For package publishing, the practical desired flow is:
+This repo now has a checked-in publish workflow at:
+
+- [`.github/workflows/publish.yml`](../.github/workflows/publish.yml)
+
+The release model is tag based.
+
+The practical flow is:
 
 1. push to `main`
 2. CI runs the full release gate
-3. a publish job is unlocked only if the gate passes
-4. the publish job packs and publishes `@regentlabs/cli`
-5. the release job creates a git tag and release notes
+3. bump the package version in git
+4. create and push a matching tag like `v0.2.0`
+5. the publish workflow reruns the release gate
+6. the publish workflow rechecks the tarball contents
+7. the publish workflow publishes `@regentlabs/cli`
+8. the publish workflow creates a GitHub release with generated notes
 
 The publish job should also prove that it is publishing the same package shape that passed `test:pack-smoke`.
 
@@ -153,46 +172,29 @@ In plain English:
 - test the exact thing you plan to ship
 - only publish if that exact thing passed
 
-## Recommended GitHub Actions shape
+## Required external setup
 
-This repo does not appear to have checked-in GitHub Actions yet.
+The workflows alone are not enough. Two things still need to be configured outside git:
 
-The clean setup would be two workflows:
+1. Branch protection on `main`
+   Require the CI workflow to pass before merge.
+2. npm trusted publishing
+   Configure `@regentlabs/cli` on npm to trust this repository and the publish workflow file.
 
-### 1. Required checks workflow
+The publish workflow is written for npm trusted publishing, not a long-lived npm token.
 
-Trigger:
+## Tagging a release
 
-- pull requests
-- pushes to `main`
+After the release commit is merged to `main`, create a tag that matches the package version exactly:
 
-Steps:
+```bash
+git switch main
+git pull --ff-only origin main
+git tag v0.2.0
+git push origin v0.2.0
+```
 
-1. install pnpm dependencies
-2. run `pnpm check:openapi`
-3. run `pnpm build`
-4. run `pnpm typecheck`
-5. run `pnpm test`
-6. run `pnpm test:pack-smoke`
-
-This is the branch protection workflow.
-
-### 2. Publish workflow
-
-Trigger:
-
-- manual approval
-- or a version tag / release branch event, depending on your preferred release model
-
-Steps:
-
-1. rerun the same release gate
-2. pack the CLI
-3. publish to npm using the npm token
-4. create a git tag
-5. create release notes
-
-The important rule is that publish should not be a different path from validation.
+The publish workflow rejects mismatches. If the package version is `0.2.0`, the tag must be `v0.2.0`.
 
 ## Release artifacts that matter
 
@@ -209,9 +211,9 @@ Those are the things an operator or downstream user actually feels.
 
 This runbook does not replace:
 
-- [`docs/manual-acceptance.md`](/Users/sean/Documents/regent/regent-cli/docs/manual-acceptance.md) for operator usage checks
-- [`docs/autolaunch-cli.md`](/Users/sean/Documents/regent/regent-cli/docs/autolaunch-cli.md) for the Autolaunch command lifecycle
-- [`docs/regent-doctor-spec.md`](/Users/sean/Documents/regent/regent-cli/docs/regent-doctor-spec.md) for doctor behavior
+- [`docs/manual-acceptance.md`](./manual-acceptance.md) for operator usage checks
+- [`docs/autolaunch-cli.md`](./autolaunch-cli.md) for the Autolaunch command lifecycle
+- [`docs/regent-doctor-spec.md`](./regent-doctor-spec.md) for doctor behavior
 
 Those docs explain how the CLI behaves.
 
@@ -221,11 +223,9 @@ This runbook explains how the package itself should be released.
 
 `regent-cli` is already set up for a disciplined local release flow.
 
-What is still missing is the hosted version of that same flow:
+What is still missing is the external repo configuration around the checked-in workflows:
 
-- push-triggered required checks
-- a gated publish job
-- npm publication
-- tag and release-note creation
+- branch protection
+- npm trusted-publisher configuration
 
-That is the right next step for this repo because it is a package, not a long-running deployed service.
+That is the right remaining work for this repo because it is a package, not a long-running deployed service.
