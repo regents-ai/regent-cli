@@ -11,7 +11,7 @@ version if the checks pass, stages only the package release files it owns, creat
 Codex-style commit message, commits, and pushes.
 
 Options:
-  --dry-run  Run the release gate, bump the version, stage files, and print the generated commit message without committing or pushing.
+  --dry-run  Run the release gate, simulate the version bump, and print the generated commit message without changing git state.
   --no-push  Commit locally but skip git push.
 EOF
 }
@@ -71,10 +71,16 @@ echo "Running Regent CLI release gate..."
   pnpm test:pack-smoke
 )
 
-VERSION_JSON=$(node - "${PACKAGE_JSON}" <<'NODE'
+VERSION_MODE="write"
+if ((DRY_RUN)); then
+  VERSION_MODE="simulate"
+fi
+
+VERSION_JSON=$(node - "${PACKAGE_JSON}" "${VERSION_MODE}" <<'NODE'
 const fs = require("fs");
 
 const packagePath = process.argv[2];
+const mode = process.argv[3];
 const pkg = JSON.parse(fs.readFileSync(packagePath, "utf8"));
 const [major, minor] = String(pkg.version).split(".").map((value) => Number.parseInt(value, 10));
 
@@ -102,8 +108,18 @@ updateDependencyVersion(
   nextVersion,
 );
 
-fs.writeFileSync(packagePath, `${JSON.stringify(pkg, null, 2)}\n`);
-process.stdout.write(JSON.stringify({ name: pkg.name, previousVersion, nextVersion }));
+if (mode === "write") {
+  fs.writeFileSync(packagePath, `${JSON.stringify(pkg, null, 2)}\n`);
+}
+
+process.stdout.write(
+  JSON.stringify({
+    name: pkg.name,
+    previousVersion,
+    nextVersion,
+    changedPaths: ["packages/regent-cli/package.json"],
+  }),
+);
 NODE
 )
 
@@ -113,18 +129,28 @@ NEXT_VERSION=$(node -e 'const payload = JSON.parse(process.argv[1]); process.std
 
 echo "Version bumped: ${PACKAGE_NAME} ${PREVIOUS_VERSION} -> ${NEXT_VERSION}"
 
-(
-  cd "${REPO_ROOT}"
-  git add -- "${RELEASE_STAGE_PATHS[@]}"
-)
-
 STAGED_FILES=()
-while IFS= read -r staged_file; do
-  STAGED_FILES+=("${staged_file}")
-done < <(
-  cd "${REPO_ROOT}" &&
-    git diff --cached --name-only -- "${RELEASE_STAGE_PATHS[@]}"
-)
+if ((DRY_RUN)); then
+  while IFS= read -r staged_file; do
+    if [[ -n "${staged_file}" ]]; then
+      STAGED_FILES+=("${staged_file}")
+    fi
+  done < <(
+    node -e 'const payload = JSON.parse(process.argv[1]); for (const file of payload.changedPaths || []) console.log(file);' "${VERSION_JSON}"
+  )
+else
+  (
+    cd "${REPO_ROOT}"
+    git add -- "${RELEASE_STAGE_PATHS[@]}"
+  )
+
+  while IFS= read -r staged_file; do
+    STAGED_FILES+=("${staged_file}")
+  done < <(
+    cd "${REPO_ROOT}" &&
+      git diff --cached --name-only -- "${RELEASE_STAGE_PATHS[@]}"
+  )
+fi
 
 if ((${#STAGED_FILES[@]} == 0)); then
   echo "No staged files found in the release scope after git add." >&2
