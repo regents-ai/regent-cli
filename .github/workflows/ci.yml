@@ -9,9 +9,26 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: regent-cli
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          path: regent-cli
+
+      - name: Check out Techtree contract source
+        uses: actions/checkout@v4
+        with:
+          repository: regent-ai/techtree
+          path: techtree
+
+      - name: Check out Autolaunch contract source
+        uses: actions/checkout@v4
+        with:
+          repository: regent-ai/autolaunch
+          path: autolaunch
 
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
