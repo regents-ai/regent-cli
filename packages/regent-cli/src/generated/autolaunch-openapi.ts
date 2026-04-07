@@ -436,6 +436,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/trust/agents/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Read one agent trust summary
+         * @description Returns the canonical nested trust summary for one agent identity. This uses the same `trust.erc8004`, `trust.ens`, `trust.world`, and `trust.x` structure exposed inside auction payloads.
+         */
+        get: operations["getAgentTrust"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/trust/x/start": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start the X-link browser flow
+         * @description Starts the X-link flow for one agent identity and returns a relative `redirect_path`. CLI and web clients should open that path in the browser. They should not implement OAuth or provider handshakes themselves.
+         */
+        post: operations["startXLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/trust/x/callback": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Save the completed X-link result
+         * @description Completes the browser-owned X-link flow and stores the linked X handle under the agent's trust summary.
+         */
+        post: operations["completeXLink"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/auctions": {
         parameters: {
             query?: never;
@@ -444,6 +504,22 @@ export interface paths {
             cookie?: never;
         };
         get: operations["listAuctions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/auction-returns": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listAuctionReturns"];
         put?: never;
         post?: never;
         delete?: never;
@@ -516,6 +592,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/me/holdings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMyHoldings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMyProfile"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/me/profile/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["refreshMyProfile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/bids/{id}/exit": {
         parameters: {
             query?: never;
@@ -526,6 +650,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["exitBid"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/bids/{id}/return-usdc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["returnBidUsdc"];
         delete?: never;
         options?: never;
         head?: never;
@@ -622,6 +762,38 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["claimSubjectUsdc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/subjects/{id}/claim-emissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["claimSubjectEmissions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/subjects/{id}/claim-and-stake-emissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["claimAndStakeSubjectEmissions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -809,8 +981,16 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         Address: string;
+        DecimalString: string;
+        /** Format: date-time */
+        DateTime: string;
+        HexData: string;
         LooseObject: {
             [key: string]: unknown;
+        };
+        EmptyRequest: Record<string, never>;
+        AmountRequest: {
+            amount: components["schemas"]["DecimalString"];
         };
         OkEnvelope: {
             /** @enum {boolean} */
@@ -830,10 +1010,8 @@ export interface components {
             action?: string;
             chain_id?: number;
             target?: components["schemas"]["Address"];
-            calldata?: string;
-            tx_request?: {
-                [key: string]: unknown;
-            };
+            calldata?: components["schemas"]["HexData"];
+            tx_request?: components["schemas"]["TxRequest"];
         } & {
             [key: string]: unknown;
         };
@@ -842,6 +1020,484 @@ export interface components {
             data?: components["schemas"]["PreparedAction"];
         } & {
             [key: string]: unknown;
+        };
+        TxRequest: {
+            chain_id: number;
+            to: components["schemas"]["Address"];
+            value: components["schemas"]["HexData"];
+            data: components["schemas"]["HexData"];
+        };
+        PrelaunchMetadataDraft: {
+            title?: string | null;
+            subtitle?: string | null;
+            description?: string | null;
+            website_url?: string | null;
+            image_url?: string | null;
+            image_asset_id?: string | null;
+        };
+        PrelaunchPlan: {
+            plan_id: string;
+            agent_id: string;
+            token_name: string;
+            token_symbol: string;
+            treasury_safe_address: components["schemas"]["Address"];
+            auction_proceeds_recipient: components["schemas"]["Address"];
+            ethereum_revenue_treasury: components["schemas"]["Address"];
+            backup_safe_address?: components["schemas"]["Address"] | null;
+            launch_notes?: string | null;
+            metadata_draft?: components["schemas"]["PrelaunchMetadataDraft"] | null;
+            minimum_raise_usdc: components["schemas"]["DecimalString"];
+            minimum_raise_usdc_raw: string;
+            status?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        PrelaunchPlanUpsertRequest: {
+            agent_id: string;
+            token_name: string;
+            token_symbol: string;
+            treasury_safe_address: components["schemas"]["Address"];
+            auction_proceeds_recipient: components["schemas"]["Address"];
+            ethereum_revenue_treasury: components["schemas"]["Address"];
+            backup_safe_address?: components["schemas"]["Address"] | null;
+            launch_notes?: string | null;
+            metadata_draft?: components["schemas"]["PrelaunchMetadataDraft"] | null;
+            minimum_raise_usdc: components["schemas"]["DecimalString"];
+        };
+        PrelaunchPlanEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            plan: components["schemas"]["PrelaunchPlan"];
+        };
+        PrelaunchPlanListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            items: components["schemas"]["PrelaunchPlan"][];
+        };
+        PrelaunchValidation: {
+            launchable?: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        PrelaunchPlanValidationEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            plan: components["schemas"]["PrelaunchPlan"];
+            validation: components["schemas"]["PrelaunchValidation"];
+        };
+        LaunchPlanRequest: {
+            wallet_address: components["schemas"]["Address"];
+            nonce: string;
+            message: string;
+            signature: string;
+            issued_at: components["schemas"]["DateTime"];
+        };
+        LaunchRef: {
+            job_id?: string;
+        } & {
+            [key: string]: unknown;
+        };
+        LaunchPlanEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            plan: components["schemas"]["PrelaunchPlan"];
+            launch: components["schemas"]["LaunchRef"];
+        };
+        PrelaunchAssetUploadRequest: {
+            source_url?: string | null;
+            file_name?: string | null;
+            media_type?: string | null;
+            content_base64?: string | null;
+        };
+        PrelaunchAsset: {
+            asset_id?: string;
+            public_url?: string;
+        } & {
+            [key: string]: unknown;
+        };
+        PrelaunchAssetEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            asset: components["schemas"]["PrelaunchAsset"];
+        };
+        PrelaunchMetadataRequest: {
+            metadata: components["schemas"]["PrelaunchMetadataDraft"];
+        };
+        PrelaunchMetadataPreviewEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            html?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        LaunchPreviewRequest: {
+            agent_id: string;
+            chain_id: number;
+            token_name: string;
+            token_symbol: string;
+            recovery_safe_address: components["schemas"]["Address"];
+            auction_proceeds_recipient: components["schemas"]["Address"];
+            ethereum_revenue_treasury: components["schemas"]["Address"];
+            total_supply: string;
+            launch_notes?: string | null;
+            minimum_raise_usdc: components["schemas"]["DecimalString"];
+        };
+        LaunchPreviewEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+        } & {
+            [key: string]: unknown;
+        };
+        LaunchCreateRequest: components["schemas"]["LaunchPreviewRequest"] & {
+            wallet_address: components["schemas"]["Address"];
+            nonce: string;
+            message: string;
+            signature: string;
+            issued_at: components["schemas"]["DateTime"];
+        };
+        LaunchJob: {
+            job_id?: string;
+            status?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        LaunchJobEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            job: components["schemas"]["LaunchJob"];
+        } & {
+            [key: string]: unknown;
+        };
+        AuctionTrustErc8004: {
+            /** @enum {boolean} */
+            connected: true;
+            agent_id: string;
+            token_id: string;
+            chain_id: number;
+            registry_address?: components["schemas"]["Address"] | null;
+            web_endpoint?: string | null;
+            image_url?: string | null;
+        };
+        AuctionTrustEns: {
+            connected: boolean;
+            name: string | null;
+        };
+        AuctionTrustWorld: {
+            connected: boolean;
+            network: string;
+            human_id: string | null;
+            launch_count: number;
+        };
+        AuctionTrustX: {
+            connected: boolean;
+            handle: string | null;
+            profile_url: string | null;
+            verified_at: components["schemas"]["DateTime"] | null;
+        };
+        /** @description Canonical nested trust summary shared by auction payloads and direct trust reads. Do not flatten these fields back into older top-level flags. */
+        AuctionTrust: {
+            erc8004: components["schemas"]["AuctionTrustErc8004"];
+            ens: components["schemas"]["AuctionTrustEns"];
+            world: components["schemas"]["AuctionTrustWorld"];
+            x: components["schemas"]["AuctionTrustX"];
+        };
+        AuctionSummary: {
+            id: string;
+            agent_id: string;
+            agent_name: string;
+            symbol: string;
+            owner_address?: components["schemas"]["Address"] | null;
+            auction_address?: components["schemas"]["Address"] | null;
+            token_address?: components["schemas"]["Address"] | null;
+            network?: string;
+            chain: string;
+            chain_family?: string | null;
+            chain_id: number;
+            status: string;
+            phase?: ("biddable" | "live") | null;
+            auction_outcome?: ("active" | "graduated" | "failed_minimum" | "settled") | null;
+            started_at?: components["schemas"]["DateTime"] | null;
+            ends_at?: components["schemas"]["DateTime"] | null;
+            claim_at?: components["schemas"]["DateTime"] | null;
+            bidders: number;
+            raised_currency?: string | null;
+            currency_raised_raw?: string | null;
+            currency_raised?: components["schemas"]["DecimalString"] | null;
+            required_currency_raised_raw?: string | null;
+            required_currency_raised?: components["schemas"]["DecimalString"] | null;
+            minimum_raise_progress_percent?: number | null;
+            minimum_raise_met?: boolean | null;
+            is_graduated?: boolean | null;
+            projected_final_currency_raised_raw?: string | null;
+            projected_final_currency_raised?: components["schemas"]["DecimalString"] | null;
+            projection_basis?: "simple_pace" | null;
+            time_remaining_seconds?: number | null;
+            returns_enabled?: boolean | null;
+            target_currency?: string | null;
+            progress_percent?: number | null;
+            metrics_updated_at?: components["schemas"]["DateTime"] | null;
+            metrics_source?: string | null;
+            quote_mode?: string | null;
+            current_clearing_price: string;
+            current_price_usdc?: string | null;
+            implied_market_cap_usdc?: string | null;
+            price_source?: string | null;
+            total_bid_volume: string;
+            notes?: string | null;
+            uniswap_url?: string | null;
+            trust: components["schemas"]["AuctionTrust"];
+            completion_plan?: {
+                [key: string]: unknown;
+            } | null;
+            reputation_prompt?: {
+                [key: string]: unknown;
+            } | null;
+            your_bid_status?: string | null;
+            detail_url?: string | null;
+            subject_url?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        /** @description Auction list responses use `items`, not the older generic `data` array shape. */
+        AuctionListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            items: components["schemas"]["AuctionSummary"][];
+            generated_at: components["schemas"]["DateTime"];
+        };
+        AuctionEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            auction: components["schemas"]["AuctionSummary"];
+        };
+        AuctionReturnsEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            items: components["schemas"]["AuctionSummary"][];
+            next_cursor?: string | null;
+        };
+        AuctionBidQuoteRequest: {
+            amount: components["schemas"]["DecimalString"];
+            max_price: components["schemas"]["DecimalString"];
+        };
+        AuctionBidQuote: {
+            auction_id: string;
+            amount: components["schemas"]["DecimalString"];
+            max_price: components["schemas"]["DecimalString"];
+            current_clearing_price: components["schemas"]["DecimalString"];
+            projected_clearing_price: components["schemas"]["DecimalString"];
+            quote_mode: string;
+            would_be_active_now: boolean;
+            status_band: string;
+            estimated_tokens_if_end_now: components["schemas"]["DecimalString"];
+            estimated_tokens_if_no_other_bids_change: components["schemas"]["DecimalString"];
+            inactive_above_price: components["schemas"]["DecimalString"];
+            time_remaining_seconds: number;
+            warnings: string[];
+            tx_request?: components["schemas"]["TxRequest"] | null;
+        };
+        AuctionBidQuoteEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+        } & {
+            [key: string]: unknown;
+        };
+        CreateAuctionBidRequest: {
+            amount: components["schemas"]["DecimalString"];
+            max_price: components["schemas"]["DecimalString"];
+            tx_hash?: string | null;
+            current_clearing_price?: components["schemas"]["DecimalString"] | null;
+            projected_clearing_price?: components["schemas"]["DecimalString"] | null;
+            estimated_tokens_if_end_now?: components["schemas"]["DecimalString"] | null;
+            estimated_tokens_if_no_other_bids_change?: components["schemas"]["DecimalString"] | null;
+            inactive_above_price?: components["schemas"]["DecimalString"] | null;
+            status_band?: string | null;
+        };
+        BidMutationRequest: {
+            tx_hash?: string | null;
+        };
+        PositionAction: {
+            tx_request?: components["schemas"]["TxRequest"] | null;
+        } & {
+            [key: string]: unknown;
+        };
+        BidPosition: {
+            bid_id: string;
+            onchain_bid_id?: string | null;
+            auction_id: string;
+            agent_id: string;
+            agent_name: string;
+            chain?: string;
+            /** @enum {string} */
+            status: "active" | "borderline" | "inactive" | "claimable" | "exited" | "claimed" | "returnable";
+            amount: components["schemas"]["DecimalString"];
+            max_price: components["schemas"]["DecimalString"];
+            current_clearing_price?: components["schemas"]["DecimalString"];
+            estimated_tokens_if_end_now?: components["schemas"]["DecimalString"] | null;
+            estimated_tokens_if_no_other_bids_change?: components["schemas"]["DecimalString"] | null;
+            inactive_above_price?: components["schemas"]["DecimalString"] | null;
+            tokens_filled?: components["schemas"]["DecimalString"] | null;
+            next_action_label?: string | null;
+            tx_actions?: {
+                exit?: components["schemas"]["PositionAction"] | null;
+                claim?: components["schemas"]["PositionAction"] | null;
+            };
+            return_action?: components["schemas"]["PositionAction"] | null;
+            auction?: components["schemas"]["AuctionSummary"] | null;
+            inserted_at?: components["schemas"]["DateTime"] | null;
+        };
+        BidPositionEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            bid: components["schemas"]["BidPosition"];
+        };
+        BidPositionListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            items: components["schemas"]["BidPosition"][];
+        };
+        Subject: {
+            subject_id: string;
+            chain_id: number;
+            chain_label?: string | null;
+            token_address: components["schemas"]["Address"];
+            strategy_address?: components["schemas"]["Address"] | null;
+            subject_registry_address?: components["schemas"]["Address"] | null;
+            splitter_address: components["schemas"]["Address"];
+            default_ingress_address?: components["schemas"]["Address"] | null;
+            ingress_accounts?: {
+                [key: string]: unknown;
+            }[];
+            total_staked_raw?: number | null;
+            total_staked?: components["schemas"]["DecimalString"] | null;
+            treasury_residual_usdc_raw?: number | null;
+            treasury_residual_usdc?: components["schemas"]["DecimalString"] | null;
+            protocol_reserve_usdc_raw?: number | null;
+            protocol_reserve_usdc?: components["schemas"]["DecimalString"] | null;
+            undistributed_dust_usdc_raw?: number | null;
+            undistributed_dust_usdc?: components["schemas"]["DecimalString"] | null;
+            wallet_address?: components["schemas"]["Address"] | null;
+            wallet_stake_balance_raw?: number | null;
+            wallet_stake_balance?: components["schemas"]["DecimalString"] | null;
+            wallet_token_balance_raw?: number | null;
+            wallet_token_balance?: components["schemas"]["DecimalString"] | null;
+            claimable_usdc_raw?: number | null;
+            claimable_usdc?: components["schemas"]["DecimalString"] | null;
+            claimable_stake_token_raw?: number | null;
+            claimable_stake_token?: components["schemas"]["DecimalString"] | null;
+            can_manage_ingress?: boolean | null;
+        };
+        SubjectEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject: components["schemas"]["Subject"];
+        };
+        SubjectIngressEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject: components["schemas"]["Subject"];
+        };
+        PreparedSubjectActionEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject?: components["schemas"]["Subject"] | null;
+            tx_request?: components["schemas"]["TxRequest"] | null;
+            prepared?: components["schemas"]["PreparedAction"] | null;
+        } & {
+            [key: string]: unknown;
+        };
+        HoldingAction: {
+            type?: string;
+            tx_request?: components["schemas"]["TxRequest"] | null;
+        } & {
+            [key: string]: unknown;
+        };
+        HoldingRow: {
+            auction_id: string;
+            subject_id: string | null;
+            agent_id: string;
+            agent_name: string;
+            symbol: string;
+            phase?: string | null;
+            detail_url?: string | null;
+            unstaked_token_balance?: components["schemas"]["DecimalString"] | null;
+            staked_token_balance?: components["schemas"]["DecimalString"] | null;
+            claimable_usdc?: components["schemas"]["DecimalString"] | null;
+            claimable_emissions?: components["schemas"]["DecimalString"] | null;
+            ingress_accounts?: {
+                [key: string]: unknown;
+            }[];
+            actions?: components["schemas"]["HoldingAction"][];
+        } & {
+            [key: string]: unknown;
+        };
+        Holdings: {
+            holdings: components["schemas"]["HoldingRow"][];
+        };
+        HoldingsEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            holdings: components["schemas"]["Holdings"];
+        };
+        AgentTrustEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            agent_id: string;
+            trust: components["schemas"]["AuctionTrust"];
+        };
+        XLinkStartRequest: {
+            agent_id: string;
+        };
+        XLinkStartEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            /** @example twitter */
+            provider: string;
+            /** @example x */
+            trust_provider: string;
+            agent_id: string;
+            /**
+             * @description Relative browser path returned by the backend for the X-link flow.
+             * @example /trust/x/redirect?token=abc123
+             */
+            redirect_path: string;
+        };
+        XLinkCallbackRequest: {
+            agent_id: string;
+            handle: string;
+            profile_url: string;
+            provider_subject: string;
+        };
+        ProfileTokenRow: {
+            auction_id?: string;
+            subject_id?: string | null;
+            agent_id?: string;
+            agent_name?: string;
+            symbol?: string;
+            /** @enum {string} */
+            phase?: "biddable" | "live";
+            current_price_usdc?: string | null;
+            implied_market_cap_usdc?: string | null;
+            detail_url?: string;
+            staked_token_amount?: string | null;
+            staked_usdc_value?: string | null;
+            claimable_usdc?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        ProfileSnapshot: {
+            status: string;
+            launched_tokens: components["schemas"]["ProfileTokenRow"][];
+            staked_tokens: components["schemas"]["ProfileTokenRow"][];
+            refreshed_at?: components["schemas"]["DateTime"] | null;
+            refresh_started_at?: components["schemas"]["DateTime"] | null;
+            next_manual_refresh_at?: components["schemas"]["DateTime"] | null;
+            error_message?: string | null;
+        };
+        ProfileSnapshotEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            profile: components["schemas"]["ProfileSnapshot"];
         };
     };
     responses: never;
@@ -1172,7 +1828,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseListEnvelope"];
+                    "application/json": components["schemas"]["PrelaunchPlanListEnvelope"];
                 };
             };
         };
@@ -1186,7 +1842,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["PrelaunchPlanUpsertRequest"];
             };
         };
         responses: {
@@ -1196,7 +1852,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanEnvelope"];
                 };
             };
         };
@@ -1218,7 +1874,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanEnvelope"];
                 };
             };
         };
@@ -1234,7 +1890,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["PrelaunchPlanUpsertRequest"];
             };
         };
         responses: {
@@ -1244,7 +1900,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanEnvelope"];
                 };
             };
         };
@@ -1266,7 +1922,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanValidationEnvelope"];
                 };
             };
         };
@@ -1288,7 +1944,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanValidationEnvelope"];
                 };
             };
         };
@@ -1304,7 +1960,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["LaunchPlanRequest"];
             };
         };
         responses: {
@@ -1314,7 +1970,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["LaunchPlanEnvelope"];
                 };
             };
         };
@@ -1328,7 +1984,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["PrelaunchAssetUploadRequest"];
             };
         };
         responses: {
@@ -1338,7 +1994,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchAssetEnvelope"];
                 };
             };
         };
@@ -1354,7 +2010,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["PrelaunchMetadataRequest"];
             };
         };
         responses: {
@@ -1364,7 +2020,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchPlanEnvelope"];
                 };
             };
         };
@@ -1386,7 +2042,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PrelaunchMetadataPreviewEnvelope"];
                 };
             };
         };
@@ -1400,7 +2056,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["LaunchPreviewRequest"];
             };
         };
         responses: {
@@ -1410,7 +2066,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["LaunchPreviewEnvelope"];
                 };
             };
         };
@@ -1424,7 +2080,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["LaunchCreateRequest"];
             };
         };
         responses: {
@@ -1434,7 +2090,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["LaunchJobEnvelope"];
                 };
             };
         };
@@ -1456,7 +2112,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["LaunchJobEnvelope"];
                 };
             };
         };
@@ -1553,9 +2209,82 @@ export interface operations {
             };
         };
     };
-    listAuctions: {
+    getAgentTrust: {
         parameters: {
             query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["AgentId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Agent trust summary */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentTrustEnvelope"];
+                };
+            };
+        };
+    };
+    startXLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["XLinkStartRequest"];
+            };
+        };
+        responses: {
+            /** @description X link start payload */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["XLinkStartEnvelope"];
+                };
+            };
+        };
+    };
+    completeXLink: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["XLinkCallbackRequest"];
+            };
+        };
+        responses: {
+            /** @description X link saved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentTrustEnvelope"];
+                };
+            };
+        };
+    };
+    listAuctions: {
+        parameters: {
+            query?: {
+                mode?: "biddable" | "live" | "all" | "failed_minimum";
+                sort?: "newest" | "oldest" | "market_cap_desc" | "market_cap_asc" | "failure_recent";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1568,7 +2297,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseListEnvelope"];
+                    "application/json": components["schemas"]["AuctionListEnvelope"];
+                };
+            };
+        };
+    };
+    listAuctionReturns: {
+        parameters: {
+            query?: {
+                cursor?: string;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Failed auctions available for returns */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionReturnsEnvelope"];
                 };
             };
         };
@@ -1590,7 +2342,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["AuctionEnvelope"];
                 };
             };
         };
@@ -1606,7 +2358,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["AuctionBidQuoteRequest"];
             };
         };
         responses: {
@@ -1616,7 +2368,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["AuctionBidQuoteEnvelope"];
                 };
             };
         };
@@ -1632,7 +2384,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["CreateAuctionBidRequest"];
             };
         };
         responses: {
@@ -1642,14 +2394,17 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["BidPositionEnvelope"];
                 };
             };
         };
     };
     listMyBids: {
         parameters: {
-            query?: never;
+            query?: {
+                auction?: string;
+                status?: "active" | "borderline" | "inactive" | "claimable" | "exited" | "claimed" | "returnable";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1662,7 +2417,67 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseListEnvelope"];
+                    "application/json": components["schemas"]["BidPositionListEnvelope"];
+                };
+            };
+        };
+    };
+    getMyHoldings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user's actionable holdings */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HoldingsEnvelope"];
+                };
+            };
+        };
+    };
+    getMyProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current user's cached token profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileSnapshotEnvelope"];
+                };
+            };
+        };
+    };
+    refreshMyProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Profile refresh started */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProfileSnapshotEnvelope"];
                 };
             };
         };
@@ -1678,7 +2493,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["BidMutationRequest"];
             };
         };
         responses: {
@@ -1688,7 +2503,33 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["BidPositionEnvelope"];
+                };
+            };
+        };
+    };
+    returnBidUsdc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["BidId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["BidMutationRequest"];
+            };
+        };
+        responses: {
+            /** @description Return prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidPositionEnvelope"];
                 };
             };
         };
@@ -1704,7 +2545,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["BidMutationRequest"];
             };
         };
         responses: {
@@ -1714,7 +2555,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["BidPositionEnvelope"];
                 };
             };
         };
@@ -1736,7 +2577,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["SubjectEnvelope"];
                 };
             };
         };
@@ -1758,7 +2599,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["SubjectIngressEnvelope"];
                 };
             };
         };
@@ -1774,7 +2615,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["AmountRequest"];
             };
         };
         responses: {
@@ -1784,7 +2625,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
                 };
             };
         };
@@ -1800,7 +2641,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["AmountRequest"];
             };
         };
         responses: {
@@ -1810,7 +2651,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
                 };
             };
         };
@@ -1826,7 +2667,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["EmptyRequest"];
             };
         };
         responses: {
@@ -1836,7 +2677,59 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    claimSubjectEmissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EmptyRequest"];
+            };
+        };
+        responses: {
+            /** @description Emissions claim prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    claimAndStakeSubjectEmissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EmptyRequest"];
+            };
+        };
+        responses: {
+            /** @description Emissions compound prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
                 };
             };
         };
@@ -1853,7 +2746,7 @@ export interface operations {
         };
         requestBody?: {
             content: {
-                "application/json": components["schemas"]["LooseObject"];
+                "application/json": components["schemas"]["EmptyRequest"];
             };
         };
         responses: {
@@ -1863,7 +2756,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
                 };
             };
         };
