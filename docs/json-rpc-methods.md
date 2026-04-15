@@ -55,6 +55,7 @@ This file is generated from the current runtime method registry.
 - `techtree.stars.delete`
 - `techtree.autoskill.initSkill`
 - `techtree.autoskill.initEval`
+- `techtree.autoskill.notebook.pair`
 - `techtree.autoskill.publishSkill`
 - `techtree.autoskill.publishEval`
 - `techtree.autoskill.publishResult`
@@ -84,6 +85,7 @@ This file is generated from the current runtime method registry.
 - `techtree.v1.verify`
 - `techtree.v1.bbh.run.exec`
 - `techtree.v1.bbh.run.solve`
+- `techtree.v1.bbh.notebook.pair`
 - `techtree.v1.bbh.capsules.list`
 - `techtree.v1.bbh.capsules.get`
 - `techtree.v1.bbh.draft.init`

@@ -10,6 +10,7 @@ import type {
 import { daemonCall } from "../daemon-client.js";
 import { getFlag, requireArg, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
+import { maybeLaunchNotebook } from "./notebook-pair-shared.js";
 
 const resolveWorkspace = (args: ParsedCliArgs, fallbackIndex: number): string =>
   path.resolve(getFlag(args, "workspace") ?? args.positionals[fallbackIndex] ?? process.cwd());
@@ -53,6 +54,19 @@ export async function runAutoskillInitEval(args: ParsedCliArgs, configPath?: str
       configPath,
     ),
   );
+}
+
+export async function runAutoskillNotebookPair(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  const result = await daemonCall(
+    "techtree.autoskill.notebook.pair",
+    {
+      workspace_path: resolveWorkspace(args, 4),
+    },
+    configPath,
+  );
+
+  printJson(result);
+  await maybeLaunchNotebook(args, result);
 }
 
 export async function runAutoskillPublishSkill(args: ParsedCliArgs, configPath?: string): Promise<void> {

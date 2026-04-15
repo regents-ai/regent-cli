@@ -33,6 +33,7 @@ import {
   handleTechtreeAutoskillBuy,
   handleTechtreeAutoskillInitEval,
   handleTechtreeAutoskillInitSkill,
+  handleTechtreeAutoskillNotebookPair,
   handleTechtreeAutoskillListingCreate,
   handleTechtreeAutoskillPublishEval,
   handleTechtreeAutoskillPublishResult,
@@ -76,6 +77,7 @@ import {
   handleTechtreeV1BbhDraftReady,
   handleTechtreeV1BbhGenomeImprove,
   handleTechtreeV1BbhGenomeInit,
+  handleTechtreeV1BbhNotebookPair,
   handleTechtreeV1BbhGenomePropose,
   handleTechtreeV1BbhGenomeScore,
   handleTechtreeV1BbhRunExec,
@@ -454,6 +456,11 @@ export class RegentRuntime {
           ctx,
           params as Parameters<typeof handleTechtreeAutoskillInitEval>[1],
         );
+      case "techtree.autoskill.notebook.pair":
+        return handleTechtreeAutoskillNotebookPair(
+          ctx,
+          params as Parameters<typeof handleTechtreeAutoskillNotebookPair>[1],
+        );
       case "techtree.autoskill.publishSkill":
         return handleTechtreeAutoskillPublishSkill(
           ctx,
@@ -539,6 +546,11 @@ export class RegentRuntime {
         return handleTechtreeV1BbhRunExec(ctx, params as Parameters<typeof handleTechtreeV1BbhRunExec>[1]);
       case "techtree.v1.bbh.run.solve":
         return handleTechtreeV1BbhRunSolve(ctx, params as Parameters<typeof handleTechtreeV1BbhRunSolve>[1]);
+      case "techtree.v1.bbh.notebook.pair":
+        return handleTechtreeV1BbhNotebookPair(
+          ctx,
+          params as Parameters<typeof handleTechtreeV1BbhNotebookPair>[1],
+        );
       case "techtree.v1.bbh.capsules.list":
         return handleTechtreeV1BbhCapsulesList(
           ctx,

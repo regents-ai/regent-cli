@@ -22,6 +22,8 @@ import type {
   AutoskillCreateResultResponse,
   AutoskillCreateReviewResponse,
   AutoskillCreateSkillResponse,
+  AutoskillNotebookPairParams,
+  AutoskillNotebookPairResponse,
   AutoskillEvalPublishInput,
   AutoskillEvalPublishRequest,
   AutoskillListingCreateInput,
@@ -51,6 +53,8 @@ import type {
   BbhGenomeScoreParams,
   BbhGenomeScoreResponse,
   BbhLeaderboardResponse,
+  BbhNotebookPairParams,
+  BbhNotebookPairResponse,
   BbhReviewerApplyParams,
   BbhReviewerApplyResponse,
   BbhReviewerOrcidLinkParams,
@@ -129,6 +133,7 @@ import {
   materializeAutoskillBundle,
   writeDefaultResultFiles,
 } from "../workloads/autoskill.js";
+import { prepareAutoskillNotebookPair, prepareBbhNotebookPair } from "../workloads/notebook-pair.js";
 
 type NodeType = "artifact" | "run" | "review";
 
@@ -734,6 +739,13 @@ export async function handleTechtreeAutoskillInitEval(
   };
 }
 
+export async function handleTechtreeAutoskillNotebookPair(
+  _ctx: RuntimeContext,
+  params: AutoskillNotebookPairParams,
+): Promise<AutoskillNotebookPairResponse> {
+  return prepareAutoskillNotebookPair(params.workspace_path);
+}
+
 export async function handleTechtreeAutoskillPublishSkill(
   ctx: RuntimeContext,
   params: { workspace_path: string; input: AutoskillSkillPublishRequest },
@@ -1187,6 +1199,13 @@ export async function handleTechtreeV1BbhRunSolve(
 ): Promise<BbhRunSolveResponse> {
   const resolvedMetadata = ctx.agentRouter.resolveRunMetadata(params.metadata ?? null);
   return solveBbhWorkspace(ctx.config, params, resolvedMetadata);
+}
+
+export async function handleTechtreeV1BbhNotebookPair(
+  _ctx: RuntimeContext,
+  params: BbhNotebookPairParams,
+): Promise<BbhNotebookPairResponse> {
+  return prepareBbhNotebookPair(params.workspace_path);
 }
 
 export async function handleTechtreeV1BbhGenomeInit(

@@ -42,6 +42,8 @@ import type {
   BbhCapsuleGetResponse,
   BbhCapsuleListResponse,
   BbhLeaderboardResponse,
+  BbhNotebookPairParams,
+  BbhNotebookPairResponse,
   BbhRunSubmitResponse,
   BbhSyncParams,
   BbhValidationSubmitResponse,
@@ -66,6 +68,8 @@ import type {
   AutoskillCreateSkillResponse,
   AutoskillEvalPublishRequest,
   AutoskillListingCreateInput,
+  AutoskillNotebookPairParams,
+  AutoskillNotebookPairResponse,
   AutoskillResultPublishInput,
   AutoskillReviewCreateInput,
   AutoskillSkillPublishRequest,
@@ -177,6 +181,7 @@ export type RegentRpcMethod =
   | "techtree.stars.delete"
   | "techtree.autoskill.initSkill"
   | "techtree.autoskill.initEval"
+  | "techtree.autoskill.notebook.pair"
   | "techtree.autoskill.publishSkill"
   | "techtree.autoskill.publishEval"
   | "techtree.autoskill.publishResult"
@@ -206,6 +211,7 @@ export type RegentRpcMethod =
   | "techtree.v1.verify"
   | "techtree.v1.bbh.run.exec"
   | "techtree.v1.bbh.run.solve"
+  | "techtree.v1.bbh.notebook.pair"
   | "techtree.v1.bbh.capsules.list"
   | "techtree.v1.bbh.capsules.get"
   | "techtree.v1.bbh.draft.init"
@@ -280,6 +286,7 @@ export interface RegentRpcParamsMap {
   "techtree.stars.delete": { nodeId: number };
   "techtree.autoskill.initSkill": { workspace_path: string };
   "techtree.autoskill.initEval": { workspace_path: string };
+  "techtree.autoskill.notebook.pair": AutoskillNotebookPairParams;
   "techtree.autoskill.publishSkill": { workspace_path: string; input: AutoskillSkillPublishRequest };
   "techtree.autoskill.publishEval": { workspace_path: string; input: AutoskillEvalPublishRequest };
   "techtree.autoskill.publishResult": { workspace_path: string; input: AutoskillResultPublishInput };
@@ -321,6 +328,7 @@ export interface RegentRpcParamsMap {
   "techtree.v1.verify": TechtreeV1VerifyParams;
   "techtree.v1.bbh.run.exec": BbhRunExecParams;
   "techtree.v1.bbh.run.solve": BbhRunSolveParams;
+  "techtree.v1.bbh.notebook.pair": BbhNotebookPairParams;
   "techtree.v1.bbh.capsules.list": TechtreeV1BbhCapsulesListParams | undefined;
   "techtree.v1.bbh.capsules.get": TechtreeV1BbhCapsulesGetParams;
   "techtree.v1.bbh.draft.init": TechtreeV1BbhDraftInitParams;
@@ -411,6 +419,7 @@ export interface RegentRpcResultMap {
     workspace_path: string;
     files: string[];
   };
+  "techtree.autoskill.notebook.pair": AutoskillNotebookPairResponse;
   "techtree.autoskill.publishSkill": AutoskillCreateSkillResponse & {
     workspace_path: string;
     bundle_hash: string;
@@ -464,6 +473,7 @@ export interface RegentRpcResultMap {
   "techtree.v1.verify": TechtreeVerifyResponse & { tree: "main" | "bbh" };
   "techtree.v1.bbh.run.exec": BbhRunExecResponse;
   "techtree.v1.bbh.run.solve": BbhRunSolveResponse;
+  "techtree.v1.bbh.notebook.pair": BbhNotebookPairResponse;
   "techtree.v1.bbh.capsules.list": BbhCapsuleListResponse;
   "techtree.v1.bbh.capsules.get": BbhCapsuleGetResponse;
   "techtree.v1.bbh.draft.init": TechtreeWorkspaceActionResult;

@@ -621,6 +621,20 @@ export interface BbhRunSolveResponse {
   verdict_summary: BbhRunSolveVerdictSummary;
 }
 
+export interface BbhNotebookPairParams {
+  workspace_path: string;
+}
+
+export interface BbhNotebookPairResponse {
+  ok: true;
+  entrypoint: "bbh.notebook.pair";
+  workspace_path: string;
+  notebook_path: string;
+  launch_argv: string[];
+  marimo_pair: import("./techtree.js").NotebookPairSkillStatus;
+  instructions: import("./techtree.js").NotebookPairInstructions;
+}
+
 export interface BbhRunSubmitResponse {
   data: {
     run_id: string;

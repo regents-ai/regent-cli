@@ -6,6 +6,7 @@ import { daemonCall } from "../daemon-client.js";
 import { getFlag, requireArg, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
 import { normalizeNodeId, normalizeTree, normalizeWorkspacePath, optionalWorkspacePath, workspaceFlag } from "./techtree-v1-shared.js";
+import { maybeLaunchNotebook } from "./notebook-pair-shared.js";
 
 export const readRunMetadata = (args: ParsedCliArgs): RegentRunMetadata | undefined => {
   const executorHarnessKind = getFlag(args, "executor-harness-kind");
@@ -460,6 +461,19 @@ export async function runTechtreeBbhRunSolve(args: ParsedCliArgs, configPath?: s
       configPath,
     ),
   );
+}
+
+export async function runTechtreeBbhNotebookPair(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  const result = await daemonCall(
+    "techtree.v1.bbh.notebook.pair",
+    {
+      workspace_path: normalizeWorkspacePath(args, 4),
+    },
+    configPath,
+  );
+
+  printJson(result);
+  await maybeLaunchNotebook(args, result);
 }
 
 export async function runTechtreeBbhSubmit(args: ParsedCliArgs, configPath?: string): Promise<void> {

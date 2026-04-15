@@ -164,6 +164,37 @@ export interface AutoskillBuyResponse {
   };
 }
 
+export interface NotebookPairSkillStatus {
+  skill_name: string;
+  installed: boolean;
+  scopes: Array<"project" | "global">;
+  agents: string[];
+  install_commands: string[];
+}
+
+export interface NotebookPairInstructions {
+  recommended_default: string;
+  techtree_skill: string;
+  hermes_prompt: string;
+  openclaw_prompt: string;
+  next_regent_commands: string[];
+}
+
+export interface AutoskillNotebookPairParams {
+  workspace_path: string;
+}
+
+export interface AutoskillNotebookPairResponse {
+  ok: true;
+  entrypoint: "autoskill.notebook.pair";
+  workspace_path: string;
+  workspace_kind: "skill" | "eval";
+  notebook_path: string;
+  launch_argv: string[];
+  marimo_pair: NotebookPairSkillStatus;
+  instructions: NotebookPairInstructions;
+}
+
 export interface AutoskillSkillPublishInput {
   parent_id?: number;
   title: string;
