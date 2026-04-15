@@ -88,10 +88,14 @@ describe("CLI config and create flows", () => {
           stateDir: path.join(harness.tempDir, "custom-state"),
           logLevel: "debug",
         },
+        auth: {
+          baseUrl: "http://127.0.0.1:4999",
+          audience: "regent-cli",
+          defaultChainId: 11155111,
+          requestTimeoutMs: 2500,
+        },
         techtree: {
           baseUrl: "http://127.0.0.1:5555",
-          audience: "custom",
-          defaultChainId: 11155111,
           requestTimeoutMs: 2500,
         },
         wallet: {
@@ -164,10 +168,14 @@ describe("CLI config and create flows", () => {
         stateDir: path.join(harness.tempDir, "state"),
         logLevel: "debug",
       },
+      auth: {
+        baseUrl: "http://127.0.0.1:4000",
+        audience: "regent-cli",
+        defaultChainId: 11155111,
+        requestTimeoutMs: 10_000,
+      },
       techtree: {
         baseUrl: "http://127.0.0.1:4100",
-        audience: "techtree",
-        defaultChainId: 11155111,
         requestTimeoutMs: 10_000,
       },
       wallet: {
@@ -244,10 +252,14 @@ describe("CLI config and create flows", () => {
           stateDir: path.join(harness.tempDir, "alt-state"),
           logLevel: "warn",
         },
+        auth: {
+          baseUrl: "http://127.0.0.1:4999",
+          audience: "regent-cli",
+          defaultChainId: 8453,
+          requestTimeoutMs: 2500,
+        },
         techtree: {
           baseUrl: "http://127.0.0.1:4455",
-          audience: "techtree",
-          defaultChainId: 8453,
           requestTimeoutMs: 2500,
         },
         wallet: {
@@ -335,10 +347,14 @@ describe("CLI config and create flows", () => {
           stateDir: path.join(harness.tempDir, "alt-state"),
           logLevel: "warn",
         },
+        auth: {
+          baseUrl: "http://127.0.0.1:4999",
+          audience: "regent-cli",
+          defaultChainId: 8453,
+          requestTimeoutMs: 2500,
+        },
         techtree: {
           baseUrl: "http://127.0.0.1:4455",
-          audience: "techtree",
-          defaultChainId: 8453,
           requestTimeoutMs: 2500,
         },
         wallet: {

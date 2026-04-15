@@ -1,7 +1,7 @@
 import { getCurrentAgentIdentity, getMissingAgentIdentityFields } from "../../agent/profile.js";
 import { buildAuthenticatedFetchInit } from "../../techtree/request-builder.js";
-import { buildSiwaMessage } from "../../techtree/siwa.js";
-import { HTTP_SIGNATURE_COVERED_COMPONENTS, parseSignatureInputHeader, } from "../../techtree/signing.js";
+import { buildSiwaMessage, SiwaClient } from "../../techtree/siwa.js";
+import { coveredComponentsForAgentHeaders, parseSignatureInputHeader, } from "../../techtree/signing.js";
 import { buildBackendDetails, deriveSignerWalletAddress, isPositiveIntegerString, isValidAddress, skipDueToMissingConfig } from "./shared.js";
 const FRESHNESS_THRESHOLD_MS = 5 * 60 * 1000;
 const PLACEHOLDER_WALLET = "0x0000000000000000000000000000000000000001";
@@ -86,14 +86,14 @@ export function authChecks() {
                     return skipDueToMissingConfig();
                 }
                 try {
+                    const authClient = new SiwaClient(ctx.config.auth.baseUrl, ctx.config.auth.requestTimeoutMs);
                     const identity = getCurrentAgentIdentity(ctx.stateStore);
                     const walletAddress = identity?.walletAddress ?? (await deriveSignerWalletAddress(ctx)) ?? PLACEHOLDER_WALLET;
-                    const chainId = identity?.chainId ?? ctx.config.techtree.defaultChainId;
-                    const response = await ctx.techtree.siwaNonce({
-                        kind: "nonce_request",
-                        walletAddress,
-                        chainId,
-                        audience: ctx.config.techtree.audience,
+                    const chainId = identity?.chainId ?? ctx.config.auth.defaultChainId;
+                    const response = await authClient.requestNonce({
+                        wallet_address: walletAddress,
+                        chain_id: chainId,
+                        audience: ctx.config.auth.audience,
                     });
                     return {
                         status: "ok",
@@ -134,7 +134,7 @@ export function authChecks() {
                     };
                 }
                 const walletAddress = identity?.walletAddress ?? (await deriveSignerWalletAddress(ctx)) ?? PLACEHOLDER_WALLET;
-                const chainId = identity?.chainId ?? ctx.config.techtree.defaultChainId;
+                const chainId = identity?.chainId ?? ctx.config.auth.defaultChainId;
                 const nonce = `doctor-unverifiable-${Date.now()}`;
                 const message = buildSiwaMessage({
                     domain: "regent.cx",
@@ -145,14 +145,14 @@ export function authChecks() {
                     statement: "Sign in to Regent CLI.",
                 });
                 try {
-                    const response = await ctx.techtree.siwaVerify({
-                        kind: "verify_request",
-                        walletAddress,
-                        chainId,
+                    const authClient = new SiwaClient(ctx.config.auth.baseUrl, ctx.config.auth.requestTimeoutMs);
+                    const response = await authClient.verify({
+                        wallet_address: walletAddress,
+                        chain_id: chainId,
                         nonce,
                         message,
                         signature: `0x${"00".repeat(65)}`,
-                        ...(identity ? { registryAddress: identity.registryAddress, tokenId: identity.tokenId } : {}),
+                        ...(identity ? { registry_address: identity.registryAddress, token_id: identity.tokenId } : {}),
                     });
                     return {
                         status: "warn",
@@ -381,7 +381,7 @@ export function authChecks() {
                         privateKey,
                     });
                     const headers = request.init.headers;
-                    const missing = [
+                    const requiredHeaders = [
                         "x-siwa-receipt",
                         "x-key-id",
                         "x-timestamp",
@@ -389,11 +389,16 @@ export function authChecks() {
                         "signature",
                         "x-agent-wallet-address",
                         "x-agent-chain-id",
-                        "x-agent-registry-address",
-                        "x-agent-token-id",
-                    ].filter((headerName) => !headers[headerName]);
+                        ...(identity.registryAddress ? ["x-agent-registry-address"] : []),
+                        ...(identity.tokenId ? ["x-agent-token-id"] : []),
+                    ];
+                    const missing = requiredHeaders.filter((headerName) => !headers[headerName]);
                     const parsedSignatureInput = parseSignatureInputHeader(headers["signature-input"] ?? "");
-                    const missingCoveredComponents = HTTP_SIGNATURE_COVERED_COMPONENTS.filter((component) => !parsedSignatureInput?.coveredComponents.includes(component));
+                    const expectedCoveredComponents = coveredComponentsForAgentHeaders({
+                        includeRegistryBinding: Boolean(identity.registryAddress),
+                        includeTokenBinding: Boolean(identity.tokenId),
+                    });
+                    const missingCoveredComponents = expectedCoveredComponents.filter((component) => !parsedSignatureInput?.coveredComponents.includes(component));
                     const timestamp = Number.parseInt(headers["x-timestamp"] ?? "", 10);
                     const nowUnixSeconds = Math.floor(Date.now() / 1000);
                     const expectedSessionKeyId = session.keyId.trim().toLowerCase();

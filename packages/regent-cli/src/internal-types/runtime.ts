@@ -1,8 +1,8 @@
 export interface LocalAgentIdentity {
   walletAddress: `0x${string}`;
   chainId: number;
-  registryAddress: `0x${string}`;
-  tokenId: string;
+  registryAddress?: `0x${string}`;
+  tokenId?: string;
   label?: string;
 }
 

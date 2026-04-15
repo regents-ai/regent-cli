@@ -8,7 +8,7 @@ import type {
 import { deriveWalletAddress, signPersonalMessage } from "../agent/wallet.js";
 import { AuthError } from "../errors.js";
 import type { RuntimeContext } from "../runtime.js";
-import { buildSiwaMessage } from "../techtree/siwa.js";
+import { buildSiwaMessage, SiwaClient } from "../techtree/siwa.js";
 
 export async function handleAuthSiwaLogin(
   ctx: RuntimeContext,
@@ -22,8 +22,9 @@ export async function handleAuthSiwaLogin(
 ): Promise<SiwaVerifyResponse> {
   const privateKey = await ctx.walletSecretSource.getPrivateKeyHex();
   const walletAddress = params.walletAddress ?? (await deriveWalletAddress(privateKey));
-  const chainId = params.chainId ?? ctx.config.techtree.defaultChainId;
-  const audience = params.audience ?? ctx.config.techtree.audience;
+  const chainId = params.chainId ?? ctx.config.auth.defaultChainId;
+  const audience = params.audience ?? ctx.config.auth.audience;
+  const authClient = new SiwaClient(ctx.config.auth.baseUrl, ctx.config.auth.requestTimeoutMs);
 
   const hasRegistryAddress = typeof params.registryAddress === "string";
   const hasTokenId = typeof params.tokenId === "string";
@@ -34,10 +35,9 @@ export async function handleAuthSiwaLogin(
     );
   }
 
-  const nonceResponse = await ctx.techtree.siwaNonce({
-    kind: "nonce_request",
-    walletAddress,
-    chainId,
+  const nonceResponse = await authClient.requestNonce({
+    wallet_address: walletAddress,
+    chain_id: chainId,
     audience,
   });
 
@@ -51,15 +51,14 @@ export async function handleAuthSiwaLogin(
   });
 
   const signature = await signPersonalMessage(privateKey, message);
-  const verifyResponse = await ctx.techtree.siwaVerify({
-    kind: "verify_request",
-    walletAddress,
-    chainId,
+  const verifyResponse = await authClient.verify({
+    wallet_address: walletAddress,
+    chain_id: chainId,
     nonce: nonceResponse.data.nonce,
     message,
     signature,
-    ...(params.registryAddress ? { registryAddress: params.registryAddress } : {}),
-    ...(params.tokenId ? { tokenId: params.tokenId } : {}),
+    ...(params.registryAddress ? { registry_address: params.registryAddress } : {}),
+    ...(params.tokenId ? { token_id: params.tokenId } : {}),
   });
 
   const session: SiwaSession = {

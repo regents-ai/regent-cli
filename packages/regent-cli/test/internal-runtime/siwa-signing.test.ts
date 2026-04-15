@@ -8,6 +8,7 @@ import {
 } from "../../src/internal-runtime/techtree/request-builder.js";
 import { buildSiwaMessage } from "../../src/internal-runtime/techtree/siwa.js";
 import {
+  coveredComponentsForAgentHeaders,
   buildHttpSignatureSigningMessage,
   buildSignatureInputString,
   buildSignedAgentHeaders,
@@ -46,6 +47,10 @@ describe("siwa message construction", () => {
 describe("http signing", () => {
   it("formats signature-input exactly", () => {
     const signatureInput = buildSignatureInputString({
+      coveredComponents: coveredComponentsForAgentHeaders({
+        includeRegistryBinding: true,
+        includeTokenBinding: true,
+      }),
       created: 1_700_000_000,
       expires: 1_700_000_120,
       nonce: "sig-nonce-fixed",
@@ -54,6 +59,23 @@ describe("http signing", () => {
 
     expect(signatureInput).toBe(
       'sig1=("@method" "@path" "x-siwa-receipt" "x-key-id" "x-timestamp" "x-agent-wallet-address" "x-agent-chain-id" "x-agent-registry-address" "x-agent-token-id");created=1700000000;expires=1700000120;nonce="sig-nonce-fixed";keyid="0xabc"',
+    );
+  });
+
+  it("formats signature-input without optional Techtree binding headers", () => {
+    const signatureInput = buildSignatureInputString({
+      coveredComponents: coveredComponentsForAgentHeaders({
+        includeRegistryBinding: false,
+        includeTokenBinding: false,
+      }),
+      created: 1_700_000_000,
+      expires: 1_700_000_120,
+      nonce: "sig-nonce-fixed",
+      keyId: "0xabc",
+    });
+
+    expect(signatureInput).toBe(
+      'sig1=("@method" "@path" "x-siwa-receipt" "x-key-id" "x-timestamp" "x-agent-wallet-address" "x-agent-chain-id");created=1700000000;expires=1700000120;nonce="sig-nonce-fixed";keyid="0xabc"',
     );
   });
 

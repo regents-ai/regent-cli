@@ -50,9 +50,8 @@ const createHarness = (baseUrl: string): ClientHarness => {
 
 const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness): Promise<void> => {
   const nonce = await client.siwaNonce({
-    kind: "nonce_request",
-    walletAddress: TEST_WALLET,
-    chainId: 11155111,
+    wallet_address: TEST_WALLET,
+    chain_id: 11155111,
     audience: "techtree",
   });
 
@@ -68,14 +67,13 @@ const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness)
 
   const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
   const verify = await client.siwaVerify({
-    kind: "verify_request",
-    walletAddress: TEST_WALLET,
-    chainId: 11155111,
+    wallet_address: TEST_WALLET,
+    chain_id: 11155111,
     nonce: nonce.data.nonce,
     message,
     signature,
-    registryAddress: TEST_REGISTRY,
-    tokenId: "99",
+    registry_address: TEST_REGISTRY,
+    token_id: "99",
   });
 
   sessionStore.setSiwaSession({
@@ -336,9 +334,8 @@ describeNetwork("TechtreeClient functional coverage", () => {
   it("fails protected writes when the SIWA session exists but the agent identity is missing", async () => {
     const harness = createHarness(server.baseUrl);
     const nonce = await harness.client.siwaNonce({
-      kind: "nonce_request",
-      walletAddress: TEST_WALLET,
-      chainId: 11155111,
+      wallet_address: TEST_WALLET,
+      chain_id: 11155111,
       audience: "techtree",
     });
     const message = buildSiwaMessage({
@@ -352,9 +349,8 @@ describeNetwork("TechtreeClient functional coverage", () => {
     });
     const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
     const verify = await harness.client.siwaVerify({
-      kind: "verify_request",
-      walletAddress: TEST_WALLET,
-      chainId: 11155111,
+      wallet_address: TEST_WALLET,
+      chain_id: 11155111,
       nonce: nonce.data.nonce,
       message,
       signature,
@@ -402,9 +398,8 @@ describeNetwork("TechtreeClient functional coverage", () => {
 
     await expect(
       harness.client.siwaVerify({
-        kind: "verify_request",
-        walletAddress: TEST_WALLET,
-        chainId: 11155111,
+        wallet_address: TEST_WALLET,
+        chain_id: 11155111,
         nonce: "doctor-invalid-nonce",
         message: buildSiwaMessage({
           domain: "regent.cx",
@@ -416,8 +411,8 @@ describeNetwork("TechtreeClient functional coverage", () => {
           statement: "Sign in to Regent CLI.",
         }),
         signature: `0x${"00".repeat(65)}`,
-        registryAddress: TEST_REGISTRY,
-        tokenId: "99",
+        registry_address: TEST_REGISTRY,
+        token_id: "99",
       }),
     ).rejects.toMatchObject({
       code: "siwa_verify_invalid",

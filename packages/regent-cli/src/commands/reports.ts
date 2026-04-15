@@ -7,27 +7,28 @@ import type {
   JsonSuccessResponseFor,
 } from "../contracts/openapi-helpers.js";
 import { loadConfig, StateStore } from "../internal-runtime/index.js";
+import { buildAgentAuthHeaders } from "./agent-auth.js";
 import { getFlag, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
 
 type BugReportRequest = JsonRequestBodyFor<
   RegentServicePaths,
-  "/api/bug-report",
+  "/v1/agent/bug-report",
   "post"
 >;
 type BugReportResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/bug-report",
+  "/v1/agent/bug-report",
   "post"
 >;
 type SecurityReportRequest = JsonRequestBodyFor<
   RegentServicePaths,
-  "/api/security-report",
+  "/v1/agent/security-report",
   "post"
 >;
 type SecurityReportResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/security-report",
+  "/v1/agent/security-report",
   "post"
 >;
 
@@ -99,12 +100,20 @@ const parsePlatformError = (text: string, status: number): string => {
 const requestPlatformJson = async <TResponse>(
   endpointPath: string,
   body: unknown,
+  configPath?: string,
 ): Promise<TResponse> => {
+  const authHeaders = await buildAgentAuthHeaders({
+    method: "POST",
+    path: endpointPath,
+    configPath,
+    requireBoundIdentity: true,
+  });
   const response = await fetch(`${platformPhxBaseUrl()}${endpointPath}`, {
     method: "POST",
     headers: {
       accept: "application/json",
       "content-type": "application/json",
+      ...authHeaders,
     },
     body: JSON.stringify(body),
   });
@@ -135,7 +144,7 @@ export async function runBugReport(args: ParsedCliArgs, configPath?: string): Pr
     reporting_agent: readLocalAgentIdentity(configPath),
   };
 
-  printJson(await requestPlatformJson<BugReportResponse>("/api/bug-report", payload));
+  printJson(await requestPlatformJson<BugReportResponse>("/v1/agent/bug-report", payload, configPath));
 }
 
 export async function runSecurityReport(args: ParsedCliArgs, configPath?: string): Promise<void> {
@@ -162,5 +171,7 @@ export async function runSecurityReport(args: ParsedCliArgs, configPath?: string
     reporting_agent: readLocalAgentIdentity(configPath),
   };
 
-  printJson(await requestPlatformJson<SecurityReportResponse>("/api/security-report", payload));
+  printJson(
+    await requestPlatformJson<SecurityReportResponse>("/v1/agent/security-report", payload, configPath),
+  );
 }

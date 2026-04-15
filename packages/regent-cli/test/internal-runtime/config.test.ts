@@ -18,8 +18,8 @@ describe("config loading", () => {
     const configPath = path.join(tempDir, "regent.config.json");
     const config = loadConfig(configPath);
 
-    expect(config.techtree.defaultChainId).toBe(11155111);
-    expect(config.techtree.audience).toBe("techtree");
+    expect(config.auth.defaultChainId).toBe(11155111);
+    expect(config.auth.audience).toBe("regent-cli");
     expect(config.runtime.stateDir).toBe(path.join(tempDir, "state"));
     expect(config.runtime.socketPath).toBe(path.join(tempDir, "run", "regent.sock"));
     expect(config.wallet.keystorePath).toBe(path.join(tempDir, "keys", "agent-wallet.json"));
@@ -50,6 +50,7 @@ describe("config loading", () => {
     const config = loadConfig(configPath);
 
     expect(config.techtree.baseUrl).toBe("http://127.0.0.1:4100");
+    expect(config.auth.baseUrl).toBe("http://127.0.0.1:4000");
     expect(config.runtime.logLevel).toBe("debug");
     expect(path.isAbsolute(config.runtime.socketPath)).toBe(true);
     expect(config.wallet.privateKeyEnv).toBe(defaultConfig().wallet.privateKeyEnv);
@@ -89,10 +90,14 @@ describe("config loading", () => {
         stateDir: "./state-dir",
         logLevel: "warn",
       },
+      auth: {
+        baseUrl: "http://127.0.0.1:4000",
+        audience: "regent-cli",
+        defaultChainId: 8453,
+        requestTimeoutMs: 2_500,
+      },
       techtree: {
         baseUrl: "http://127.0.0.1:4300",
-        audience: "techtree",
-        defaultChainId: 8453,
         requestTimeoutMs: 2_500,
       },
       wallet: {
@@ -249,7 +254,7 @@ describe("config loading", () => {
     fs.writeFileSync(
       configPath,
       JSON.stringify({
-        techtree: {
+        auth: {
           audience: "",
         },
       }),

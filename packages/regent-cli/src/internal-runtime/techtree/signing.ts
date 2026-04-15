@@ -7,7 +7,7 @@ import crypto from "node:crypto";
 
 import { signPersonalMessage } from "../agent/wallet.js";
 
-export const HTTP_SIGNATURE_COVERED_COMPONENTS = [
+export const HTTP_SIGNATURE_BASE_COMPONENTS = [
   "@method",
   "@path",
   "x-siwa-receipt",
@@ -15,8 +15,6 @@ export const HTTP_SIGNATURE_COVERED_COMPONENTS = [
   "x-timestamp",
   "x-agent-wallet-address",
   "x-agent-chain-id",
-  "x-agent-registry-address",
-  "x-agent-token-id",
 ] as const;
 
 export interface BuildSignedHeadersInput {
@@ -24,8 +22,8 @@ export interface BuildSignedHeadersInput {
   path: string;
   walletAddress: `0x${string}`;
   chainId: number;
-  registryAddress: `0x${string}`;
-  tokenId: string;
+  registryAddress?: `0x${string}`;
+  tokenId?: string;
   receipt: string;
   privateKey: `0x${string}`;
   nowUnixSeconds?: number;
@@ -97,13 +95,14 @@ const toSig1SignatureHeader = (signatureHex: `0x${string}`): string => {
 };
 
 export function buildSignatureInputString(input: {
+  coveredComponents: readonly string[];
   created: number;
   expires: number;
   nonce: string;
   keyId: string;
 }): string {
   const signatureParams =
-    `(${HTTP_SIGNATURE_COVERED_COMPONENTS.map((component) => `"${component}"`).join(" ")})` +
+    `(${input.coveredComponents.map((component) => `"${component}"`).join(" ")})` +
     `;created=${input.created}` +
     `;expires=${input.expires}` +
     `;nonce="${input.nonce}"` +
@@ -120,22 +119,35 @@ export function buildHttpSignatureSigningMessage(input: {
   const normalizedHeaders = Object.fromEntries(
     Object.entries(input.headers).map(([key, value]) => [key.toLowerCase(), value.trim()]),
   );
+  const parsed = parseSignatureInputHeader(normalizedHeaders["signature-input"] ?? "");
   const signatureParams = signatureParamsFromHeader(normalizedHeaders["signature-input"] ?? "");
+  const components = parsed?.coveredComponents ?? [];
+  const lines = components.map((component) => {
+    if (component === "@method") {
+      return `"@method": ${input.method.toLowerCase()}`;
+    }
 
-  const lines = [
-    `"@method": ${input.method.toLowerCase()}`,
-    `"@path": ${input.path}`,
-    `"x-siwa-receipt": ${normalizedHeaders["x-siwa-receipt"] ?? ""}`,
-    `"x-key-id": ${normalizedHeaders["x-key-id"] ?? ""}`,
-    `"x-timestamp": ${normalizedHeaders["x-timestamp"] ?? ""}`,
-    `"x-agent-wallet-address": ${normalizedHeaders["x-agent-wallet-address"] ?? ""}`,
-    `"x-agent-chain-id": ${normalizedHeaders["x-agent-chain-id"] ?? ""}`,
-    `"x-agent-registry-address": ${normalizedHeaders["x-agent-registry-address"] ?? ""}`,
-    `"x-agent-token-id": ${normalizedHeaders["x-agent-token-id"] ?? ""}`,
-    `"@signature-params": ${signatureParams}`,
-  ];
+    if (component === "@path") {
+      return `"@path": ${input.path}`;
+    }
+
+    return `"${component}": ${normalizedHeaders[component] ?? ""}`;
+  });
+
+  lines.push(`"@signature-params": ${signatureParams}`);
 
   return lines.join("\n");
+}
+
+export function coveredComponentsForAgentHeaders(input: {
+  includeRegistryBinding: boolean;
+  includeTokenBinding: boolean;
+}): string[] {
+  return [
+    ...HTTP_SIGNATURE_BASE_COMPONENTS,
+    ...(input.includeRegistryBinding ? ["x-agent-registry-address"] : []),
+    ...(input.includeTokenBinding ? ["x-agent-token-id"] : []),
+  ];
 }
 
 export async function buildSignedAgentHeaders(
@@ -152,11 +164,16 @@ export async function buildSignedAgentHeaders(
     "x-timestamp": String(created),
     "x-agent-wallet-address": input.walletAddress,
     "x-agent-chain-id": String(input.chainId),
-    "x-agent-registry-address": input.registryAddress,
-    "x-agent-token-id": input.tokenId,
+    ...(input.registryAddress ? { "x-agent-registry-address": input.registryAddress } : {}),
+    ...(input.tokenId ? { "x-agent-token-id": input.tokenId } : {}),
   };
+  const coveredComponents = coveredComponentsForAgentHeaders({
+    includeRegistryBinding: typeof input.registryAddress === "string",
+    includeTokenBinding: typeof input.tokenId === "string",
+  });
 
   const signatureInput = buildSignatureInputString({
+    coveredComponents,
     created,
     expires,
     nonce,

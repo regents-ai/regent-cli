@@ -21,10 +21,14 @@ const configSchema = z.object({
     stateDir: z.string().min(1),
     logLevel: logLevelSchema,
   }),
-  techtree: z.object({
+  auth: z.object({
     baseUrl: z.string().url(),
     audience: z.string().min(1),
     defaultChainId: z.number().int().positive(),
+    requestTimeoutMs: z.number().int().positive(),
+  }),
+  techtree: z.object({
+    baseUrl: z.string().url(),
     requestTimeoutMs: z.number().int().positive(),
   }),
   wallet: z.object({
@@ -75,6 +79,7 @@ const configSchema = z.object({
 
 const configOverrideSchema = z.object({
   runtime: configSchema.shape.runtime.partial().optional(),
+  auth: configSchema.shape.auth.partial().optional(),
   techtree: configSchema.shape.techtree.partial().optional(),
   wallet: configSchema.shape.wallet.partial().optional(),
   gossipsub: configSchema.shape.gossipsub.partial().optional(),
@@ -152,6 +157,9 @@ const normalizeConfig = (config: RegentConfig, configPath?: string): RegentConfi
       ...config.runtime,
       socketPath: normalizePath(config.runtime.socketPath, resolvedConfigRootDir),
       stateDir: normalizePath(config.runtime.stateDir, resolvedConfigRootDir),
+    },
+    auth: {
+      ...config.auth,
     },
     techtree: {
       ...config.techtree,
@@ -271,10 +279,14 @@ export function defaultConfig(configPath?: string): RegentConfig {
       stateDir: path.join(rootDir, "state"),
       logLevel: "info",
     },
+    auth: {
+      baseUrl: "http://127.0.0.1:4000",
+      audience: "regent-cli",
+      defaultChainId: 11155111,
+      requestTimeoutMs: 10_000,
+    },
     techtree: {
       baseUrl: "http://127.0.0.1:4001",
-      audience: "techtree",
-      defaultChainId: 11155111,
       requestTimeoutMs: 10_000,
     },
     wallet: {

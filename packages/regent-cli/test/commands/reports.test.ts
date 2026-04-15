@@ -4,10 +4,14 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { runCliEntrypoint } from "../../src/index.js";
+import { writeInitialConfig } from "../../src/internal-runtime/config.js";
 import { captureOutput, parsePrintedJson } from "../helpers/output.js";
 
 const TEST_WALLET = "0x1111111111111111111111111111111111111111";
 const TEST_REGISTRY = "0x2222222222222222222222222222222222222222";
+const TEST_PRIVATE_KEY =
+  "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
 
 describe("reporting CLI commands", () => {
   const originalEnv = { ...process.env };
@@ -15,7 +19,8 @@ describe("reporting CLI commands", () => {
   let tempDir = "";
   let configPath = "";
 
-  const writeLocalIdentity = () => {
+  const writeAgentAuthState = () => {
+    writeInitialConfig(configPath);
     const statePath = path.join(tempDir, "state", "runtime-state.json");
     fs.mkdirSync(path.dirname(statePath), { recursive: true });
     fs.writeFileSync(
@@ -28,6 +33,17 @@ describe("reporting CLI commands", () => {
             registryAddress: TEST_REGISTRY,
             tokenId: "99",
             label: "Hermes operator",
+          },
+          siwa: {
+            walletAddress: TEST_WALLET,
+            chainId: 11155111,
+            nonce: "report-login-nonce",
+            keyId: TEST_WALLET.toLowerCase(),
+            receipt: "report-receipt",
+            receiptExpiresAt: "2999-01-01T00:00:00.000Z",
+            audience: "regent-cli",
+            registryAddress: TEST_REGISTRY,
+            tokenId: "99",
           },
         },
         null,
@@ -42,6 +58,7 @@ describe("reporting CLI commands", () => {
     vi.stubGlobal("fetch", fetchMock);
     process.env = { ...originalEnv };
     delete process.env.PLATFORM_PHX_BASE_URL;
+    process.env.REGENT_WALLET_PRIVATE_KEY = TEST_PRIVATE_KEY;
     fetchMock.mockReset();
   });
 
@@ -52,7 +69,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("submits a bug report with the saved local agent identity", async () => {
-    writeLocalIdentity();
+    writeAgentAuthState();
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -78,7 +95,6 @@ describe("reporting CLI commands", () => {
       ),
     );
 
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "bug",
@@ -92,7 +108,10 @@ describe("reporting CLI commands", () => {
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4000/api/bug-report");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("http://127.0.0.1:4000/v1/agent/bug-report");
+    expect((fetchMock.mock.calls[0]?.[1]?.headers as Record<string, string>)["x-siwa-receipt"]).toBe(
+      "report-receipt",
+    );
     expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual({
       summary: "can't do xyz",
       details: "any more details here",
@@ -111,7 +130,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("submits a security report and honors the Platform Phoenix base URL override", async () => {
-    writeLocalIdentity();
+    writeAgentAuthState();
     process.env.PLATFORM_PHX_BASE_URL = "https://reports.regents.sh/";
     fetchMock.mockResolvedValue(
       new Response(
@@ -137,7 +156,6 @@ describe("reporting CLI commands", () => {
       ),
     );
 
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "security-report",
@@ -153,7 +171,10 @@ describe("reporting CLI commands", () => {
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://reports.regents.sh/api/security-report");
+    expect(fetchMock.mock.calls[0]?.[0]).toBe("https://reports.regents.sh/v1/agent/security-report");
+    expect((fetchMock.mock.calls[0]?.[1]?.headers as Record<string, string>)["x-siwa-receipt"]).toBe(
+      "report-receipt",
+    );
     expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual({
       summary: "private vuln",
       details: "steps and impact",
@@ -172,7 +193,6 @@ describe("reporting CLI commands", () => {
   });
 
   it("explains when the saved local agent identity is missing", async () => {
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "bug",
@@ -191,8 +211,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("returns a helpful error when bug is missing summary text", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint(["bug", "--details", "any more details here", "--config", configPath]),
     );
@@ -203,8 +222,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("returns a helpful error when bug is missing details text", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint(["bug", "--summary", "can't do xyz", "--config", configPath]),
     );
@@ -215,8 +233,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("rejects whitespace-only bug input before any network request", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "bug",
@@ -235,8 +252,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("returns a helpful error when security-report is missing contact text", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "security-report",
@@ -255,8 +271,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("returns a helpful error when security-report is missing summary text", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "security-report",
@@ -275,8 +290,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("returns a helpful error when security-report is missing details text", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "security-report",
@@ -295,8 +309,7 @@ describe("reporting CLI commands", () => {
   });
 
   it("rejects whitespace-only contact text for security-report", async () => {
-    writeLocalIdentity();
-    const { runCliEntrypoint } = await import("../../src/index.js");
+    writeAgentAuthState();
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "security-report",

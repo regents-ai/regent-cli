@@ -16,47 +16,47 @@ import { requestTypedJson, requirePositional } from "./autolaunch/shared.js";
 
 type RegentStakingOverviewResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking",
+  "/v1/agent/regent/staking",
   "get"
 >;
 type RegentStakingAccountResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/account/{address}",
+  "/v1/agent/regent/staking/account/{address}",
   "get"
 >;
 type RegentStakingStakeBody = JsonRequestBodyFor<
   RegentServicePaths,
-  "/api/regent/staking/stake",
+  "/v1/agent/regent/staking/stake",
   "post"
 >;
 type RegentStakingStakeResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/stake",
+  "/v1/agent/regent/staking/stake",
   "post"
 >;
 type RegentStakingUnstakeBody = JsonRequestBodyFor<
   RegentServicePaths,
-  "/api/regent/staking/unstake",
+  "/v1/agent/regent/staking/unstake",
   "post"
 >;
 type RegentStakingUnstakeResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/unstake",
+  "/v1/agent/regent/staking/unstake",
   "post"
 >;
 type RegentStakingClaimResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/claim-usdc",
+  "/v1/agent/regent/staking/claim-usdc",
   "post"
 >;
 type RegentStakingClaimRegentResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/claim-regent",
+  "/v1/agent/regent/staking/claim-regent",
   "post"
 >;
 type RegentStakingClaimAndRestakeRegentResponse = JsonSuccessResponseFor<
   RegentServicePaths,
-  "/api/regent/staking/claim-and-restake-regent",
+  "/v1/agent/regent/staking/claim-and-restake-regent",
   "post"
 >;
 
@@ -115,7 +115,7 @@ const printPreparedOrSubmitted = async (
 };
 
 export async function runRegentStakingShow(): Promise<void> {
-  printJson(await requestTypedJson<RegentStakingOverviewResponse>("GET", "/api/regent/staking"));
+  printJson(await requestTypedJson<RegentStakingOverviewResponse>("GET", "/v1/agent/regent/staking"));
 }
 
 export async function runRegentStakingAccount(args: ParsedCliArgs): Promise<void> {
@@ -123,31 +123,39 @@ export async function runRegentStakingAccount(args: ParsedCliArgs): Promise<void
   printJson(
     await requestTypedJson<RegentStakingAccountResponse>(
       "GET",
-      `/api/regent/staking/account/${encodeURIComponent(address)}`,
+      `/v1/agent/regent/staking/account/${encodeURIComponent(address)}`,
     ),
   );
 }
 
-export async function runRegentStakingStake(args: ParsedCliArgs): Promise<void> {
+export async function runRegentStakingStake(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const body: RegentStakingStakeBody = {
     amount: requireArg(getFlag(args, "amount"), "amount"),
   };
   printJson(
-    await requestTypedJson<RegentStakingStakeResponse>("POST", "/api/regent/staking/stake", {
+    await requestTypedJson<RegentStakingStakeResponse>("POST", "/v1/agent/regent/staking/stake", {
       body,
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-export async function runRegentStakingUnstake(args: ParsedCliArgs): Promise<void> {
+export async function runRegentStakingUnstake(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const body: RegentStakingUnstakeBody = {
     amount: requireArg(getFlag(args, "amount"), "amount"),
   };
   printJson(
-    await requestTypedJson<RegentStakingUnstakeResponse>("POST", "/api/regent/staking/unstake", {
+    await requestTypedJson<RegentStakingUnstakeResponse>("POST", "/v1/agent/regent/staking/unstake", {
       body,
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
@@ -156,9 +164,10 @@ export async function runRegentStakingClaimUsdc(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
-  const payload = await requestTypedJson<RegentStakingClaimResponse>("POST", "/api/regent/staking/claim-usdc", {
+  const payload = await requestTypedJson<RegentStakingClaimResponse>("POST", "/v1/agent/regent/staking/claim-usdc", {
       body: {},
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     });
 
   await printPreparedOrSubmitted(payload as Record<string, unknown>, args, configPath);
@@ -170,10 +179,11 @@ export async function runRegentStakingClaimRegent(
 ): Promise<void> {
   const payload = await requestTypedJson<RegentStakingClaimRegentResponse>(
     "POST",
-    "/api/regent/staking/claim-regent",
+    "/v1/agent/regent/staking/claim-regent",
     {
       body: {},
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     },
   );
 
@@ -186,10 +196,11 @@ export async function runRegentStakingClaimAndRestakeRegent(
 ): Promise<void> {
   const payload = await requestTypedJson<RegentStakingClaimAndRestakeRegentResponse>(
     "POST",
-    "/api/regent/staking/claim-and-restake-regent",
+    "/v1/agent/regent/staking/claim-and-restake-regent",
     {
       body: {},
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     },
   );
 

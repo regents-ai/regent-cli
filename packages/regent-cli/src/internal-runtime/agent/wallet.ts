@@ -1,7 +1,7 @@
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 
 export async function deriveWalletAddress(privateKey: `0x${string}`): Promise<`0x${string}`> {
-  return privateKeyToAccount(privateKey).address;
+  return privateKeyToAccount(privateKey).address as `0x${string}`;
 }
 
 export async function signPersonalMessage(
@@ -9,7 +9,7 @@ export async function signPersonalMessage(
   message: string,
 ): Promise<`0x${string}`> {
   const account = privateKeyToAccount(privateKey);
-  return account.signMessage({ message });
+  return (await account.signMessage({ message })) as `0x${string}`;
 }
 
 export async function generateWallet(): Promise<{
@@ -20,6 +20,6 @@ export async function generateWallet(): Promise<{
   const account = privateKeyToAccount(privateKey);
   return {
     privateKey,
-    address: account.address,
+    address: account.address as `0x${string}`,
   };
 }

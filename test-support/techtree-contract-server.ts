@@ -19,7 +19,7 @@ import type {
 
 import {
   buildHttpSignatureSigningMessage,
-  HTTP_SIGNATURE_COVERED_COMPONENTS,
+  HTTP_SIGNATURE_BASE_COMPONENTS,
   parseSignatureInputHeader,
 } from "../packages/regent-cli/src/internal-runtime/techtree/signing.js";
 
@@ -35,7 +35,7 @@ const REQUIRED_AUTH_HEADERS = [
   "x-agent-token-id",
 ] as const;
 
-const REQUIRED_SIGNATURE_COMPONENTS = [...HTTP_SIGNATURE_COVERED_COMPONENTS] as const;
+const REQUIRED_SIGNATURE_COMPONENTS = [...HTTP_SIGNATURE_BASE_COMPONENTS] as const;
 
 const TEST_AGENT_WALLET = "0x1111111111111111111111111111111111111111" as const;
 const TEST_AGENT_SUMMARY = {
@@ -435,13 +435,24 @@ export class TechtreeContractServer {
         return;
       }
 
-      const payload = body as { walletAddress?: `0x${string}`; chainId?: number };
-      const walletAddress = payload.walletAddress ?? TEST_AGENT_WALLET;
-      const chainId = payload.chainId ?? 11155111;
+      const payload = body as { wallet_address?: `0x${string}`; chain_id?: number };
+      const walletAddress = payload.wallet_address ?? TEST_AGENT_WALLET;
+      const chainId = payload.chain_id;
+
+      if (!Number.isSafeInteger(chainId) || (chainId ?? 0) <= 0) {
+        json(res, 422, {
+          error: {
+            code: "invalid_chain_id",
+            message: "chain_id must be a positive integer",
+          },
+        });
+        return;
+      }
+
       const nonce = `nonce-${walletAddress}-${Date.now()}`;
       this.issuedNonces.set(nonce, {
         walletAddress,
-        chainId,
+        chainId: chainId as number,
         expiresAtUnixSeconds: currentUnixSeconds() + 300,
       });
       const response: SiwaNonceResponse = {
@@ -450,7 +461,7 @@ export class TechtreeContractServer {
         data: {
           nonce,
           walletAddress,
-          chainId,
+          chainId: chainId as number,
           expiresAt: "2999-01-01T00:00:00.000Z",
         },
       };
@@ -465,21 +476,21 @@ export class TechtreeContractServer {
       }
 
       const payload = body as {
-        walletAddress?: `0x${string}`;
-        chainId?: number;
+        wallet_address?: `0x${string}`;
+        chain_id?: number;
         nonce?: string;
         message?: string;
         signature?: `0x${string}`;
-        registryAddress?: `0x${string}`;
-        tokenId?: string;
+        registry_address?: `0x${string}`;
+        token_id?: string;
       };
 
       const issues: string[] = [];
-      if (!payload.walletAddress) {
-        issues.push("walletAddress is required");
+      if (!payload.wallet_address) {
+        issues.push("wallet_address is required");
       }
-      if (!Number.isSafeInteger(payload.chainId) || (payload.chainId ?? 0) <= 0) {
-        issues.push("chainId must be a positive integer");
+      if (!Number.isSafeInteger(payload.chain_id) || (payload.chain_id ?? 0) <= 0) {
+        issues.push("chain_id must be a positive integer");
       }
       if (!payload.nonce) {
         issues.push("nonce is required");
@@ -495,10 +506,10 @@ export class TechtreeContractServer {
       if (!issuedNonce) {
         issues.push("nonce was not issued");
       } else {
-        if (issuedNonce.walletAddress.toLowerCase() !== payload.walletAddress?.toLowerCase()) {
+        if (issuedNonce.walletAddress.toLowerCase() !== payload.wallet_address?.toLowerCase()) {
           issues.push("nonce wallet binding mismatch");
         }
-        if (issuedNonce.chainId !== payload.chainId) {
+        if (issuedNonce.chainId !== payload.chain_id) {
           issues.push("nonce chain binding mismatch");
         }
         if (issuedNonce.expiresAtUnixSeconds <= currentUnixSeconds()) {
@@ -506,11 +517,11 @@ export class TechtreeContractServer {
         }
       }
 
-      if (payload.message && payload.walletAddress && payload.chainId && payload.nonce) {
-        if (!payload.message.includes(`${payload.walletAddress}\n`)) {
+      if (payload.message && payload.wallet_address && payload.chain_id && payload.nonce) {
+        if (!payload.message.includes(`${payload.wallet_address}\n`)) {
           issues.push("message does not include wallet address");
         }
-        if (!payload.message.includes(`Chain ID: ${payload.chainId}`)) {
+        if (!payload.message.includes(`Chain ID: ${payload.chain_id}`)) {
           issues.push("message does not include chain id");
         }
         if (!payload.message.includes(`Nonce: ${payload.nonce}`)) {
@@ -536,14 +547,14 @@ export class TechtreeContractServer {
       }
 
       this.issuedNonces.delete(payload.nonce as string);
-      const walletAddress = payload.walletAddress as `0x${string}`;
+      const walletAddress = payload.wallet_address as `0x${string}`;
       const receiptClaims: ReceiptClaims = {
         walletAddress,
-        chainId: payload.chainId as number,
+        chainId: payload.chain_id as number,
         keyId: walletAddress.toLowerCase(),
         expiresAt: "2999-01-01T00:00:00.000Z",
-        ...(payload.registryAddress ? { registryAddress: payload.registryAddress } : {}),
-        ...(payload.tokenId ? { tokenId: payload.tokenId } : {}),
+        ...(payload.registry_address ? { registryAddress: payload.registry_address } : {}),
+        ...(payload.token_id ? { tokenId: payload.token_id } : {}),
       };
       const response: SiwaVerifyResponse = {
         ok: true,
@@ -551,7 +562,7 @@ export class TechtreeContractServer {
         data: {
           verified: true,
           walletAddress,
-          chainId: payload.chainId as number,
+          chainId: payload.chain_id as number,
           nonce: payload.nonce as string,
           keyId: walletAddress.toLowerCase(),
           signatureScheme: "evm_personal_sign",

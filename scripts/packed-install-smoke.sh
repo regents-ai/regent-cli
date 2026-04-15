@@ -112,8 +112,8 @@ const server = http.createServer(async (req, res) => {
       code: "nonce_issued",
       data: {
         nonce: "packed-install-nonce",
-        walletAddress: body?.walletAddress ?? "0x0",
-        chainId: body?.chainId ?? 11155111,
+        walletAddress: body?.wallet_address ?? "0x0",
+        chainId: body?.chain_id ?? 11155111,
         expiresAt: "2999-01-01T00:00:00.000Z"
       }
     });
@@ -126,10 +126,10 @@ const server = http.createServer(async (req, res) => {
       code: "siwa_verified",
       data: {
         verified: true,
-        walletAddress: body?.walletAddress ?? "0x0",
-        chainId: body?.chainId ?? 11155111,
+        walletAddress: body?.wallet_address ?? "0x0",
+        chainId: body?.chain_id ?? 11155111,
         nonce: body?.nonce ?? "packed-install-nonce",
-        keyId: String(body?.walletAddress ?? "0x0").toLowerCase(),
+        keyId: String(body?.wallet_address ?? "0x0").toLowerCase(),
         signatureScheme: "evm_personal_sign",
         receipt: "receipt-valid.eyJ3YWxsZXRBZGRyZXNzIjoiMHgwIiwiY2hhaW5JZCI6MTExNTUxMTEsImtleUlkIjoiMHgwIiwiZXhwaXJlc0F0IjoiMjk5OS0wMS0wMVQwMDowMDowMC4wMDBaIn0",
         receiptExpiresAt: "2999-01-01T00:00:00.000Z"
@@ -211,10 +211,14 @@ cat > "${WORK_DIR}/replacement.json" <<EOF
     "stateDir": "${WORK_DIR}/state",
     "logLevel": "info"
   },
+  "auth": {
+    "baseUrl": "${BASE_URL}",
+    "audience": "regent-cli",
+    "defaultChainId": 11155111,
+    "requestTimeoutMs": 1000
+  },
   "techtree": {
     "baseUrl": "${BASE_URL}",
-    "audience": "techtree",
-    "defaultChainId": 11155111,
     "requestTimeoutMs": 1000
   },
   "wallet": {

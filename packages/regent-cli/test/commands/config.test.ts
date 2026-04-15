@@ -26,7 +26,8 @@ describe("config commands", () => {
     const { stdout } = await captureOutput(() => runConfigRead(parseCliArgs(["--config", configPath])));
     const printed = parsePrintedJson<{
       runtime: { socketPath: string; stateDir: string; logLevel: string };
-      techtree: { baseUrl: string; audience: string; defaultChainId: number; requestTimeoutMs: number };
+      auth: { baseUrl: string; audience: string; defaultChainId: number; requestTimeoutMs: number };
+      techtree: { baseUrl: string; requestTimeoutMs: number };
       xmtp: { dbPath: string; publicPolicyPath: string; env: string };
       agents: { defaultHarness: string; harnesses: { hermes: { workspaceRoot: string } } };
       workloads: { bbh: { workspaceRoot: string; defaultHarness: string; defaultProfile: string } };
@@ -35,10 +36,14 @@ describe("config commands", () => {
     expect(printed.runtime.socketPath).toBe(path.join(tempDir, "run", "regent.sock"));
     expect(printed.runtime.stateDir).toBe(path.join(tempDir, "state"));
     expect(printed.runtime.logLevel).toBe("info");
+    expect(printed.auth).toEqual({
+      baseUrl: "http://127.0.0.1:4000",
+      audience: "regent-cli",
+      defaultChainId: 11155111,
+      requestTimeoutMs: 10_000,
+    });
     expect(printed.techtree).toEqual({
       baseUrl: "http://127.0.0.1:4100",
-      audience: "techtree",
-      defaultChainId: 11155111,
       requestTimeoutMs: 10_000,
     });
     expect(printed.xmtp).toEqual({
@@ -78,10 +83,14 @@ describe("config commands", () => {
           stateDir: path.join(tempDir, "alt-state"),
           logLevel: "error",
         },
+        auth: {
+          baseUrl: "http://127.0.0.1:4000",
+          audience: "regent-cli",
+          defaultChainId: 8453,
+          requestTimeoutMs: 3500,
+        },
         techtree: {
           baseUrl: "http://127.0.0.1:4300",
-          audience: "techtree",
-          defaultChainId: 8453,
           requestTimeoutMs: 3500,
         },
         wallet: {
@@ -156,7 +165,8 @@ describe("config commands", () => {
       ok: boolean;
       configPath: string;
       config: {
-        techtree: { baseUrl: string; defaultChainId: number };
+        auth: { baseUrl: string; audience: string; defaultChainId: number; requestTimeoutMs: number };
+        techtree: { baseUrl: string; requestTimeoutMs: number };
         runtime: { logLevel: string };
         agents: { defaultHarness: string };
         workloads: { bbh: { defaultProfile: string } };
@@ -168,10 +178,14 @@ describe("config commands", () => {
     expect(printed.config.runtime.logLevel).toBe("error");
     expect(printed.config.agents.defaultHarness).toBe("hermes");
     expect(printed.config.workloads.bbh.defaultProfile).toBe("bbh");
+    expect(printed.config.auth).toEqual({
+      baseUrl: "http://127.0.0.1:4000",
+      audience: "regent-cli",
+      defaultChainId: 8453,
+      requestTimeoutMs: 3500,
+    });
     expect(printed.config.techtree).toEqual({
       baseUrl: "http://127.0.0.1:4300",
-      audience: "techtree",
-      defaultChainId: 8453,
       requestTimeoutMs: 3500,
     });
     expect(JSON.parse(fs.readFileSync(configPath, "utf8"))).toEqual(printed.config);

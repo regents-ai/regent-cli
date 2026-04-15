@@ -36,10 +36,14 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
         stateDir: path.join(tempDir, "state"),
         logLevel: "debug",
       },
+      auth: {
+        baseUrl: server.baseUrl,
+        audience: "regent-cli",
+        defaultChainId: 11155111,
+        requestTimeoutMs: 1_000,
+      },
       techtree: {
         baseUrl: server.baseUrl,
-        audience: "techtree",
-        defaultChainId: 11155111,
         requestTimeoutMs: 1_000,
       },
       wallet: {
@@ -154,7 +158,7 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     expect(JSON.parse(workPacketOutput.stderr)).toEqual({
       error: {
         code: "agent_identity_missing",
-        message: expect.stringContaining("registryAddress, tokenId"),
+        message: "current agent identity is missing; run `regent auth siwa login` first",
       },
     });
   }, 15_000);
@@ -214,10 +218,10 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     );
     expect(techtreeStatusOutput.result).toBe(0);
     expect(JSON.parse(techtreeStatusOutput.stdout)).toEqual({
-      config: expect.objectContaining({
+      config: {
         baseUrl: server.baseUrl,
-        audience: "techtree",
-      }),
+        requestTimeoutMs: 1_000,
+      },
       health: {
         ok: true,
         service: "techtree-contract-server",

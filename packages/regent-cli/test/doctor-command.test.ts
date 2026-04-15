@@ -38,10 +38,14 @@ describeNetwork.sequential("CLI doctor command", () => {
         stateDir: path.join(tempDir, "state"),
         logLevel: "debug",
       },
+      auth: {
+        baseUrl: server.baseUrl,
+        audience: "regent-cli",
+        defaultChainId: 11155111,
+        requestTimeoutMs: 1_000,
+      },
       techtree: {
         baseUrl: server.baseUrl,
-        audience: "techtree",
-        defaultChainId: 11155111,
         requestTimeoutMs: 1_000,
       },
       wallet: {

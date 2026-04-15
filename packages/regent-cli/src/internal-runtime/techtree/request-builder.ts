@@ -33,7 +33,7 @@ export interface ProtectedTechtreeAuthFailureDebugSnapshot {
 }
 
 export interface AuthenticatedRequestInput {
-  method: "GET" | "POST" | "DELETE";
+  method: "GET" | "POST" | "DELETE" | "PATCH" | "PUT";
   path: string;
   body?: unknown;
   session: SiwaSession;

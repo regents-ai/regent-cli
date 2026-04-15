@@ -1,9 +1,8 @@
 import type { LocalAgentIdentity } from "./runtime.js";
 
 export interface SiwaNonceRequest {
-  kind: "nonce_request";
-  walletAddress: `0x${string}`;
-  chainId: number;
+  wallet_address: `0x${string}`;
+  chain_id: number;
   audience: string;
 }
 
@@ -20,14 +19,13 @@ export interface SiwaNonceResponse {
 }
 
 export interface SiwaVerifyRequest {
-  kind: "verify_request";
-  walletAddress: `0x${string}`;
-  chainId: number;
+  wallet_address: `0x${string}`;
+  chain_id: number;
   nonce: string;
   message: string;
   signature: `0x${string}`;
-  registryAddress?: `0x${string}`;
-  tokenId?: string;
+  registry_address?: `0x${string}`;
+  token_id?: string;
 }
 
 export interface SiwaVerifyResponse {
@@ -76,6 +74,6 @@ export interface SignedAgentRequestHeaders {
   signature: string;
   "x-agent-wallet-address": `0x${string}`;
   "x-agent-chain-id": string;
-  "x-agent-registry-address": `0x${string}`;
-  "x-agent-token-id": string;
+  "x-agent-registry-address"?: `0x${string}`;
+  "x-agent-token-id"?: string;
 }

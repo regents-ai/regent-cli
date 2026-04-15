@@ -10,6 +10,11 @@ export interface RegentRuntimeConfig {
 
 export interface RegentTechtreeConfig {
   baseUrl: string;
+  requestTimeoutMs: number;
+}
+
+export interface RegentAuthConfig {
+  baseUrl: string;
   audience: string;
   defaultChainId: number;
   requestTimeoutMs: number;
@@ -68,6 +73,7 @@ export interface RegentWorkloadsConfig {
 
 export interface RegentConfig {
   runtime: RegentRuntimeConfig;
+  auth: RegentAuthConfig;
   techtree: RegentTechtreeConfig;
   wallet: RegentWalletConfig;
   xmtp: RegentXmtpConfig;

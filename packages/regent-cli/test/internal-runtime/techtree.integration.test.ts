@@ -70,9 +70,8 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
     const tokenId = String(Date.now());
 
     const nonceResponse = await client.siwaNonce({
-      kind: "nonce_request",
-      walletAddress: wallet.address,
-      chainId: 11155111,
+      wallet_address: wallet.address,
+      chain_id: 11155111,
       audience: "techtree",
     });
 
@@ -87,14 +86,13 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
     const signature = await signPersonalMessage(wallet.privateKey, message);
 
     const verifyResponse = await client.siwaVerify({
-      kind: "verify_request",
-      walletAddress: wallet.address,
-      chainId: 11155111,
+      wallet_address: wallet.address,
+      chain_id: 11155111,
       nonce: nonceResponse.data.nonce,
       message,
       signature,
-      registryAddress,
-      tokenId,
+      registry_address: registryAddress,
+      token_id: tokenId,
     });
 
     sessionStore.setSiwaSession({

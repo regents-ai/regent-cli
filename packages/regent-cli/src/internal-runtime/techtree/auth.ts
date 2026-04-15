@@ -23,10 +23,17 @@ export function requireAuthenticatedAgentContext(
   }
 
   const identity = stateStore.read().agent;
-  if (!identity) {
+  if (!identity?.walletAddress || typeof identity.chainId !== "number") {
     throw new AuthError(
       "agent_identity_missing",
-      "current agent identity is missing; provide registryAddress, tokenId via --registry-address and --token-id first",
+      "current agent identity is missing; run `regent auth siwa login` first",
+    );
+  }
+
+  if (!identity.registryAddress || !identity.tokenId) {
+    throw new AuthError(
+      "agent_identity_missing",
+      "current Techtree identity is missing registry and token binding; run `regent auth siwa login --registry-address ... --token-id ...`",
     );
   }
 
