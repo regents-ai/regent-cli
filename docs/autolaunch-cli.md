@@ -43,9 +43,58 @@ The product rules for this CLI surface are:
 - `AUTOLAUNCH_DISPLAY_NAME`
   Optional display name sent during session exchange.
 - `AUTOLAUNCH_WALLET_ADDRESS`
-  Optional wallet address sent during session exchange.
+  Required wallet address when using `AUTOLAUNCH_PRIVY_BEARER_TOKEN`.
 
-If `AUTOLAUNCH_SESSION_COOKIE` is not set and `AUTOLAUNCH_PRIVY_BEARER_TOKEN` is present, the CLI exchanges the bearer token against `/api/auth/privy/session` before calling authenticated endpoints.
+If `AUTOLAUNCH_SESSION_COOKIE` is not set and `AUTOLAUNCH_PRIVY_BEARER_TOKEN` is present, the CLI exchanges the bearer token plus `AUTOLAUNCH_WALLET_ADDRESS` against `/api/auth/privy/session` before calling authenticated endpoints.
+
+## Agent quick start
+
+If you are operating Autolaunch as an agent, use the guided lifecycle through `regent autolaunch ...`.
+
+From an installed package:
+
+```bash
+regent autolaunch ...
+```
+
+From the source checkout:
+
+```bash
+pnpm --filter @regentlabs/cli exec regent autolaunch ...
+```
+
+Before a real launch, the Autolaunch launch node should pass:
+
+```bash
+mix autolaunch.doctor
+AUTOLAUNCH_MOCK_DEPLOY=true mix autolaunch.smoke
+```
+
+After a real launch reaches `ready`, verify it with:
+
+```bash
+mix autolaunch.verify_deploy --job <job-id>
+```
+
+`mix autolaunch.doctor` is the stop sign for missing launch dependencies. In particular, it now catches a deploy binary that exists on disk but cannot actually run.
+
+If Sepolia congestion or node slowness makes a legitimate deploy run longer than expected, increase `AUTOLAUNCH_DEPLOY_TIMEOUT_MS` on the Autolaunch launch node. The default is `180000`.
+
+The recommended agent order is:
+
+```bash
+regent autolaunch safe wizard --backup-signer-address <address>
+regent autolaunch safe create --backup-signer-address <address> --website-wallet-address <address>
+regent autolaunch prelaunch wizard --agent <agent-id> --name "Agent Coin Name" --symbol "AGENT" --agent-safe-address <safe-address>
+regent autolaunch prelaunch validate --plan <id>
+regent autolaunch prelaunch publish --plan <id>
+regent autolaunch launch run --plan <id>
+regent autolaunch launch monitor --job <job-id> --watch
+regent autolaunch launch finalize --job <job-id> [--submit]
+regent autolaunch vesting status --job <job-id>
+```
+
+Skip the Safe commands only when the agent Safe already exists and the launch plan already points to it.
 
 ## Primary operator journey
 
@@ -62,6 +111,9 @@ regent autolaunch launch monitor --job <job-id> [--watch]
 regent autolaunch launch finalize --job <job-id> [--submit]
 regent autolaunch vesting status --job <job-id>
 regent autolaunch vesting release --job <job-id> [--submit]
+regent autolaunch vesting propose-beneficiary-rotation --job <job-id> --beneficiary <address> [--json]
+regent autolaunch vesting cancel-beneficiary-rotation --job <job-id> [--json]
+regent autolaunch vesting execute-beneficiary-rotation --job <job-id> [--json]
 ```
 
 These commands assume the Phoenix backend is alive and act as the guided operator front door.
@@ -73,10 +125,7 @@ regent autolaunch prelaunch wizard \
   --agent <agent-id> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
-  --treasury-safe-address <safe-address> \
-  --auction-proceeds-recipient <address> \
-  --ethereum-revenue-treasury <address> \
-  [--backup-safe-address <address>] \
+  --agent-safe-address <safe-address> \
   [--fallback-operator-wallet <address>] \
   [--title <text>] \
   [--subtitle <text>] \
@@ -175,7 +224,7 @@ regent autolaunch launch preview \
   --chain-id <11155111> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
-  --treasury-address <address> \
+  --agent-safe-address <safe-address> \
   [--launch-notes <text>] \
   [--json]
 
@@ -184,7 +233,7 @@ regent autolaunch launch create \
   --chain-id <11155111> \
   --name "Agent Coin Name" \
   --symbol "AGENT" \
-  --treasury-address <address> \
+  --agent-safe-address <safe-address> \
   --wallet-address <address> \
   --nonce <nonce> \
   --message <message> \
@@ -309,11 +358,13 @@ regent autolaunch fee-vault withdraw-regent --job <job-id> --currency <address> 
 regent autolaunch splitter show --subject <subject-id> [--json]
 regent autolaunch splitter set-paused --subject <subject-id> --paused true|false [--json]
 regent autolaunch splitter set-label --subject <subject-id> --label <text> [--json]
-regent autolaunch splitter set-treasury-recipient --subject <subject-id> --recipient <address> [--json]
+regent autolaunch splitter propose-treasury-recipient-rotation --subject <subject-id> --recipient <address> [--json]
+regent autolaunch splitter cancel-treasury-recipient-rotation --subject <subject-id> [--json]
+regent autolaunch splitter execute-treasury-recipient-rotation --subject <subject-id> [--json]
 regent autolaunch splitter set-protocol-recipient --subject <subject-id> --recipient <address> [--json]
 regent autolaunch splitter set-protocol-skim-bps --subject <subject-id> --skim-bps <bps> [--json]
-regent autolaunch splitter withdraw-treasury-residual --subject <subject-id> --amount <raw-units> --recipient <address> [--json]
-regent autolaunch splitter withdraw-protocol-reserve --subject <subject-id> --amount <raw-units> --recipient <address> [--json]
+regent autolaunch splitter sweep-treasury-residual --subject <subject-id> --amount <raw-units> [--json]
+regent autolaunch splitter sweep-protocol-reserve --subject <subject-id> --amount <raw-units> [--json]
 regent autolaunch splitter reassign-dust --subject <subject-id> --amount <raw-units> [--json]
 
 regent autolaunch ingress create --subject <subject-id> --label <text> [--make-default true|false] [--json]
@@ -324,6 +375,7 @@ regent autolaunch ingress rescue --subject <subject-id> --address <ingress-addre
 regent autolaunch registry show --subject <subject-id> [--json]
 regent autolaunch registry set-subject-manager --subject <subject-id> --account <address> --enabled true|false [--json]
 regent autolaunch registry link-identity --subject <subject-id> --identity-chain-id <id> --identity-registry <address> --identity-agent-id <id> [--json]
+regent autolaunch registry rotate-safe --subject <subject-id> --new-safe <address> [--json]
 
 regent autolaunch factory revenue-share set-authorized-creator --account <address> --enabled true|false [--json]
 regent autolaunch factory revenue-ingress set-authorized-creator --account <address> --enabled true|false [--json]

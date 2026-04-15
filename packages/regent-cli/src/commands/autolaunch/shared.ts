@@ -1,8 +1,7 @@
+import { buildAgentAuthHeaders } from "../agent-auth.js";
 import { getFlag, requireArg, type ParsedCliArgs } from "../../parse.js";
 
 const DEFAULT_BASE_URL = "http://127.0.0.1:4010";
-const SESSION_COOKIE_ENV = "AUTOLAUNCH_SESSION_COOKIE";
-const PRIVY_TOKEN_ENV = "AUTOLAUNCH_PRIVY_BEARER_TOKEN";
 export const AGENT_PRIVATE_KEY_ENV = "AUTOLAUNCH_AGENT_PRIVATE_KEY";
 
 export interface JsonObject {
@@ -13,7 +12,8 @@ type JsonValue = string | number | boolean | null | JsonObject | JsonValue[];
 
 export interface RequestOptions {
   readonly body?: unknown;
-  readonly requireSession?: boolean;
+  readonly requireAgentAuth?: boolean;
+  readonly configPath?: string;
 }
 
 export type AutolaunchChainId = "11155111";
@@ -36,55 +36,6 @@ export const failIfNotObject = (value: unknown): JsonObject => {
   return value as JsonObject;
 };
 
-export const toCookieHeader = async (): Promise<string | undefined> => {
-  const existing = process.env[SESSION_COOKIE_ENV];
-  if (existing) {
-    return existing;
-  }
-
-  const bearer = process.env[PRIVY_TOKEN_ENV];
-  if (!bearer) {
-    return undefined;
-  }
-
-  const displayName = process.env.AUTOLAUNCH_DISPLAY_NAME;
-  const walletAddress = process.env.AUTOLAUNCH_WALLET_ADDRESS;
-  const sessionBody: Record<string, string> = {};
-
-  if (displayName) {
-    sessionBody.display_name = displayName;
-  }
-
-  if (walletAddress) {
-    sessionBody.wallet_address = walletAddress;
-  }
-
-  const response = await fetch(`${baseUrl()}/api/auth/privy/session`, {
-    method: "POST",
-    headers: {
-      accept: "application/json",
-      "content-type": "application/json",
-      authorization: `Bearer ${bearer}`,
-    },
-    body: JSON.stringify(sessionBody),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `Unable to exchange Privy bearer token for session cookie: ${await response.text()}`,
-    );
-  }
-
-  const setCookie = response.headers.get("set-cookie");
-  if (!setCookie) {
-    throw new Error("Privy session exchange succeeded but no session cookie was returned");
-  }
-
-  const cookie = setCookie.split(";", 1)[0] ?? "";
-  process.env[SESSION_COOKIE_ENV] = cookie;
-  return cookie;
-};
-
 export const requestJson = async (
   method: string,
   path: string,
@@ -96,15 +47,16 @@ export const requestJson = async (
     headers.set("content-type", "application/json");
   }
 
-  if (options.requireSession) {
-    const cookie = await toCookieHeader();
-    if (!cookie) {
-      throw new Error(
-        "This command requires an authenticated session. Set AUTOLAUNCH_SESSION_COOKIE or AUTOLAUNCH_PRIVY_BEARER_TOKEN.",
-      );
-    }
+  if (options.requireAgentAuth) {
+    const authHeaders = await buildAgentAuthHeaders({
+      method,
+      path,
+      configPath: options.configPath,
+    });
 
-    headers.set("cookie", cookie);
+    for (const [key, value] of Object.entries(authHeaders)) {
+      headers.set(key, value);
+    }
   }
 
   const response = await fetch(`${baseUrl()}${path}`, {
@@ -134,15 +86,16 @@ export const requestTypedJson = async <T>(
     headers.set("content-type", "application/json");
   }
 
-  if (options.requireSession) {
-    const cookie = await toCookieHeader();
-    if (!cookie) {
-      throw new Error(
-        "This command requires an authenticated session. Set AUTOLAUNCH_SESSION_COOKIE or AUTOLAUNCH_PRIVY_BEARER_TOKEN.",
-      );
-    }
+  if (options.requireAgentAuth) {
+    const authHeaders = await buildAgentAuthHeaders({
+      method,
+      path,
+      configPath: options.configPath,
+    });
 
-    headers.set("cookie", cookie);
+    for (const [key, value] of Object.entries(authHeaders)) {
+      headers.set(key, value);
+    }
   }
 
   const response = await fetch(`${baseUrl()}${path}`, {
@@ -213,14 +166,14 @@ export const autolaunchChainId = (args: ParsedCliArgs): AutolaunchChainId => {
 
 export const requireLaunchIdentity = (args: ParsedCliArgs) => {
   const chainId = autolaunchChainId(args);
-  const treasuryAddress = requireArg(getFlag(args, "treasury-address"), "treasury-address");
+  const agentSafeAddress = requireArg(getFlag(args, "agent-safe-address"), "agent-safe-address");
 
   return {
     agent: requireArg(getFlag(args, "agent"), "agent"),
     chainId,
     name: requireArg(getFlag(args, "name"), "name"),
     symbol: requireArg(getFlag(args, "symbol"), "symbol"),
-    treasuryAddress,
+    agentSafeAddress,
   };
 };
 

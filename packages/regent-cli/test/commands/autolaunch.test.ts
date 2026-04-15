@@ -4,26 +4,45 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { runCliEntrypoint } from "../../src/index.js";
 import { writeInitialConfig } from "../../src/internal-runtime/config.js";
 import { captureOutput, parsePrintedJson } from "../helpers/output.js";
 
-const { writeContractMock, waitForReceiptMock } = vi.hoisted(() => ({
+const {
+  writeContractMock,
+  waitForReceiptMock,
+  sendTransactionMock,
+  safeInitMock,
+  getSafeAddressFromDeploymentTxMock,
+} = vi.hoisted(() => ({
   writeContractMock: vi.fn(),
   waitForReceiptMock: vi.fn(),
+  sendTransactionMock: vi.fn(),
+  safeInitMock: vi.fn(),
+  getSafeAddressFromDeploymentTxMock: vi.fn(),
 }));
 
 const { execFileMock } = vi.hoisted(() => ({
   execFileMock: vi.fn(),
 }));
 
+const { buildAgentAuthHeadersMock } = vi.hoisted(() => ({
+  buildAgentAuthHeadersMock: vi.fn(),
+}));
+
 vi.mock("node:child_process", () => ({
   execFile: execFileMock,
+}));
+
+vi.mock("../../src/commands/agent-auth.js", () => ({
+  buildAgentAuthHeaders: buildAgentAuthHeadersMock,
 }));
 
 vi.mock("viem/accounts", () => ({
   privateKeyToAccount: (privateKey: string) => ({
     address:
-      privateKey === "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      privateKey ===
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         ? "0x00000000000000000000000000000000000000aa"
         : "0x00000000000000000000000000000000000000bb",
     signMessage: async () => "0xsigned",
@@ -39,6 +58,7 @@ vi.mock("viem", () => ({
   http: (url: string) => ({ url }),
   createWalletClient: () => ({
     writeContract: writeContractMock,
+    sendTransaction: sendTransactionMock,
   }),
   createPublicClient: () => ({
     waitForTransactionReceipt: waitForReceiptMock,
@@ -52,21 +72,71 @@ vi.mock("viem", () => ({
   ],
 }));
 
+vi.mock("@safe-global/protocol-kit", () => ({
+  __esModule: true,
+  default: {
+    init: safeInitMock,
+  },
+  getSafeAddressFromDeploymentTx: getSafeAddressFromDeploymentTxMock,
+}));
+
 describe("autolaunch CLI command group", () => {
   const expectedBaseUrl = "http://127.0.0.1:4010";
   const expectedBrowserCommand =
-    process.platform === "darwin" ? "open" : process.platform === "win32" ? "cmd" : "xdg-open";
+    process.platform === "darwin"
+      ? "open"
+      : process.platform === "win32"
+        ? "cmd"
+        : "xdg-open";
   const originalEnv = { ...process.env };
   const fetchMock = vi.fn<typeof fetch>();
   const tempDirs: string[] = [];
+  const expectedAgentWallet = "0x00000000000000000000000000000000000000aa";
 
   const createConfigPath = () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-cli-autolaunch-"));
+    const tempDir = fs.mkdtempSync(
+      path.join(os.tmpdir(), "regent-cli-autolaunch-"),
+    );
     tempDirs.push(tempDir);
 
     const configPath = path.join(tempDir, "regent.config.json");
     writeInitialConfig(configPath);
     return configPath;
+  };
+
+  const assertLaunchRequestBody = (
+    body: unknown,
+    expected: Record<string, unknown>,
+  ) => {
+    const payload = JSON.parse(String(body)) as Record<string, unknown>;
+
+    const containsLegacyLaunchField = (value: unknown): boolean => {
+      if (!value || typeof value !== "object") {
+        return false;
+      }
+
+      if (Array.isArray(value)) {
+        return value.some(containsLegacyLaunchField);
+      }
+
+      return Object.entries(value as Record<string, unknown>).some(
+        ([key, nested]) =>
+          key.includes("treasury") ||
+          key.includes("recovery") ||
+          containsLegacyLaunchField(nested),
+      );
+    };
+
+    expect(payload).toMatchObject(expected);
+    expect(containsLegacyLaunchField(payload)).toBe(false);
+  };
+
+  const assertAgentAuthHeaders = (headers: Headers | undefined) => {
+    expect(headers?.get("x-siwa-receipt")).toBe("receipt_123");
+    expect(headers?.get("x-key-id")).toBe(expectedAgentWallet);
+    expect(headers?.get("x-agent-wallet-address")).toBe(expectedAgentWallet);
+    expect(headers?.get("x-agent-chain-id")).toBe("11155111");
+    expect(headers?.get("signature")).toBe("sig1=:ZmFrZQ==:");
   };
 
   beforeEach(() => {
@@ -80,8 +150,41 @@ describe("autolaunch CLI command group", () => {
     delete process.env.ETH_SEPOLIA_RPC_URL;
     fetchMock.mockReset();
     execFileMock.mockReset();
+    buildAgentAuthHeadersMock.mockReset();
     writeContractMock.mockReset();
     waitForReceiptMock.mockReset();
+    sendTransactionMock.mockReset();
+    safeInitMock.mockReset();
+    getSafeAddressFromDeploymentTxMock.mockReset();
+
+    sendTransactionMock.mockResolvedValue(
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    );
+    waitForReceiptMock.mockResolvedValue({ logs: [] });
+    getSafeAddressFromDeploymentTxMock.mockReturnValue(
+      "0x4444444444444444444444444444444444444444",
+    );
+    buildAgentAuthHeadersMock.mockResolvedValue({
+      "x-siwa-receipt": "receipt_123",
+      "x-key-id": expectedAgentWallet,
+      "x-agent-wallet-address": expectedAgentWallet,
+      "x-agent-chain-id": "11155111",
+      "signature-input":
+        'sig1=("@method" "@path");created=1700000000;expires=1700000120;nonce="sig-nonce-fixed";keyid="0x00000000000000000000000000000000000000aa"',
+      signature: "sig1=:ZmFrZQ==:",
+    });
+    safeInitMock.mockResolvedValue({
+      getAddress: vi
+        .fn()
+        .mockResolvedValue("0x4444444444444444444444444444444444444444"),
+      isSafeDeployed: vi.fn().mockResolvedValue(false),
+      createSafeDeploymentTransaction: vi.fn().mockResolvedValue({
+        to: "0x5555555555555555555555555555555555555555",
+        data: "0xabcdef",
+        value: "0",
+      }),
+      getContractVersion: vi.fn().mockReturnValue("1.4.1"),
+    });
   });
 
   afterEach(() => {
@@ -145,8 +248,6 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -162,15 +263,18 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      `${expectedBaseUrl}/api/auctions?sort=recently_launched&status=active`,
+      `${expectedBaseUrl}/v1/agent/auctions?sort=recently_launched&status=active`,
     );
-    expect(parsePrintedJson<{ items: Array<{ id: string; trust: { x: { handle: string | null } } }> }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{
+        items: Array<{ id: string; trust: { x: { handle: string | null } } }>;
+      }>(output.stdout),
+    ).toMatchObject({
       items: [{ id: "auc_1", trust: { x: { handle: "atlas_agent" } } }],
     });
   });
 
   it("starts an Autolaunch X link and opens the returned browser URL", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
     execFileMock.mockImplementation((_file, _args, callback) => {
       callback?.(null, "", "");
       return {} as never;
@@ -190,25 +294,35 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "trust", "x-link", "--agent", "11155111:42"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "trust",
+        "x-link",
+        "--agent",
+        "11155111:42",
+      ]),
     );
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/trust/x/start`);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/trust/x/start`,
+    );
     const [, requestInit] = fetchMock.mock.calls[0] ?? [];
-    expect((requestInit?.headers as Headers).get("cookie")).toBe("_autolaunch_key=abc");
-    expect(JSON.parse(String(requestInit?.body))).toEqual({ agent_id: "11155111:42" });
+    assertAgentAuthHeaders(requestInit?.headers as Headers);
+    expect(JSON.parse(String(requestInit?.body))).toEqual({
+      agent_id: "11155111:42",
+    });
     expect(execFileMock).toHaveBeenCalledWith(
       expectedBrowserCommand,
       [`${expectedBaseUrl}/trust/x/redirect?token=abc123`],
       expect.any(Function),
     );
     expect(
-      parsePrintedJson<{ browser_opened: boolean; redirect_url: string }>(output.stdout),
+      parsePrintedJson<{ browser_opened: boolean; redirect_url: string }>(
+        output.stdout,
+      ),
     ).toMatchObject({
       browser_opened: true,
       redirect_url: `${expectedBaseUrl}/trust/x/redirect?token=abc123`,
@@ -216,7 +330,6 @@ describe("autolaunch CLI command group", () => {
   });
 
   it("prints the full X link URL when the browser cannot be opened", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
     execFileMock.mockImplementation((_file, _args, callback) => {
       callback?.(new Error("open failed"));
       return {} as never;
@@ -236,10 +349,14 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "trust", "x-link", "--agent", "11155111:42"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "trust",
+        "x-link",
+        "--agent",
+        "11155111:42",
+      ]),
     );
 
     expect(output.result).toBe(0);
@@ -259,10 +376,13 @@ describe("autolaunch CLI command group", () => {
   it("supports non-numeric agent ids for autolaunch agent show/readiness routes", async () => {
     fetchMock
       .mockResolvedValueOnce(
-        new Response(JSON.stringify({ ok: true, agent: { id: "agent:alpha" } }), {
-          status: 200,
-          headers: { "content-type": "application/json" },
-        }),
+        new Response(
+          JSON.stringify({ ok: true, agent: { id: "agent:alpha" } }),
+          {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          },
+        ),
       )
       .mockResolvedValueOnce(
         new Response(JSON.stringify({ ok: true, readiness: { ready: true } }), {
@@ -270,8 +390,6 @@ describe("autolaunch CLI command group", () => {
           headers: { "content-type": "application/json" },
         }),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const showOutput = await captureOutput(() =>
       runCliEntrypoint(["autolaunch", "agent", "agent:alpha"]),
     );
@@ -281,25 +399,33 @@ describe("autolaunch CLI command group", () => {
 
     expect(showOutput.result).toBe(0);
     expect(readinessOutput.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/agents/agent%3Aalpha`);
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      `${expectedBaseUrl}/api/agents/agent%3Aalpha/readiness`,
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/agents/agent%3Aalpha`,
     );
-    expect(parsePrintedJson<{ ok: boolean }>(showOutput.stdout)).toMatchObject({ ok: true });
-    expect(parsePrintedJson<{ ok: boolean }>(readinessOutput.stdout)).toMatchObject({ ok: true });
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/agents/agent%3Aalpha/readiness`,
+    );
+    expect(parsePrintedJson<{ ok: boolean }>(showOutput.stdout)).toMatchObject({
+      ok: true,
+    });
+    expect(
+      parsePrintedJson<{ ok: boolean }>(readinessOutput.stdout),
+    ).toMatchObject({ ok: true });
   });
 
   it("plans an ENS link through the shared autolaunch API", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ ok: true, plan: { verify_status: "ens_record_missing" } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({
+          ok: true,
+          plan: { verify_status: "ens_record_missing" },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -315,22 +441,26 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/ens/link/plan`);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/ens/link/plan`,
+    );
     const [, requestInit] = fetchMock.mock.calls[0] ?? [];
     expect(JSON.parse(String(requestInit?.body))).toMatchObject({
       ens_name: "vitalik.eth",
       identity_id: "1:42",
       include_reverse: true,
     });
-    expect(parsePrintedJson<{ ok: boolean; plan: { verify_status: string } }>(output.stdout)).toEqual({
+    expect(
+      parsePrintedJson<{ ok: boolean; plan: { verify_status: string } }>(
+        output.stdout,
+      ),
+    ).toEqual({
       ok: true,
       plan: { verify_status: "ens_record_missing" },
     });
   });
 
   it("passes through the optional reputation prompt on launch preview", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -349,8 +479,6 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -366,16 +494,29 @@ describe("autolaunch CLI command group", () => {
         "ATLAS",
         "--minimum-raise-usdc",
         "10000",
-        "--treasury-address",
+        "--agent-safe-address",
         "0x1111111111111111111111111111111111111111",
       ]),
     );
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/launch/preview`);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/launch/preview`,
+    );
+    const [, previewRequest] = fetchMock.mock.calls[0] ?? [];
+    assertLaunchRequestBody(previewRequest?.body, {
+      agent_id: "1:42",
+      chain_id: 11155111,
+      token_name: "Atlas Coin",
+      token_symbol: "ATLAS",
+      agent_safe_address: "0x1111111111111111111111111111111111111111",
+      minimum_raise_usdc: "10000",
+    });
     expect(
-      parsePrintedJson<{ reputation_prompt: { skip_label: string } }>(output.stdout),
+      parsePrintedJson<{ reputation_prompt: { skip_label: string } }>(
+        output.stdout,
+      ),
     ).toMatchObject({
       reputation_prompt: {
         skip_label: "Skip for now",
@@ -383,9 +524,71 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("prepares bidirectional ENS link transactions through autolaunch", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
+  it("passes through the launch create body with the agent safe address", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          launch: { job_id: "job_alpha" },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "launch",
+        "create",
+        "--agent",
+        "1:42",
+        "--chain-id",
+        "11155111",
+        "--name",
+        "Atlas Coin",
+        "--symbol",
+        "ATLAS",
+        "--minimum-raise-usdc",
+        "10000",
+        "--agent-safe-address",
+        "0x1111111111111111111111111111111111111111",
+        "--wallet-address",
+        "0x2222222222222222222222222222222222222222",
+        "--nonce",
+        "nonce_alpha",
+        "--message",
+        "message_alpha",
+        "--signature",
+        "signature_alpha",
+        "--issued-at",
+        "2026-03-29T12:00:00Z",
+      ]),
+    );
 
+    expect(output.result).toBe(0);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/launch/jobs`,
+    );
+    const [, createRequest] = fetchMock.mock.calls[0] ?? [];
+    assertLaunchRequestBody(createRequest?.body, {
+      agent_id: "1:42",
+      chain_id: 11155111,
+      token_name: "Atlas Coin",
+      token_symbol: "ATLAS",
+      agent_safe_address: "0x1111111111111111111111111111111111111111",
+      minimum_raise_usdc: "10000",
+      wallet_address: "0x2222222222222222222222222222222222222222",
+      nonce: "nonce_alpha",
+      message: "message_alpha",
+      signature: "signature_alpha",
+      issued_at: "2026-03-29T12:00:00Z",
+    });
+  });
+
+  it("prepares bidirectional ENS link transactions through autolaunch", async () => {
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -402,8 +605,6 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -421,9 +622,14 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      `${expectedBaseUrl}/api/ens/link/prepare-bidirectional`,
+      `${expectedBaseUrl}/v1/agent/ens/link/prepare-bidirectional`,
     );
-    expect(parsePrintedJson<{ ok: boolean; prepared: { ensip25: { tx: { to: string } } } }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{
+        ok: boolean;
+        prepared: { ensip25: { tx: { to: string } } };
+      }>(output.stdout),
+    ).toMatchObject({
       ok: true,
       prepared: {
         ensip25: { tx: { to: "0xresolver" } },
@@ -432,13 +638,14 @@ describe("autolaunch CLI command group", () => {
   });
 
   it("shows subject revenue state through the shared autolaunch API", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
           ok: true,
-          subject: { subject_id: "0xabc", splitter_address: "0x9999999999999999999999999999999999999999" },
+          subject: {
+            subject_id: "0xabc",
+            splitter_address: "0x9999999999999999999999999999999999999999",
+          },
         }),
         {
           status: 200,
@@ -446,22 +653,22 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint(["autolaunch", "subjects", "show", "0xabc"]),
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/subjects/0xabc`);
-    expect(parsePrintedJson<{ subject: { subject_id: string } }>(output.stdout)).toMatchObject({
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/subjects/0xabc`,
+    );
+    expect(
+      parsePrintedJson<{ subject: { subject_id: string } }>(output.stdout),
+    ).toMatchObject({
       subject: { subject_id: "0xabc" },
     });
   });
 
   it("prepares strategy migration through the contracts API", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -478,24 +685,28 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "strategy", "migrate", "--job", "job_123"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "strategy",
+        "migrate",
+        "--job",
+        "job_123",
+      ]),
     );
 
     expect(output.result).toBe(0);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      `${expectedBaseUrl}/api/contracts/jobs/job_123/strategy/migrate/prepare`,
+      `${expectedBaseUrl}/v1/agent/contracts/jobs/job_123/strategy/migrate/prepare`,
     );
-    expect(parsePrintedJson<{ prepared: { action: string } }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ prepared: { action: string } }>(output.stdout),
+    ).toMatchObject({
       prepared: { action: "migrate" },
     });
   });
 
   it("prepares factory authorized creator changes through the contracts API", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({
@@ -512,8 +723,6 @@ describe("autolaunch CLI command group", () => {
         },
       ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -529,13 +738,17 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock.mock.calls[0]?.[0]).toBe(
-      `${expectedBaseUrl}/api/contracts/admin/revenue_share_factory/set_authorized_creator/prepare`,
+      `${expectedBaseUrl}/v1/agent/contracts/admin/revenue_share_factory/set_authorized_creator/prepare`,
     );
-    expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toMatchObject({
+    expect(
+      JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body)),
+    ).toMatchObject({
       account: "0x00000000000000000000000000000000000000aa",
       enabled: "true",
     });
-    expect(parsePrintedJson<{ prepared: { resource: string } }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ prepared: { resource: string } }>(output.stdout),
+    ).toMatchObject({
       prepared: { resource: "revenue_share_factory" },
     });
   });
@@ -576,8 +789,6 @@ describe("autolaunch CLI command group", () => {
           headers: { "content-type": "application/json" },
         }),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -592,7 +803,11 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(parsePrintedJson<{ launchable: Array<{ agent_id: string }> }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ launchable: Array<{ agent_id: string }> }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
       ok: true,
       chain_id: 11155111,
       owner_address: "0x00000000000000000000000000000000000000aa",
@@ -636,8 +851,6 @@ describe("autolaunch CLI command group", () => {
           headers: { "content-type": "application/json" },
         }),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "techtree",
@@ -652,7 +865,11 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(parsePrintedJson<{ launchable: Array<{ agent_id: string }> }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ launchable: Array<{ agent_id: string }> }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
       ok: true,
       chain_id: 11155111,
       owner_address: "0x00000000000000000000000000000000000000aa",
@@ -669,8 +886,6 @@ describe("autolaunch CLI command group", () => {
       blockNumber: 123n,
       logs: [],
     });
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -685,7 +900,11 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(writeContractMock).toHaveBeenCalledTimes(1);
-    expect(parsePrintedJson<{ agent_id: string | null; chain_id: number }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ agent_id: string | null; chain_id: number }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
       ok: true,
       chain_id: 11155111,
       agent_id: "11155111:42",
@@ -703,8 +922,6 @@ describe("autolaunch CLI command group", () => {
       blockNumber: 456n,
       logs: [],
     });
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "techtree",
@@ -717,7 +934,11 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     expect(writeContractMock).toHaveBeenCalledTimes(1);
-    expect(parsePrintedJson<{ agent_id: string | null; chain_id: number }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ agent_id: string | null; chain_id: number }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
       ok: true,
       chain_id: 11155111,
       agent_id: "11155111:42",
@@ -726,17 +947,16 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("maps ethereum sepolia chain names to chain ids and uses session cookie", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
+  it("maps ethereum sepolia chain names to chain ids and signs launch preview requests", async () => {
     fetchMock.mockResolvedValue(
-      new Response(JSON.stringify({ ok: true, preview: { launch_ready: true } }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({ ok: true, preview: { launch_ready: true } }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
     );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -752,7 +972,7 @@ describe("autolaunch CLI command group", () => {
         "AGENT",
         "--minimum-raise-usdc",
         "2500",
-        "--treasury-address",
+        "--agent-safe-address",
         "0x0000000000000000000000000000000000000001",
       ]),
     );
@@ -760,7 +980,7 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(0);
     expect(fetchMock).toHaveBeenCalledTimes(1);
     const [, requestInit] = fetchMock.mock.calls[0] ?? [];
-    expect((requestInit?.headers as Headers).get("cookie")).toBe("_autolaunch_key=abc");
+    assertAgentAuthHeaders(requestInit?.headers as Headers);
     expect(JSON.parse(String(requestInit?.body))).toMatchObject({
       agent_id: "ag_123",
       chain_id: 11155111,
@@ -769,65 +989,106 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("exchanges a Privy bearer token for a session before calling mine bids", async () => {
-    process.env.AUTOLAUNCH_PRIVY_BEARER_TOKEN = "privy-token";
-    process.env.AUTOLAUNCH_DISPLAY_NAME = "Operator";
-    process.env.AUTOLAUNCH_WALLET_ADDRESS = "0x00000000000000000000000000000000000000aa";
-
-    fetchMock
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ ok: true }), {
-          status: 200,
-          headers: {
-            "content-type": "application/json",
-            "set-cookie": "_autolaunch_key=session123; Path=/; HttpOnly",
-          },
-        }),
-      )
-      .mockResolvedValueOnce(
-        new Response(JSON.stringify({ ok: true, items: [] }), {
-          status: 200,
-          headers: { "content-type": "application/json" },
-        }),
-      );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
+  it("signs mine bids requests with the saved agent session", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ ok: true, items: [] }), {
+        status: 200,
+        headers: { "content-type": "application/json" },
+      }),
+    );
     const output = await captureOutput(() =>
       runCliEntrypoint(["autolaunch", "bids", "mine", "--status", "active"]),
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/auth/privy/session`);
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      `${expectedBaseUrl}/api/me/bids?status=active`,
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/me/bids?status=active`,
     );
-    const secondRequest = fetchMock.mock.calls[1]?.[1];
-    expect((secondRequest?.headers as Headers).get("cookie")).toBe("_autolaunch_key=session123");
-    expect(parsePrintedJson<{ ok: boolean; items: unknown[] }>(output.stdout)).toEqual({
+    const request = fetchMock.mock.calls[0]?.[1];
+    assertAgentAuthHeaders(request?.headers as Headers);
+    expect(
+      parsePrintedJson<{ ok: boolean; items: unknown[] }>(output.stdout),
+    ).toEqual({
       ok: true,
       items: [],
     });
   });
 
   it("rejects non-positive interval values for autolaunch jobs watch", async () => {
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "jobs", "watch", "job_123", "--interval", "0"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "jobs",
+        "watch",
+        "job_123",
+        "--interval",
+        "0",
+      ]),
     );
 
     expect(output.result).toBe(1);
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(parsePrintedJson<{ error: { message: string } }>(output.stderr)).toEqual({
+    expect(
+      parsePrintedJson<{ error: { message: string } }>(output.stderr),
+    ).toEqual({
       error: {
         message: "--interval must be a positive number",
       },
     });
   });
 
+  it("rejects autolaunch job watch requests without a signed-in session", async () => {
+    buildAgentAuthHeadersMock.mockRejectedValueOnce(
+      new Error("Run `regent auth siwa login` before using this command."),
+    );
+    const output = await captureOutput(() =>
+      runCliEntrypoint(["autolaunch", "jobs", "watch", "job_123"]),
+    );
+
+    expect(output.result).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(output.stderr).toContain(
+      "Run `regent auth siwa login` before using this command.",
+    );
+  });
+
+  it("attaches signed agent auth headers when watching an autolaunch job", async () => {
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          job: { job_id: "job_123", status: "ready" },
+          auction: { auction_id: "auc_123" },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+    const output = await captureOutput(() =>
+      runCliEntrypoint(["autolaunch", "jobs", "watch", "job_123"]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/launch/jobs/job_123`,
+    );
+    const [, requestInit] = fetchMock.mock.calls[0] ?? [];
+    assertAgentAuthHeaders(requestInit?.headers as Headers);
+    expect(
+      parsePrintedJson<{ job: { job_id: string; status: string } }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
+      job: { job_id: "job_123", status: "ready" },
+    });
+  });
+
   it("guides a prelaunch wizard flow and saves the local plan", async () => {
     const configPath = createConfigPath();
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
 
     fetchMock
       .mockResolvedValueOnce(
@@ -887,8 +1148,6 @@ describe("autolaunch CLI command group", () => {
           { status: 200, headers: { "content-type": "application/json" } },
         ),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
       runCliEntrypoint([
         "autolaunch",
@@ -904,14 +1163,8 @@ describe("autolaunch CLI command group", () => {
         "ATLAS",
         "--minimum-raise-usdc",
         "10000",
-        "--treasury-safe-address",
+        "--agent-safe-address",
         "0x1111111111111111111111111111111111111111",
-        "--auction-proceeds-recipient",
-        "0x2222222222222222222222222222222222222222",
-        "--ethereum-revenue-treasury",
-        "0x3333333333333333333333333333333333333333",
-        "--backup-safe-address",
-        "0x4444444444444444444444444444444444444444",
         "--title",
         "Atlas Launch",
         "--description",
@@ -922,36 +1175,274 @@ describe("autolaunch CLI command group", () => {
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/prelaunch/plans`);
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(`${expectedBaseUrl}/api/prelaunch/assets`);
-    expect(fetchMock.mock.calls[3]?.[0]).toBe(
-      `${expectedBaseUrl}/api/prelaunch/plans/plan_alpha/validate`,
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/prelaunch/plans`,
     );
-    expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toMatchObject({
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/prelaunch/assets`,
+    );
+    expect(fetchMock.mock.calls[3]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/prelaunch/plans/plan_alpha/validate`,
+    );
+    assertLaunchRequestBody(fetchMock.mock.calls[0]?.[1]?.body, {
+      agent_id: "11155111:42",
+      token_name: "Atlas Coin",
+      token_symbol: "ATLAS",
       minimum_raise_usdc: "10000",
+      agent_safe_address: "0x1111111111111111111111111111111111111111",
+      metadata_draft: {
+        title: "Atlas Launch",
+        description: "Prepare the Atlas coin launch.",
+      },
     });
 
     const localPlan = JSON.parse(
       fs.readFileSync(
-        path.join(path.dirname(configPath), "state", "autolaunch-plans", "plan_alpha.json"),
+        path.join(
+          path.dirname(configPath),
+          "state",
+          "autolaunch-plans",
+          "plan_alpha.json",
+        ),
         "utf8",
       ),
     ) as { plan_id: string; remote_plan: { state: string } };
 
     expect(localPlan.plan_id).toBe("plan_alpha");
     expect(localPlan.remote_plan.state).toBe("launchable");
-    expect(parsePrintedJson<{ validation: { launchable: boolean } }>(output.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ validation: { launchable: boolean } }>(output.stdout),
+    ).toMatchObject({
       validation: { launchable: true },
+    });
+  });
+
+  it("guides Safe setup and lets the operator wait for the website wallet", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "safe",
+        "wizard",
+        "--config",
+        configPath,
+        "--backup-signer-address",
+        "0x3333333333333333333333333333333333333333",
+        "--wait-for-website-wallet",
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(parsePrintedJson(output.stdout)).toMatchObject({
+      ok: true,
+      status: "waiting_for_website_wallet",
+      launch_ready: false,
+      threshold: "2-of-3",
+      agent_safe_address: null,
+      signers: {
+        agent: {
+          address: "0x00000000000000000000000000000000000000aa",
+          source: "config",
+        },
+        website: {
+          address: null,
+          source: "missing",
+        },
+        backup: {
+          address: "0x3333333333333333333333333333333333333333",
+          source: "flag",
+        },
+      },
+    });
+  });
+
+  it("guides Safe setup when all three signers and the Safe are ready", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    process.env.AUTOLAUNCH_WALLET_ADDRESS =
+      "0x2222222222222222222222222222222222222222";
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "safe",
+        "wizard",
+        "--config",
+        configPath,
+        "--backup-signer-address",
+        "0x3333333333333333333333333333333333333333",
+        "--agent-safe-address",
+        "0x4444444444444444444444444444444444444444",
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(parsePrintedJson(output.stdout)).toMatchObject({
+      ok: true,
+      status: "ready_for_launch",
+      launch_ready: true,
+      threshold: "2-of-3",
+      agent_safe_address: "0x4444444444444444444444444444444444444444",
+      signers: {
+        agent: {
+          address: "0x00000000000000000000000000000000000000aa",
+          source: "config",
+        },
+        website: {
+          address: "0x2222222222222222222222222222222222222222",
+          source: "env",
+        },
+        backup: {
+          address: "0x3333333333333333333333333333333333333333",
+          source: "flag",
+        },
+      },
+    });
+  });
+
+  it("creates a Safe on Sepolia through the autolaunch CLI", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    process.env.AUTOLAUNCH_WALLET_ADDRESS =
+      "0x2222222222222222222222222222222222222222";
+    process.env.ETH_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "safe",
+        "create",
+        "--config",
+        configPath,
+        "--backup-signer-address",
+        "0x3333333333333333333333333333333333333333",
+        "--salt-nonce",
+        "12345",
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(safeInitMock).toHaveBeenCalledWith({
+      provider: "https://rpc.sepolia.example",
+      signer:
+        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      predictedSafe: {
+        safeAccountConfig: {
+          owners: [
+            "0x00000000000000000000000000000000000000aa",
+            "0x2222222222222222222222222222222222222222",
+            "0x3333333333333333333333333333333333333333",
+          ],
+          threshold: 2,
+        },
+        safeDeploymentConfig: {
+          saltNonce: "12345",
+        },
+      },
+    });
+    expect(sendTransactionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: "0x5555555555555555555555555555555555555555",
+        data: "0xabcdef",
+        value: 0n,
+      }),
+    );
+    expect(parsePrintedJson(output.stdout)).toMatchObject({
+      ok: true,
+      status: "created",
+      network: "ethereum-sepolia",
+      chain_id: 11155111,
+      threshold: "2-of-3",
+      safe_address: "0x4444444444444444444444444444444444444444",
+      deployment_tx_hash:
+        "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    });
+  });
+
+  it("returns the existing Safe address if that Safe is already deployed", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    process.env.AUTOLAUNCH_WALLET_ADDRESS =
+      "0x2222222222222222222222222222222222222222";
+    process.env.ETH_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+
+    safeInitMock.mockResolvedValueOnce({
+      getAddress: vi
+        .fn()
+        .mockResolvedValue("0x4444444444444444444444444444444444444444"),
+      isSafeDeployed: vi.fn().mockResolvedValue(true),
+      createSafeDeploymentTransaction: vi.fn(),
+      getContractVersion: vi.fn().mockReturnValue("1.4.1"),
+    });
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "safe",
+        "create",
+        "--config",
+        configPath,
+        "--backup-signer-address",
+        "0x3333333333333333333333333333333333333333",
+        "--salt-nonce",
+        "12345",
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(sendTransactionMock).not.toHaveBeenCalled();
+    expect(parsePrintedJson(output.stdout)).toMatchObject({
+      ok: true,
+      status: "already_deployed",
+      safe_address: "0x4444444444444444444444444444444444444444",
+      deployment_tx_hash: null,
+    });
+  });
+
+  it("tells the launch wizard to use the Safe wizard first when no Safe is provided", async () => {
+    const configPath = createConfigPath();
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "prelaunch",
+        "wizard",
+        "--config",
+        configPath,
+        "--agent",
+        "11155111:42",
+        "--name",
+        "Atlas Coin",
+        "--symbol",
+        "ATLAS",
+        "--minimum-raise-usdc",
+        "10000",
+      ]),
+    );
+
+    expect(output.result).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(
+      parsePrintedJson<{ error: { message: string } }>(output.stderr),
+    ).toEqual({
+      error: {
+        message:
+          "Agent Safe is required. Run `regent autolaunch safe wizard` first, then rerun with --agent-safe-address <safe>.",
+      },
     });
   });
 
   it("runs a launch from a saved plan and watches the job once", async () => {
     const configPath = createConfigPath();
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
     process.env.REGENT_WALLET_PRIVATE_KEY =
       "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
 
-    const planDir = path.join(path.dirname(configPath), "state", "autolaunch-plans");
+    const planDir = path.join(
+      path.dirname(configPath),
+      "state",
+      "autolaunch-plans",
+    );
     fs.mkdirSync(planDir, { recursive: true });
     fs.writeFileSync(
       path.join(planDir, "plan_alpha.json"),
@@ -960,7 +1451,8 @@ describe("autolaunch CLI command group", () => {
         saved_at: "2026-03-27T00:00:00Z",
         remote_plan: {
           plan_id: "plan_alpha",
-          fallback_operator_wallet: "0x00000000000000000000000000000000000000aa",
+          fallback_operator_wallet:
+            "0x00000000000000000000000000000000000000aa",
         },
       })}\n`,
       "utf8",
@@ -973,7 +1465,8 @@ describe("autolaunch CLI command group", () => {
             ok: true,
             plan: {
               plan_id: "plan_alpha",
-              fallback_operator_wallet: "0x00000000000000000000000000000000000000aa",
+              fallback_operator_wallet:
+                "0x00000000000000000000000000000000000000aa",
             },
           }),
           { status: 200, headers: { "content-type": "application/json" } },
@@ -999,7 +1492,11 @@ describe("autolaunch CLI command group", () => {
         new Response(
           JSON.stringify({
             ok: true,
-            plan: { plan_id: "plan_alpha", state: "launched", launch_job_id: "job_alpha" },
+            plan: {
+              plan_id: "plan_alpha",
+              state: "launched",
+              launch_job_id: "job_alpha",
+            },
             launch: { job_id: "job_alpha" },
           }),
           { status: 200, headers: { "content-type": "application/json" } },
@@ -1015,25 +1512,47 @@ describe("autolaunch CLI command group", () => {
           { status: 200, headers: { "content-type": "application/json" } },
         ),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const output = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "launch", "run", "--config", configPath, "--plan", "plan_alpha"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "launch",
+        "run",
+        "--config",
+        configPath,
+        "--plan",
+        "plan_alpha",
+      ]),
     );
 
     expect(output.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/prelaunch/plans/plan_alpha`);
-    expect(fetchMock.mock.calls[2]?.[0]).toBe(`${expectedBaseUrl}/v1/agent/siwa/nonce`);
-    expect(fetchMock.mock.calls[3]?.[0]).toBe(`${expectedBaseUrl}/api/prelaunch/plans/plan_alpha/launch`);
-    expect(fetchMock.mock.calls[4]?.[0]).toBe(`${expectedBaseUrl}/api/launch/jobs/job_alpha`);
-    expect(parsePrintedJson<{ job: { job_id: string; status: string } }>(output.stdout)).toMatchObject({
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/prelaunch/plans/plan_alpha`,
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/siwa/nonce`,
+    );
+    const siwaNonceRequest = fetchMock.mock.calls[2]?.[1];
+    expect(JSON.parse(String(siwaNonceRequest?.body))).toEqual({
+      wallet_address: "0x00000000000000000000000000000000000000aa",
+      chain_id: 11155111,
+      audience: "autolaunch",
+    });
+    expect(fetchMock.mock.calls[3]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/prelaunch/plans/plan_alpha/launch`,
+    );
+    expect(fetchMock.mock.calls[4]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/launch/jobs/job_alpha`,
+    );
+    expect(
+      parsePrintedJson<{ job: { job_id: string; status: string } }>(
+        output.stdout,
+      ),
+    ).toMatchObject({
       job: { job_id: "job_alpha", status: "ready" },
     });
   });
 
   it("shows lifecycle monitor, finalize, and vesting status through the new golden path", async () => {
-    process.env.AUTOLAUNCH_SESSION_COOKIE = "_autolaunch_key=abc";
-
     fetchMock
       .mockResolvedValueOnce(
         new Response(
@@ -1064,40 +1583,67 @@ describe("autolaunch CLI command group", () => {
           JSON.stringify({
             ok: true,
             job_id: "job_alpha",
-            vesting_wallet_address: "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            vesting_wallet_address:
+              "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             release_ready: true,
             releasable_launch_token: 25,
           }),
           { status: 200, headers: { "content-type": "application/json" } },
         ),
       );
-
-    const { runCliEntrypoint } = await import("../../src/index.js");
     const monitorOutput = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "launch", "monitor", "--job", "job_alpha"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "launch",
+        "monitor",
+        "--job",
+        "job_alpha",
+      ]),
     );
     const finalizeOutput = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "launch", "finalize", "--job", "job_alpha"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "launch",
+        "finalize",
+        "--job",
+        "job_alpha",
+      ]),
     );
     const vestingOutput = await captureOutput(() =>
-      runCliEntrypoint(["autolaunch", "vesting", "status", "--job", "job_alpha"]),
+      runCliEntrypoint([
+        "autolaunch",
+        "vesting",
+        "status",
+        "--job",
+        "job_alpha",
+      ]),
     );
 
     expect(monitorOutput.result).toBe(0);
     expect(finalizeOutput.result).toBe(0);
     expect(vestingOutput.result).toBe(0);
-    expect(fetchMock.mock.calls[0]?.[0]).toBe(`${expectedBaseUrl}/api/lifecycle/jobs/job_alpha`);
-    expect(fetchMock.mock.calls[1]?.[0]).toBe(
-      `${expectedBaseUrl}/api/lifecycle/jobs/job_alpha/finalize/prepare`,
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/lifecycle/jobs/job_alpha`,
     );
-    expect(fetchMock.mock.calls[2]?.[0]).toBe(`${expectedBaseUrl}/api/lifecycle/jobs/job_alpha/vesting`);
-    expect(parsePrintedJson<{ recommended_action: string }>(monitorOutput.stdout)).toMatchObject({
+    expect(fetchMock.mock.calls[1]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/lifecycle/jobs/job_alpha/finalize/prepare`,
+    );
+    expect(fetchMock.mock.calls[2]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/lifecycle/jobs/job_alpha/vesting`,
+    );
+    expect(
+      parsePrintedJson<{ recommended_action: string }>(monitorOutput.stdout),
+    ).toMatchObject({
       recommended_action: "migrate",
     });
-    expect(parsePrintedJson<{ prepared: { action: string } }>(finalizeOutput.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ prepared: { action: string } }>(finalizeOutput.stdout),
+    ).toMatchObject({
       prepared: { action: "migrate" },
     });
-    expect(parsePrintedJson<{ release_ready: boolean }>(vestingOutput.stdout)).toMatchObject({
+    expect(
+      parsePrintedJson<{ release_ready: boolean }>(vestingOutput.stdout),
+    ).toMatchObject({
       release_ready: true,
     });
   });

@@ -10,8 +10,16 @@ import type {
   paths as AutolaunchPaths,
 } from "../../generated/autolaunch-openapi.js";
 import { loadConfig } from "../../internal-runtime/config.js";
-import { FileWalletSecretSource, EnvWalletSecretSource } from "../../internal-runtime/agent/key-store.js";
-import { getBooleanFlag, getFlag, requireArg, type ParsedCliArgs } from "../../parse.js";
+import {
+  FileWalletSecretSource,
+  EnvWalletSecretSource,
+} from "../../internal-runtime/agent/key-store.js";
+import {
+  getBooleanFlag,
+  getFlag,
+  requireArg,
+  type ParsedCliArgs,
+} from "../../parse.js";
 import { printJson } from "../../printer.js";
 import type {
   JsonRequestBodyFor,
@@ -30,19 +38,31 @@ import {
 
 const execFileAsync = promisify(execFile);
 
-type AutolaunchAgentsListResponse = JsonSuccessResponseFor<AutolaunchPaths, "/api/agents", "get">;
-type AutolaunchAgentResponse = JsonSuccessResponseFor<AutolaunchPaths, "/api/agents/{id}", "get">;
+type AutolaunchAgentsListResponse = JsonSuccessResponseFor<
+  AutolaunchPaths,
+  "/v1/agent/agents",
+  "get"
+>;
+type AutolaunchAgentResponse = JsonSuccessResponseFor<
+  AutolaunchPaths,
+  "/v1/agent/agents/{id}",
+  "get"
+>;
 type AutolaunchAgentReadinessResponse = JsonSuccessResponseFor<
   AutolaunchPaths,
-  "/api/agents/{id}/readiness",
+  "/v1/agent/agents/{id}/readiness",
   "get"
 >;
 type AutolaunchAuctionsListResponse = JsonSuccessResponseFor<
   AutolaunchPaths,
-  "/api/auctions",
+  "/v1/agent/auctions",
   "get"
 >;
-type AutolaunchAuctionResponse = JsonSuccessResponseFor<AutolaunchPaths, "/api/auctions/{id}", "get">;
+type AutolaunchAuctionResponse = JsonSuccessResponseFor<
+  AutolaunchPaths,
+  "/v1/agent/auctions/{id}",
+  "get"
+>;
 type XLinkStartBody = {
   agent_id: string;
 };
@@ -54,14 +74,26 @@ type XLinkStartResponse = {
   redirect_path: string;
   [key: string]: unknown;
 };
-type LaunchPreviewBody = JsonRequestBodyFor<AutolaunchPaths, "/api/launch/preview", "post">;
-type LaunchPreviewResponse = JsonSuccessResponseFor<
+type LaunchPreviewBody = JsonRequestBodyFor<
   AutolaunchPaths,
-  "/api/launch/preview",
+  "/v1/agent/launch/preview",
   "post"
 >;
-type LaunchCreateBody = JsonRequestBodyFor<AutolaunchPaths, "/api/launch/jobs", "post">;
-type LaunchCreateResponse = JsonSuccessResponseFor<AutolaunchPaths, "/api/launch/jobs", "post">;
+type LaunchPreviewResponse = JsonSuccessResponseFor<
+  AutolaunchPaths,
+  "/v1/agent/launch/preview",
+  "post"
+>;
+type LaunchCreateBody = JsonRequestBodyFor<
+  AutolaunchPaths,
+  "/v1/agent/launch/jobs",
+  "post"
+>;
+type LaunchCreateResponse = JsonSuccessResponseFor<
+  AutolaunchPaths,
+  "/v1/agent/launch/jobs",
+  "post"
+>;
 
 const postBidMutation = async (
   action: "exit" | "claim",
@@ -69,19 +101,24 @@ const postBidMutation = async (
   txHash: string,
 ): Promise<void> => {
   printJson(
-    await requestJson("POST", `/api/bids/${encodeURIComponent(bidId)}/${action}`, {
-      body: { tx_hash: txHash },
-      requireSession: true,
-    }),
+    await requestJson(
+      "POST",
+      `/v1/agent/bids/${encodeURIComponent(bidId)}/${action}`,
+      {
+        body: { tx_hash: txHash },
+        requireAgentAuth: true,
+      },
+    ),
   );
 };
 
-const configuredPrivateKey = async (configPath?: string): Promise<`0x${string}`> => {
+const configuredPrivateKey = async (
+  configPath?: string,
+): Promise<`0x${string}`> => {
   const config = loadConfig(configPath);
-  const secretSource =
-    process.env[config.wallet.privateKeyEnv]
-      ? new EnvWalletSecretSource(config.wallet.privateKeyEnv)
-      : new FileWalletSecretSource(config.wallet.keystorePath);
+  const secretSource = process.env[config.wallet.privateKeyEnv]
+    ? new EnvWalletSecretSource(config.wallet.privateKeyEnv)
+    : new FileWalletSecretSource(config.wallet.keystorePath);
 
   return await secretSource.getPrivateKeyHex();
 };
@@ -98,8 +135,15 @@ const walletClientForChain = async (chainId: number, configPath?: string) => {
 
     return {
       chain: sepolia,
-      walletClient: createWalletClient({ account, chain: sepolia, transport: http(rpcUrl) }),
-      publicClient: createPublicClient({ chain: sepolia, transport: http(rpcUrl) }),
+      walletClient: createWalletClient({
+        account,
+        chain: sepolia,
+        transport: http(rpcUrl),
+      }),
+      publicClient: createPublicClient({
+        chain: sepolia,
+        transport: http(rpcUrl),
+      }),
       account,
     };
   }
@@ -107,13 +151,22 @@ const walletClientForChain = async (chainId: number, configPath?: string) => {
   if (chainId === 8_453) {
     const rpcUrl = process.env.BASE_MAINNET_RPC_URL ?? process.env.BASE_RPC_URL;
     if (!rpcUrl) {
-      throw new Error("missing BASE_MAINNET_RPC_URL or BASE_RPC_URL for submit mode");
+      throw new Error(
+        "missing BASE_MAINNET_RPC_URL or BASE_RPC_URL for submit mode",
+      );
     }
 
     return {
       chain: base,
-      walletClient: createWalletClient({ account, chain: base, transport: http(rpcUrl) }),
-      publicClient: createPublicClient({ chain: base, transport: http(rpcUrl) }),
+      walletClient: createWalletClient({
+        account,
+        chain: base,
+        transport: http(rpcUrl),
+      }),
+      publicClient: createPublicClient({
+        chain: base,
+        transport: http(rpcUrl),
+      }),
       account,
     };
   }
@@ -130,7 +183,8 @@ const submitTxRequest = async (
     throw new Error("tx_request.chain_id is missing");
   }
 
-  const { chain, walletClient, publicClient, account } = await walletClientForChain(chainId, configPath);
+  const { chain, walletClient, publicClient, account } =
+    await walletClientForChain(chainId, configPath);
   const txHash = await (walletClient as any).sendTransaction({
     account,
     chain,
@@ -150,7 +204,10 @@ const prepareOrSubmitWrite = async (
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> => {
-  const prepared = await requestJson(method, path, { body, requireSession: true });
+  const prepared = await requestJson(method, path, {
+    body,
+    requireAgentAuth: true,
+  });
 
   if (!getBooleanFlag(args, "submit")) {
     printJson(prepared);
@@ -171,7 +228,7 @@ const prepareOrSubmitWrite = async (
   printJson(
     await requestJson(method, path, {
       body: { ...body, tx_hash: txHash },
-      requireSession: true,
+      requireAgentAuth: true,
     }),
   );
 };
@@ -183,7 +240,10 @@ const prepareOrSubmitPreparedOnly = async (
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> => {
-  const prepared = await requestJson(method, path, { body, requireSession: true });
+  const prepared = await requestJson(method, path, {
+    body,
+    requireAgentAuth: true,
+  });
 
   if (!getBooleanFlag(args, "submit")) {
     printJson(prepared);
@@ -225,39 +285,59 @@ const openBrowser = async (url: string): Promise<boolean> => {
   }
 };
 
-export async function runAutolaunchAgentsList(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchAgentsList(
+  args: ParsedCliArgs,
+): Promise<void> {
   printJson(
     await requestTypedJson<AutolaunchAgentsListResponse>(
       "GET",
-      appendQuery("/api/agents", { launchable: getBooleanFlag(args, "launchable") }),
+      appendQuery("/v1/agent/agents", {
+        launchable: getBooleanFlag(args, "launchable"),
+      }),
     ),
   );
 }
 
 export async function runAutolaunchAgentShow(agentId: string): Promise<void> {
   printJson(
-    await requestTypedJson<AutolaunchAgentResponse>("GET", `/api/agents/${encodeURIComponent(agentId)}`),
-  );
-}
-
-export async function runAutolaunchAgentReadiness(agentId: string): Promise<void> {
-  printJson(
-    await requestTypedJson<AutolaunchAgentReadinessResponse>(
+    await requestTypedJson<AutolaunchAgentResponse>(
       "GET",
-      `/api/agents/${encodeURIComponent(agentId)}/readiness`,
+      `/v1/agent/agents/${encodeURIComponent(agentId)}`,
     ),
   );
 }
 
-export async function runAutolaunchTrustXLink(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchAgentReadiness(
+  agentId: string,
+): Promise<void> {
+  printJson(
+    await requestTypedJson<AutolaunchAgentReadinessResponse>(
+      "GET",
+      `/v1/agent/agents/${encodeURIComponent(agentId)}/readiness`,
+    ),
+  );
+}
+
+export async function runAutolaunchTrustXLink(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const body: XLinkStartBody = {
     agent_id: requireArg(getFlag(args, "agent"), "agent"),
   };
-  const response = await requestTypedJson<XLinkStartResponse>("POST", "/api/trust/x/start", {
-    body,
-    requireSession: true,
-  });
-  const redirectUrl = new URL(response.redirect_path, `${baseUrl()}/`).toString();
+  const response = await requestTypedJson<XLinkStartResponse>(
+    "POST",
+    "/v1/agent/trust/x/start",
+    {
+      body,
+      requireAgentAuth: true,
+      configPath,
+    },
+  );
+  const redirectUrl = new URL(
+    response.redirect_path,
+    `${baseUrl()}/`,
+  ).toString();
   const browserOpened = await openBrowser(redirectUrl);
 
   printJson({
@@ -274,30 +354,42 @@ export async function runAutolaunchTrustXLink(args: ParsedCliArgs): Promise<void
   });
 }
 
-export async function runAutolaunchLaunchPreview(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchLaunchPreview(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const required = requireLaunchIdentity(args);
   const body: LaunchPreviewBody = {
     agent_id: required.agent,
     chain_id: Number(required.chainId),
     token_name: required.name,
     token_symbol: required.symbol,
-    recovery_safe_address: required.treasuryAddress,
-    auction_proceeds_recipient: required.treasuryAddress,
-    ethereum_revenue_treasury: required.treasuryAddress,
-    minimum_raise_usdc: requireArg(getFlag(args, "minimum-raise-usdc"), "minimum-raise-usdc"),
+    agent_safe_address: required.agentSafeAddress,
+    minimum_raise_usdc: requireArg(
+      getFlag(args, "minimum-raise-usdc"),
+      "minimum-raise-usdc",
+    ),
     total_supply: AGENT_LAUNCH_TOTAL_SUPPLY,
     launch_notes: getFlag(args, "launch-notes"),
   };
 
   printJson(
-    await requestTypedJson<LaunchPreviewResponse>("POST", "/api/launch/preview", {
-      body,
-      requireSession: true,
-    }),
+    await requestTypedJson<LaunchPreviewResponse>(
+      "POST",
+      "/v1/agent/launch/preview",
+      {
+        body,
+        requireAgentAuth: true,
+        configPath,
+      },
+    ),
   );
 }
 
-export async function runAutolaunchLaunchCreate(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchLaunchCreate(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const required = requireLaunchIdentity(args);
 
   const body: LaunchCreateBody = {
@@ -305,13 +397,17 @@ export async function runAutolaunchLaunchCreate(args: ParsedCliArgs): Promise<vo
     chain_id: Number(required.chainId),
     token_name: required.name,
     token_symbol: required.symbol,
-    recovery_safe_address: required.treasuryAddress,
-    auction_proceeds_recipient: required.treasuryAddress,
-    ethereum_revenue_treasury: required.treasuryAddress,
-    minimum_raise_usdc: requireArg(getFlag(args, "minimum-raise-usdc"), "minimum-raise-usdc"),
+    agent_safe_address: required.agentSafeAddress,
+    minimum_raise_usdc: requireArg(
+      getFlag(args, "minimum-raise-usdc"),
+      "minimum-raise-usdc",
+    ),
     total_supply: AGENT_LAUNCH_TOTAL_SUPPLY,
     launch_notes: getFlag(args, "launch-notes"),
-    wallet_address: requireArg(getFlag(args, "wallet-address"), "wallet-address"),
+    wallet_address: requireArg(
+      getFlag(args, "wallet-address"),
+      "wallet-address",
+    ),
     nonce: requireArg(getFlag(args, "nonce"), "nonce"),
     message: requireArg(getFlag(args, "message"), "message"),
     signature: requireArg(getFlag(args, "signature"), "signature"),
@@ -319,27 +415,40 @@ export async function runAutolaunchLaunchCreate(args: ParsedCliArgs): Promise<vo
   };
 
   printJson(
-    await requestTypedJson<LaunchCreateResponse>("POST", "/api/launch/jobs", {
+    await requestTypedJson<LaunchCreateResponse>("POST", "/v1/agent/launch/jobs", {
       body,
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-export async function runAutolaunchJobsWatch(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchJobsWatch(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const jobId = requirePositional(args, 3, "job-id");
   const intervalSeconds = parsePollingIntervalSeconds(args);
   const shouldWatch = getBooleanFlag(args, "watch");
 
   for (;;) {
-    const payload = await requestJson("GET", `/api/launch/jobs/${encodeURIComponent(jobId)}`);
+    const payload = await requestJson(
+      "GET",
+      `/v1/agent/launch/jobs/${encodeURIComponent(jobId)}`,
+      { requireAgentAuth: true, configPath },
+    );
     printJson(payload);
 
     const status =
       typeof payload.job === "object" && payload.job
         ? (payload.job as Record<string, unknown>).status
         : undefined;
-    if (!shouldWatch || status === "ready" || status === "failed" || status === "blocked") {
+    if (
+      !shouldWatch ||
+      status === "ready" ||
+      status === "failed" ||
+      status === "blocked"
+    ) {
       return;
     }
 
@@ -347,11 +456,13 @@ export async function runAutolaunchJobsWatch(args: ParsedCliArgs): Promise<void>
   }
 }
 
-export async function runAutolaunchAuctionsList(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchAuctionsList(
+  args: ParsedCliArgs,
+): Promise<void> {
   printJson(
     await requestTypedJson<AutolaunchAuctionsListResponse>(
       "GET",
-      appendQuery("/api/auctions", {
+      appendQuery("/v1/agent/auctions", {
         sort: getFlag(args, "sort") ?? "hottest",
         status: getFlag(args, "status"),
         chain: getFlag(args, "chain"),
@@ -361,16 +472,20 @@ export async function runAutolaunchAuctionsList(args: ParsedCliArgs): Promise<vo
   );
 }
 
-export async function runAutolaunchAuctionShow(auctionId: string): Promise<void> {
+export async function runAutolaunchAuctionShow(
+  auctionId: string,
+): Promise<void> {
   printJson(
     await requestTypedJson<AutolaunchAuctionResponse>(
       "GET",
-      `/api/auctions/${encodeURIComponent(auctionId)}`,
+      `/v1/agent/auctions/${encodeURIComponent(auctionId)}`,
     ),
   );
 }
 
-export async function runAutolaunchBidsQuote(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchBidsQuote(
+  args: ParsedCliArgs,
+): Promise<void> {
   const auctionId = requireArg(getFlag(args, "auction"), "auction");
   const body = {
     amount: requireArg(getFlag(args, "amount"), "amount"),
@@ -378,13 +493,19 @@ export async function runAutolaunchBidsQuote(args: ParsedCliArgs): Promise<void>
   };
 
   printJson(
-    await requestJson("POST", `/api/auctions/${encodeURIComponent(auctionId)}/bid_quote`, {
-      body,
-    }),
+    await requestJson(
+      "POST",
+      `/v1/agent/auctions/${encodeURIComponent(auctionId)}/bid_quote`,
+      {
+        body,
+      },
+    ),
   );
 }
 
-export async function runAutolaunchBidsPlace(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchBidsPlace(
+  args: ParsedCliArgs,
+): Promise<void> {
   const auctionId = requireArg(getFlag(args, "auction"), "auction");
   const body = {
     amount: requireArg(getFlag(args, "amount"), "amount"),
@@ -402,53 +523,81 @@ export async function runAutolaunchBidsPlace(args: ParsedCliArgs): Promise<void>
   };
 
   printJson(
-    await requestJson("POST", `/api/auctions/${encodeURIComponent(auctionId)}/bids`, {
-      body,
-      requireSession: true,
-    }),
-  );
-}
-
-export async function runAutolaunchBidsMine(args: ParsedCliArgs): Promise<void> {
-  printJson(
     await requestJson(
-      "GET",
-      appendQuery("/api/me/bids", {
-        auction: getFlag(args, "auction"),
-        status: getFlag(args, "status"),
-      }),
-      { requireSession: true },
+      "POST",
+      `/v1/agent/auctions/${encodeURIComponent(auctionId)}/bids`,
+      {
+        body,
+        requireAgentAuth: true,
+      },
     ),
   );
 }
 
-export async function runAutolaunchBidsExit(args: ParsedCliArgs): Promise<void> {
-  const bidId = requirePositional(args, 3, "bid-id");
-  await postBidMutation("exit", bidId, requireArg(getFlag(args, "tx-hash"), "tx-hash"));
+export async function runAutolaunchBidsMine(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  printJson(
+    await requestJson(
+      "GET",
+      appendQuery("/v1/agent/me/bids", {
+        auction: getFlag(args, "auction"),
+        status: getFlag(args, "status"),
+      }),
+      { requireAgentAuth: true, configPath },
+    ),
+  );
 }
 
-export async function runAutolaunchBidsClaim(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchBidsExit(
+  args: ParsedCliArgs,
+): Promise<void> {
   const bidId = requirePositional(args, 3, "bid-id");
-  await postBidMutation("claim", bidId, requireArg(getFlag(args, "tx-hash"), "tx-hash"));
+  await postBidMutation(
+    "exit",
+    bidId,
+    requireArg(getFlag(args, "tx-hash"), "tx-hash"),
+  );
 }
 
-const loadTrackedPositions = async (args: ParsedCliArgs) =>
+export async function runAutolaunchBidsClaim(
+  args: ParsedCliArgs,
+): Promise<void> {
+  const bidId = requirePositional(args, 3, "bid-id");
+  await postBidMutation(
+    "claim",
+    bidId,
+    requireArg(getFlag(args, "tx-hash"), "tx-hash"),
+  );
+}
+
+const loadTrackedPositions = async (
+  args: ParsedCliArgs,
+  configPath?: string,
+) =>
   requestJson(
     "GET",
-    appendQuery("/api/me/bids", {
+    appendQuery("/v1/agent/me/bids", {
       auction: getFlag(args, "auction"),
       status: getFlag(args, "status"),
     }),
-    { requireSession: true },
+    { requireAgentAuth: true, configPath },
   );
 
 const requireTrackedPosition = async (
   bidId: string,
   args: ParsedCliArgs,
+  configPath?: string,
 ): Promise<Record<string, unknown>> => {
-  const payload = await loadTrackedPositions(args);
+  const payload = await loadTrackedPositions(args, configPath);
   const items = Array.isArray(payload.items) ? payload.items : [];
-  const position = items.find((item) => typeof item === "object" && item && (item as Record<string, unknown>).bid_id === bidId);
+  const position = items.find(
+    (item) =>
+      typeof item === "object" &&
+      item &&
+      (item as Record<string, unknown>).bid_id === bidId,
+  );
   if (!position || typeof position !== "object") {
     throw new Error(`tracked bid not found: ${bidId}`);
   }
@@ -462,7 +611,7 @@ const prepareOrSubmitPositionAction = async (
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> => {
-  const position = await requireTrackedPosition(bidId, args);
+  const position = await requireTrackedPosition(bidId, args, configPath);
 
   const prepared =
     kind === "return-usdc"
@@ -472,7 +621,12 @@ const prepareOrSubmitPositionAction = async (
         ] as Record<string, unknown> | undefined);
 
   if (!prepared) {
-    printJson({ ok: false, error: `no ${kind} action is currently available`, bid_id: bidId, position });
+    printJson({
+      ok: false,
+      error: `no ${kind} action is currently available`,
+      bid_id: bidId,
+      position,
+    });
     return;
   }
 
@@ -483,60 +637,86 @@ const prepareOrSubmitPositionAction = async (
 
   const txRequest = prepared.tx_request as Record<string, unknown> | undefined;
   if (!txRequest) {
-    printJson({ ok: false, error: "prepared action did not include tx_request", bid_id: bidId });
+    printJson({
+      ok: false,
+      error: "prepared action did not include tx_request",
+      bid_id: bidId,
+    });
     return;
   }
 
   const txHash = await submitTxRequest(txRequest, configPath);
   const endpoint =
     kind === "return-usdc"
-      ? `/api/bids/${encodeURIComponent(bidId)}/return-usdc`
-      : `/api/bids/${encodeURIComponent(bidId)}/${kind}`;
+      ? `/v1/agent/bids/${encodeURIComponent(bidId)}/return-usdc`
+      : `/v1/agent/bids/${encodeURIComponent(bidId)}/${kind}`;
 
   printJson(
     await requestJson("POST", endpoint, {
       body: { tx_hash: txHash },
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 };
 
-export async function runAutolaunchAuctionReturnsList(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchAuctionReturnsList(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   printJson(
     await requestJson(
       "GET",
-      appendQuery("/api/auction-returns", {
+      appendQuery("/v1/agent/auction-returns", {
         limit: getFlag(args, "limit"),
         offset: getFlag(args, "offset"),
       }),
-      { requireSession: true },
+      { requireAgentAuth: true, configPath },
     ),
   );
 }
 
-export async function runAutolaunchPositionsList(args: ParsedCliArgs): Promise<void> {
-  printJson(await loadTrackedPositions(args));
+export async function runAutolaunchPositionsList(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  printJson(await loadTrackedPositions(args, configPath));
 }
 
 export async function runAutolaunchPositionsReturnUsdc(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
-  await prepareOrSubmitPositionAction(requirePositional(args, 3, "bid-id"), "return-usdc", args, configPath);
+  await prepareOrSubmitPositionAction(
+    requirePositional(args, 3, "bid-id"),
+    "return-usdc",
+    args,
+    configPath,
+  );
 }
 
 export async function runAutolaunchPositionsExit(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
-  await prepareOrSubmitPositionAction(requirePositional(args, 3, "bid-id"), "exit", args, configPath);
+  await prepareOrSubmitPositionAction(
+    requirePositional(args, 3, "bid-id"),
+    "exit",
+    args,
+    configPath,
+  );
 }
 
 export async function runAutolaunchPositionsClaim(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
-  await prepareOrSubmitPositionAction(requirePositional(args, 3, "bid-id"), "claim", args, configPath);
+  await prepareOrSubmitPositionAction(
+    requirePositional(args, 3, "bid-id"),
+    "claim",
+    args,
+    configPath,
+  );
 }
 
 const buildEnsLinkBody = (args: ParsedCliArgs): Record<string, unknown> => {
@@ -571,43 +751,60 @@ const buildEnsLinkBody = (args: ParsedCliArgs): Record<string, unknown> => {
   return body;
 };
 
-export async function runAutolaunchEnsPlan(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchEnsPlan(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   printJson(
-    await requestJson("POST", "/api/ens/link/plan", {
+    await requestJson("POST", "/v1/agent/ens/link/plan", {
       body: buildEnsLinkBody(args),
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-export async function runAutolaunchEnsPrepareEnsip25(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchEnsPrepareEnsip25(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   printJson(
-    await requestJson("POST", "/api/ens/link/prepare-ensip25", {
+    await requestJson("POST", "/v1/agent/ens/link/prepare-ensip25", {
       body: buildEnsLinkBody(args),
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-export async function runAutolaunchEnsPrepareErc8004(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchEnsPrepareErc8004(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   printJson(
-    await requestJson("POST", "/api/ens/link/prepare-erc8004", {
+    await requestJson("POST", "/v1/agent/ens/link/prepare-erc8004", {
       body: buildEnsLinkBody(args),
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-export async function runAutolaunchEnsPrepareBidirectional(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchEnsPrepareBidirectional(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   printJson(
-    await requestJson("POST", "/api/ens/link/prepare-bidirectional", {
+    await requestJson("POST", "/v1/agent/ens/link/prepare-bidirectional", {
       body: buildEnsLinkBody(args),
-      requireSession: true,
+      requireAgentAuth: true,
+      configPath,
     }),
   );
 }
 
-const requireJobFlag = (args: ParsedCliArgs): string => requireArg(getFlag(args, "job"), "job");
+const requireJobFlag = (args: ParsedCliArgs): string =>
+  requireArg(getFlag(args, "job"), "job");
 const requireSubjectFlag = (args: ParsedCliArgs): string =>
   requireArg(getFlag(args, "subject"), "subject");
 
@@ -616,14 +813,15 @@ const postPrepareJobAction = async (
   resource: string,
   action: string,
   body: Record<string, unknown> = {},
+  configPath?: string,
 ): Promise<void> => {
   const jobId = requireJobFlag(args);
 
   printJson(
     await requestJson(
       "POST",
-      `/api/contracts/jobs/${encodeURIComponent(jobId)}/${resource}/${action}/prepare`,
-      { body, requireSession: true },
+      `/v1/agent/contracts/jobs/${encodeURIComponent(jobId)}/${resource}/${action}/prepare`,
+      { body, requireAgentAuth: true, configPath },
     ),
   );
 };
@@ -633,14 +831,15 @@ const postPrepareSubjectAction = async (
   resource: string,
   action: string,
   body: Record<string, unknown> = {},
+  configPath?: string,
 ): Promise<void> => {
   const subjectId = requireSubjectFlag(args);
 
   printJson(
     await requestJson(
       "POST",
-      `/api/contracts/subjects/${encodeURIComponent(subjectId)}/${resource}/${action}/prepare`,
-      { body, requireSession: true },
+      `/v1/agent/contracts/subjects/${encodeURIComponent(subjectId)}/${resource}/${action}/prepare`,
+      { body, requireAgentAuth: true, configPath },
     ),
   );
 };
@@ -649,23 +848,46 @@ const postPrepareAdminAction = async (
   resource: string,
   action: string,
   body: Record<string, unknown> = {},
+  configPath?: string,
 ): Promise<void> => {
   printJson(
-    await requestJson("POST", `/api/contracts/admin/${resource}/${action}/prepare`, {
-      body,
-      requireSession: true,
-    }),
+    await requestJson(
+      "POST",
+      `/v1/agent/contracts/admin/${resource}/${action}/prepare`,
+      {
+        body,
+        requireAgentAuth: true,
+        configPath,
+      },
+    ),
   );
 };
 
-export async function runAutolaunchSubjectShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSubjectShow(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const subjectId = requirePositional(args, 3, "subject-id");
-  printJson(await requestJson("GET", `/api/subjects/${encodeURIComponent(subjectId)}`, { requireSession: true }));
+  printJson(
+    await requestJson("GET", `/v1/agent/subjects/${encodeURIComponent(subjectId)}`, {
+      requireAgentAuth: true,
+      configPath,
+    }),
+  );
 }
 
-export async function runAutolaunchSubjectIngress(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSubjectIngress(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const subjectId = requirePositional(args, 3, "subject-id");
-  printJson(await requestJson("GET", `/api/subjects/${encodeURIComponent(subjectId)}/ingress`, { requireSession: true }));
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/subjects/${encodeURIComponent(subjectId)}/ingress`,
+      { requireAgentAuth: true, configPath },
+    ),
+  );
 }
 
 export async function runAutolaunchSubjectStake(
@@ -675,7 +897,7 @@ export async function runAutolaunchSubjectStake(
   const subjectId = requirePositional(args, 3, "subject-id");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/stake`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/stake`,
     { amount: requireArg(getFlag(args, "amount"), "amount") },
     args,
     configPath,
@@ -689,7 +911,7 @@ export async function runAutolaunchSubjectUnstake(
   const subjectId = requirePositional(args, 3, "subject-id");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/unstake`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/unstake`,
     { amount: requireArg(getFlag(args, "amount"), "amount") },
     args,
     configPath,
@@ -703,7 +925,7 @@ export async function runAutolaunchSubjectClaimUsdc(
   const subjectId = requirePositional(args, 3, "subject-id");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-usdc`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-usdc`,
     {},
     args,
     configPath,
@@ -717,7 +939,7 @@ export async function runAutolaunchSubjectClaimEmissions(
   const subjectId = requirePositional(args, 3, "subject-id");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
     {},
     args,
     configPath,
@@ -731,7 +953,7 @@ export async function runAutolaunchSubjectClaimAndStakeEmissions(
   const subjectId = requirePositional(args, 3, "subject-id");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
     {},
     args,
     configPath,
@@ -747,21 +969,23 @@ export async function runAutolaunchSubjectSweepIngress(
 
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/ingress/${encodeURIComponent(address)}/sweep`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/ingress/${encodeURIComponent(address)}/sweep`,
     {},
     args,
     configPath,
   );
 }
 
-export async function runAutolaunchHoldingsList(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchHoldingsList(
+  args: ParsedCliArgs,
+): Promise<void> {
   printJson(
     await requestJson(
       "GET",
-      appendQuery("/api/me/holdings", {
+      appendQuery("/v1/agent/me/holdings", {
         subject: getFlag(args, "subject"),
       }),
-      { requireSession: true },
+      { requireAgentAuth: true },
     ),
   );
 }
@@ -776,7 +1000,7 @@ export async function runAutolaunchHoldingsStake(
   const subjectId = requireHoldingSubjectId(args);
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/stake`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/stake`,
     { amount: requireArg(getFlag(args, "amount"), "amount") },
     args,
     configPath,
@@ -790,7 +1014,7 @@ export async function runAutolaunchHoldingsUnstake(
   const subjectId = requireHoldingSubjectId(args);
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/unstake`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/unstake`,
     { amount: requireArg(getFlag(args, "amount"), "amount") },
     args,
     configPath,
@@ -804,7 +1028,7 @@ export async function runAutolaunchHoldingsClaimUsdc(
   const subjectId = requireHoldingSubjectId(args);
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-usdc`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-usdc`,
     {},
     args,
     configPath,
@@ -818,7 +1042,7 @@ export async function runAutolaunchHoldingsClaimEmissions(
   const subjectId = requireHoldingSubjectId(args);
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
     {},
     args,
     configPath,
@@ -832,7 +1056,7 @@ export async function runAutolaunchHoldingsClaimAndStakeEmissions(
   const subjectId = requireHoldingSubjectId(args);
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
     {},
     args,
     configPath,
@@ -847,58 +1071,120 @@ export async function runAutolaunchHoldingsSweepIngress(
   const ingressAddress = requireArg(getFlag(args, "address"), "address");
   await prepareOrSubmitWrite(
     "POST",
-    `/api/subjects/${encodeURIComponent(subjectId)}/ingress/${encodeURIComponent(ingressAddress)}/sweep`,
+    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/ingress/${encodeURIComponent(ingressAddress)}/sweep`,
     {},
     args,
     configPath,
   );
 }
 
-export async function runAutolaunchContractsAdminShow(): Promise<void> {
-  printJson(await requestJson("GET", "/api/contracts/admin", { requireSession: true }));
+export async function runAutolaunchContractsAdminShow(
+  configPath?: string,
+): Promise<void> {
+  printJson(
+    await requestJson("GET", "/v1/agent/contracts/admin", {
+      requireAgentAuth: true,
+      configPath,
+    }),
+  );
 }
 
-export async function runAutolaunchContractsJobShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchContractsJobShow(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const jobId = requireJobFlag(args);
-  printJson(await requestJson("GET", `/api/contracts/jobs/${encodeURIComponent(jobId)}`, { requireSession: true }));
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/contracts/jobs/${encodeURIComponent(jobId)}`,
+      { requireAgentAuth: true, configPath },
+    ),
+  );
 }
 
-export async function runAutolaunchContractsSubjectShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchContractsSubjectShow(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const subjectId = requireSubjectFlag(args);
-  printJson(await requestJson("GET", `/api/contracts/subjects/${encodeURIComponent(subjectId)}`, { requireSession: true }));
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/contracts/subjects/${encodeURIComponent(subjectId)}`,
+      { requireAgentAuth: true, configPath },
+    ),
+  );
 }
 
-export async function runAutolaunchStrategyMigrate(args: ParsedCliArgs): Promise<void> {
-  await postPrepareJobAction(args, "strategy", "migrate");
+export async function runAutolaunchStrategyMigrate(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  await postPrepareJobAction(args, "strategy", "migrate", {}, configPath);
 }
 
-export async function runAutolaunchStrategySweepToken(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchStrategySweepToken(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "strategy", "sweep_token");
 }
 
-export async function runAutolaunchStrategySweepCurrency(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchStrategySweepCurrency(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "strategy", "sweep_currency");
 }
 
-export async function runAutolaunchVestingRelease(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchVestingRelease(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "vesting", "release");
 }
 
-export async function runAutolaunchFeeRegistryShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchVestingProposeBeneficiaryRotation(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareJobAction(args, "vesting", "propose_beneficiary_rotation", {
+    beneficiary: requireArg(getFlag(args, "beneficiary"), "beneficiary"),
+  });
+}
+
+export async function runAutolaunchVestingCancelBeneficiaryRotation(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareJobAction(args, "vesting", "cancel_beneficiary_rotation");
+}
+
+export async function runAutolaunchVestingExecuteBeneficiaryRotation(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareJobAction(args, "vesting", "execute_beneficiary_rotation");
+}
+
+export async function runAutolaunchFeeRegistryShow(
+  args: ParsedCliArgs,
+): Promise<void> {
   await runAutolaunchContractsJobShow(args);
 }
 
-export async function runAutolaunchFeeRegistrySetHookEnabled(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchFeeRegistrySetHookEnabled(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "fee_registry", "set_hook_enabled", {
     enabled: requireArg(getFlag(args, "enabled"), "enabled"),
   });
 }
 
-export async function runAutolaunchFeeVaultShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchFeeVaultShow(
+  args: ParsedCliArgs,
+): Promise<void> {
   await runAutolaunchContractsJobShow(args);
 }
 
-export async function runAutolaunchFeeVaultWithdrawTreasury(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchFeeVaultWithdrawTreasury(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "fee_vault", "withdraw_treasury", {
     currency: requireArg(getFlag(args, "currency"), "currency"),
     amount: requireArg(getFlag(args, "amount"), "amount"),
@@ -906,7 +1192,9 @@ export async function runAutolaunchFeeVaultWithdrawTreasury(args: ParsedCliArgs)
   });
 }
 
-export async function runAutolaunchFeeVaultWithdrawRegent(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchFeeVaultWithdrawRegent(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareJobAction(args, "fee_vault", "withdraw_regent_share", {
     currency: requireArg(getFlag(args, "currency"), "currency"),
     amount: requireArg(getFlag(args, "amount"), "amount"),
@@ -914,28 +1202,59 @@ export async function runAutolaunchFeeVaultWithdrawRegent(args: ParsedCliArgs): 
   });
 }
 
-export async function runAutolaunchSplitterShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSplitterShow(
+  args: ParsedCliArgs,
+): Promise<void> {
   await runAutolaunchContractsSubjectShow(args);
 }
 
-export async function runAutolaunchSplitterSetPaused(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSplitterSetPaused(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "splitter", "set_paused", {
     paused: requireArg(getFlag(args, "paused"), "paused"),
   });
 }
 
-export async function runAutolaunchSplitterSetLabel(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSplitterSetLabel(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "splitter", "set_label", {
     label: requireArg(getFlag(args, "label"), "label"),
   });
 }
 
-export async function runAutolaunchSplitterSetTreasuryRecipient(
+export async function runAutolaunchSplitterProposeTreasuryRecipientRotation(
   args: ParsedCliArgs,
 ): Promise<void> {
-  await postPrepareSubjectAction(args, "splitter", "set_treasury_recipient", {
-    recipient: requireArg(getFlag(args, "recipient"), "recipient"),
-  });
+  await postPrepareSubjectAction(
+    args,
+    "splitter",
+    "propose_treasury_recipient_rotation",
+    {
+      recipient: requireArg(getFlag(args, "recipient"), "recipient"),
+    },
+  );
+}
+
+export async function runAutolaunchSplitterCancelTreasuryRecipientRotation(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareSubjectAction(
+    args,
+    "splitter",
+    "cancel_treasury_recipient_rotation",
+  );
+}
+
+export async function runAutolaunchSplitterExecuteTreasuryRecipientRotation(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareSubjectAction(
+    args,
+    "splitter",
+    "execute_treasury_recipient_rotation",
+  );
 }
 
 export async function runAutolaunchSplitterSetProtocolRecipient(
@@ -954,51 +1273,59 @@ export async function runAutolaunchSplitterSetProtocolSkimBps(
   });
 }
 
-export async function runAutolaunchSplitterWithdrawTreasuryResidual(
+export async function runAutolaunchSplitterSweepTreasuryResidual(
   args: ParsedCliArgs,
 ): Promise<void> {
-  await postPrepareSubjectAction(args, "splitter", "withdraw_treasury_residual", {
+  await postPrepareSubjectAction(args, "splitter", "sweep_treasury_residual", {
     amount: requireArg(getFlag(args, "amount"), "amount"),
-    recipient: requireArg(getFlag(args, "recipient"), "recipient"),
   });
 }
 
-export async function runAutolaunchSplitterWithdrawProtocolReserve(
+export async function runAutolaunchSplitterSweepProtocolReserve(
   args: ParsedCliArgs,
 ): Promise<void> {
-  await postPrepareSubjectAction(args, "splitter", "withdraw_protocol_reserve", {
+  await postPrepareSubjectAction(args, "splitter", "sweep_protocol_reserve", {
     amount: requireArg(getFlag(args, "amount"), "amount"),
-    recipient: requireArg(getFlag(args, "recipient"), "recipient"),
   });
 }
 
-export async function runAutolaunchSplitterReassignDust(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchSplitterReassignDust(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "splitter", "reassign_dust", {
     amount: requireArg(getFlag(args, "amount"), "amount"),
   });
 }
 
-export async function runAutolaunchIngressCreate(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchIngressCreate(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "ingress_factory", "create", {
     label: requireArg(getFlag(args, "label"), "label"),
     make_default: getFlag(args, "make-default") ?? "false",
   });
 }
 
-export async function runAutolaunchIngressSetDefault(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchIngressSetDefault(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "ingress_factory", "set_default", {
     ingress_address: requireArg(getFlag(args, "address"), "address"),
   });
 }
 
-export async function runAutolaunchIngressSetLabel(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchIngressSetLabel(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "ingress_account", "set_label", {
     ingress_address: requireArg(getFlag(args, "address"), "address"),
     label: requireArg(getFlag(args, "label"), "label"),
   });
 }
 
-export async function runAutolaunchIngressRescue(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchIngressRescue(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "ingress_account", "rescue", {
     ingress_address: requireArg(getFlag(args, "address"), "address"),
     token: requireArg(getFlag(args, "token"), "token"),
@@ -1007,7 +1334,9 @@ export async function runAutolaunchIngressRescue(args: ParsedCliArgs): Promise<v
   });
 }
 
-export async function runAutolaunchRegistryShow(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchRegistryShow(
+  args: ParsedCliArgs,
+): Promise<void> {
   await runAutolaunchContractsSubjectShow(args);
 }
 
@@ -1020,28 +1349,57 @@ export async function runAutolaunchRegistrySetSubjectManager(
   });
 }
 
-export async function runAutolaunchRegistryLinkIdentity(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchRegistryLinkIdentity(
+  args: ParsedCliArgs,
+): Promise<void> {
   await postPrepareSubjectAction(args, "registry", "link_identity", {
-    identity_chain_id: requireArg(getFlag(args, "identity-chain-id"), "identity-chain-id"),
-    identity_registry: requireArg(getFlag(args, "identity-registry"), "identity-registry"),
-    identity_agent_id: requireArg(getFlag(args, "identity-agent-id"), "identity-agent-id"),
+    identity_chain_id: requireArg(
+      getFlag(args, "identity-chain-id"),
+      "identity-chain-id",
+    ),
+    identity_registry: requireArg(
+      getFlag(args, "identity-registry"),
+      "identity-registry",
+    ),
+    identity_agent_id: requireArg(
+      getFlag(args, "identity-agent-id"),
+      "identity-agent-id",
+    ),
+  });
+}
+
+export async function runAutolaunchRegistryRotateSafe(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareSubjectAction(args, "registry", "rotate_safe", {
+    new_safe: requireArg(getFlag(args, "new-safe"), "new-safe"),
   });
 }
 
 export async function runAutolaunchRevenueShareFactorySetAuthorizedCreator(
   args: ParsedCliArgs,
+  configPath?: string,
 ): Promise<void> {
-  await postPrepareAdminAction("revenue_share_factory", "set_authorized_creator", {
-    account: requireArg(getFlag(args, "account"), "account"),
-    enabled: requireArg(getFlag(args, "enabled"), "enabled"),
-  });
+  await postPrepareAdminAction(
+    "revenue_share_factory",
+    "set_authorized_creator",
+    {
+      account: requireArg(getFlag(args, "account"), "account"),
+      enabled: requireArg(getFlag(args, "enabled"), "enabled"),
+    },
+    configPath,
+  );
 }
 
 export async function runAutolaunchRevenueIngressFactorySetAuthorizedCreator(
   args: ParsedCliArgs,
 ): Promise<void> {
-  await postPrepareAdminAction("revenue_ingress_factory", "set_authorized_creator", {
-    account: requireArg(getFlag(args, "account"), "account"),
-    enabled: requireArg(getFlag(args, "enabled"), "enabled"),
-  });
+  await postPrepareAdminAction(
+    "revenue_ingress_factory",
+    "set_authorized_creator",
+    {
+      account: requireArg(getFlag(args, "account"), "account"),
+      enabled: requireArg(getFlag(args, "enabled"), "enabled"),
+    },
+  );
 }

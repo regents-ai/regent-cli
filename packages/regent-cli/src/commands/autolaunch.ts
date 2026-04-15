@@ -41,19 +41,22 @@ export {
   runAutolaunchLaunchCreate,
   runAutolaunchLaunchPreview,
   runAutolaunchRegistryLinkIdentity,
+  runAutolaunchRegistryRotateSafe,
   runAutolaunchRegistrySetSubjectManager,
   runAutolaunchRegistryShow,
   runAutolaunchRevenueIngressFactorySetAuthorizedCreator,
   runAutolaunchRevenueShareFactorySetAuthorizedCreator,
+  runAutolaunchSplitterCancelTreasuryRecipientRotation,
+  runAutolaunchSplitterExecuteTreasuryRecipientRotation,
+  runAutolaunchSplitterProposeTreasuryRecipientRotation,
   runAutolaunchSplitterReassignDust,
   runAutolaunchSplitterSetLabel,
   runAutolaunchSplitterSetPaused,
   runAutolaunchSplitterSetProtocolRecipient,
   runAutolaunchSplitterSetProtocolSkimBps,
-  runAutolaunchSplitterSetTreasuryRecipient,
+  runAutolaunchSplitterSweepProtocolReserve,
+  runAutolaunchSplitterSweepTreasuryResidual,
   runAutolaunchSplitterShow,
-  runAutolaunchSplitterWithdrawProtocolReserve,
-  runAutolaunchSplitterWithdrawTreasuryResidual,
   runAutolaunchStrategyMigrate,
   runAutolaunchStrategySweepCurrency,
   runAutolaunchStrategySweepToken,
@@ -70,6 +73,9 @@ export {
   runAutolaunchPositionsExit,
   runAutolaunchPositionsList,
   runAutolaunchPositionsReturnUsdc,
+  runAutolaunchVestingCancelBeneficiaryRotation,
+  runAutolaunchVestingExecuteBeneficiaryRotation,
+  runAutolaunchVestingProposeBeneficiaryRotation,
 } from "./autolaunch/api.js";
 export {
   runAutolaunchLaunchFinalize,
@@ -82,3 +88,5 @@ export {
   runAutolaunchVestingRelease,
   runAutolaunchVestingStatus,
 } from "./autolaunch/golden-path.js";
+export { runAutolaunchSafeCreate } from "./autolaunch/safe-create.js";
+export { runAutolaunchSafeWizard } from "./autolaunch/safe-wizard.js";

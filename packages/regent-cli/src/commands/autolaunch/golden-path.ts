@@ -7,11 +7,29 @@ import { privateKeyToAccount } from "viem/accounts";
 import { sepolia } from "viem/chains";
 
 import { loadConfig } from "../../internal-runtime/config.js";
-import { FileWalletSecretSource, EnvWalletSecretSource } from "../../internal-runtime/agent/key-store.js";
-import { deriveWalletAddress, signPersonalMessage } from "../../internal-runtime/agent/wallet.js";
+import {
+  FileWalletSecretSource,
+  EnvWalletSecretSource,
+} from "../../internal-runtime/agent/key-store.js";
+import {
+  deriveWalletAddress,
+  signPersonalMessage,
+} from "../../internal-runtime/agent/wallet.js";
 import { SiwaClient } from "../../internal-runtime/techtree/siwa.js";
-import { getFlag, getBooleanFlag, requireArg, type ParsedCliArgs } from "../../parse.js";
-import { CLI_PALETTE, isHumanTerminal, printJson, printText, renderPanel, tone } from "../../printer.js";
+import {
+  getFlag,
+  getBooleanFlag,
+  requireArg,
+  type ParsedCliArgs,
+} from "../../parse.js";
+import {
+  CLI_PALETTE,
+  isHumanTerminal,
+  printJson,
+  printText,
+  renderPanel,
+  tone,
+} from "../../printer.js";
 import { baseUrl, parsePollingIntervalSeconds, requestJson } from "./shared.js";
 
 interface LocalPlanRecord {
@@ -32,7 +50,8 @@ const normalizeText = (value: string | undefined): string | undefined => {
   return trimmed === "" ? undefined : trimmed;
 };
 
-const stateDir = (configPath?: string): string => loadConfig(configPath).runtime.stateDir;
+const stateDir = (configPath?: string): string =>
+  loadConfig(configPath).runtime.stateDir;
 
 const planDir = (configPath?: string): string => {
   const resolved = path.join(stateDir(configPath), PRELAUNCH_DIR);
@@ -43,7 +62,10 @@ const planDir = (configPath?: string): string => {
 const planPath = (planId: string, configPath?: string): string =>
   path.join(planDir(configPath), `${planId}.json`);
 
-const saveLocalPlan = (plan: Record<string, unknown>, configPath?: string): LocalPlanRecord => {
+const saveLocalPlan = (
+  plan: Record<string, unknown>,
+  configPath?: string,
+): LocalPlanRecord => {
   const planId = String(plan.plan_id ?? "");
   if (!planId) {
     throw new Error("remote plan payload is missing plan_id");
@@ -55,11 +77,18 @@ const saveLocalPlan = (plan: Record<string, unknown>, configPath?: string): Loca
     remote_plan: plan,
   };
 
-  fs.writeFileSync(planPath(planId, configPath), `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  fs.writeFileSync(
+    planPath(planId, configPath),
+    `${JSON.stringify(record, null, 2)}\n`,
+    "utf8",
+  );
   return record;
 };
 
-const loadLocalPlan = (planId: string, configPath?: string): LocalPlanRecord => {
+const loadLocalPlan = (
+  planId: string,
+  configPath?: string,
+): LocalPlanRecord => {
   const raw = fs.readFileSync(planPath(planId, configPath), "utf8");
   return JSON.parse(raw) as LocalPlanRecord;
 };
@@ -77,7 +106,9 @@ const latestLocalPlan = (configPath?: string): LocalPlanRecord | null => {
     return null;
   }
 
-  return JSON.parse(fs.readFileSync(files[0]!.filePath, "utf8")) as LocalPlanRecord;
+  return JSON.parse(
+    fs.readFileSync(files[0]!.filePath, "utf8"),
+  ) as LocalPlanRecord;
 };
 
 const resolvePlanId = (args: ParsedCliArgs, configPath?: string): string => {
@@ -88,7 +119,9 @@ const resolvePlanId = (args: ParsedCliArgs, configPath?: string): string => {
 
   const latest = latestLocalPlan(configPath);
   if (!latest) {
-    throw new Error("no local autolaunch plan found; run `regent autolaunch prelaunch wizard` first");
+    throw new Error(
+      "no local autolaunch plan found; run `regent autolaunch prelaunch wizard` first",
+    );
   }
 
   return latest.plan_id;
@@ -109,12 +142,13 @@ const prompt = async (label: string, fallback?: string): Promise<string> => {
   }
 };
 
-const configuredPrivateKey = async (configPath?: string): Promise<`0x${string}`> => {
+const configuredPrivateKey = async (
+  configPath?: string,
+): Promise<`0x${string}`> => {
   const config = loadConfig(configPath);
-  const secretSource =
-    process.env[config.wallet.privateKeyEnv]
-      ? new EnvWalletSecretSource(config.wallet.privateKeyEnv)
-      : new FileWalletSecretSource(config.wallet.keystorePath);
+  const secretSource = process.env[config.wallet.privateKeyEnv]
+    ? new EnvWalletSecretSource(config.wallet.privateKeyEnv)
+    : new FileWalletSecretSource(config.wallet.keystorePath);
 
   return await secretSource.getPrivateKeyHex();
 };
@@ -129,12 +163,9 @@ const resolveWalletAddress = async (
     return explicit as `0x${string}`;
   }
 
-  const envWalletAddress = normalizeText(process.env.AUTOLAUNCH_WALLET_ADDRESS);
-  if (envWalletAddress) {
-    return envWalletAddress as `0x${string}`;
-  }
-
-  const fallbackWallet = normalizeText(plan.fallback_operator_wallet as string | undefined);
+  const fallbackWallet = normalizeText(
+    plan.fallback_operator_wallet as string | undefined,
+  );
   if (fallbackWallet) {
     return fallbackWallet as `0x${string}`;
   }
@@ -144,7 +175,12 @@ const resolveWalletAddress = async (
 
 const readImageInput = async (
   args: ParsedCliArgs,
-): Promise<{ image_url?: string; image_file_name?: string; image_file_base64?: string; image_media_type?: string }> => {
+): Promise<{
+  image_url?: string;
+  image_file_name?: string;
+  image_file_base64?: string;
+  image_media_type?: string;
+}> => {
   const imageUrl = normalizeText(getFlag(args, "image-url"));
   if (imageUrl) {
     return { image_url: imageUrl };
@@ -179,32 +215,39 @@ const uploadImageIfNeeded = async (
 ): Promise<{ image_url?: string; image_asset_id?: string }> => {
   const image = await readImageInput(args);
   if (image.image_url) {
-    const payload = await requestJson("POST", "/api/prelaunch/assets", {
+    const payload = await requestJson("POST", "/v1/agent/prelaunch/assets", {
       body: { source_url: image.image_url },
-      requireSession: true,
+      requireAgentAuth: true,
     });
 
     const asset = payload.asset as Record<string, unknown> | undefined;
     return {
       image_url: String(asset?.public_url ?? image.image_url),
-      image_asset_id: typeof asset?.asset_id === "string" ? asset.asset_id : undefined,
+      image_asset_id:
+        typeof asset?.asset_id === "string" ? asset.asset_id : undefined,
     };
   }
 
-  if (image.image_file_base64 && image.image_file_name && image.image_media_type) {
-    const payload = await requestJson("POST", "/api/prelaunch/assets", {
+  if (
+    image.image_file_base64 &&
+    image.image_file_name &&
+    image.image_media_type
+  ) {
+    const payload = await requestJson("POST", "/v1/agent/prelaunch/assets", {
       body: {
         file_name: image.image_file_name,
         media_type: image.image_media_type,
         content_base64: image.image_file_base64,
       },
-      requireSession: true,
+      requireAgentAuth: true,
     });
 
     const asset = payload.asset as Record<string, unknown> | undefined;
     return {
-      image_url: typeof asset?.public_url === "string" ? asset.public_url : undefined,
-      image_asset_id: typeof asset?.asset_id === "string" ? asset.asset_id : undefined,
+      image_url:
+        typeof asset?.public_url === "string" ? asset.public_url : undefined,
+      image_asset_id:
+        typeof asset?.asset_id === "string" ? asset.asset_id : undefined,
     };
   }
 
@@ -227,32 +270,29 @@ const createOrUpdateRemotePlan = async (
   const minimumRaiseUsdc =
     normalizeText(getFlag(args, "minimum-raise-usdc")) ||
     (isHumanTerminal() ? await prompt("Minimum USDC raise") : undefined);
-  const treasurySafe =
-    normalizeText(getFlag(args, "treasury-safe-address") ?? getFlag(args, "treasury-address")) ||
-    (isHumanTerminal() ? await prompt("Treasury safe") : undefined);
-  const auctionProceeds =
-    normalizeText(getFlag(args, "auction-proceeds-recipient")) ||
-    treasurySafe ||
-    (isHumanTerminal() ? await prompt("Auction proceeds recipient", treasurySafe) : undefined);
-  const revenueTreasury =
-    normalizeText(getFlag(args, "ethereum-revenue-treasury")) ||
-    treasurySafe ||
-    (isHumanTerminal() ? await prompt("Ethereum revenue treasury", treasurySafe) : undefined);
-  const backupSafe =
-    normalizeText(getFlag(args, "backup-safe-address")) ||
-    (isHumanTerminal() ? await prompt("Backup safe (optional)") : undefined);
+  const agentSafe =
+    normalizeText(getFlag(args, "agent-safe-address")) ||
+    (isHumanTerminal()
+      ? await prompt("Agent Safe (leave blank if you still need to create it)")
+      : undefined);
   const fallbackWallet =
     normalizeText(getFlag(args, "fallback-operator-wallet")) ||
-    (isHumanTerminal() ? await prompt("Fallback operator wallet (optional)") : undefined);
+    (isHumanTerminal()
+      ? await prompt("Fallback operator wallet (optional)")
+      : undefined);
   const launchNotes =
     normalizeText(getFlag(args, "launch-notes")) ||
     (isHumanTerminal() ? await prompt("Launch notes (optional)") : undefined);
   const title =
     normalizeText(getFlag(args, "title")) ||
-    (isHumanTerminal() ? await prompt("Hosted page title", tokenName) : tokenName);
+    (isHumanTerminal()
+      ? await prompt("Hosted page title", tokenName)
+      : tokenName);
   const subtitle =
     normalizeText(getFlag(args, "subtitle")) ||
-    (isHumanTerminal() ? await prompt("Hosted page subtitle", "CCA launch draft") : undefined);
+    (isHumanTerminal()
+      ? await prompt("Hosted page subtitle", "CCA launch draft")
+      : undefined);
   const description =
     normalizeText(getFlag(args, "description")) ||
     (isHumanTerminal() ? await prompt("Hosted page description") : undefined);
@@ -265,10 +305,13 @@ const createOrUpdateRemotePlan = async (
     token_name: requireArg(tokenName, "name"),
     token_symbol: requireArg(tokenSymbol, "symbol"),
     minimum_raise_usdc: requireArg(minimumRaiseUsdc, "minimum-raise-usdc"),
-    treasury_safe_address: requireArg(treasurySafe, "treasury-safe-address"),
-    auction_proceeds_recipient: requireArg(auctionProceeds, "auction-proceeds-recipient"),
-    ethereum_revenue_treasury: requireArg(revenueTreasury, "ethereum-revenue-treasury"),
-    backup_safe_address: backupSafe,
+    agent_safe_address:
+      agentSafe ||
+      (() => {
+        throw new Error(
+          "Agent Safe is required. Run `regent autolaunch safe wizard` first, then rerun with --agent-safe-address <safe>.",
+        );
+      })(),
     fallback_operator_wallet: fallbackWallet,
     launch_notes: launchNotes,
     metadata_draft: {
@@ -280,23 +323,28 @@ const createOrUpdateRemotePlan = async (
   };
 
   const planId = normalizeText(getFlag(args, "plan"));
-  const response =
-    planId
-      ? await requestJson("PATCH", `/api/prelaunch/plans/${encodeURIComponent(planId)}`, {
+  const response = planId
+    ? await requestJson(
+        "PATCH",
+        `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}`,
+        {
           body: payload,
-          requireSession: true,
-        })
-      : await requestJson("POST", "/api/prelaunch/plans", {
-          body: payload,
-          requireSession: true,
-        });
+          requireAgentAuth: true,
+          configPath,
+        },
+      )
+    : await requestJson("POST", "/v1/agent/prelaunch/plans", {
+        body: payload,
+        requireAgentAuth: true,
+        configPath,
+      });
 
   let plan = response.plan as Record<string, unknown>;
   const uploaded = await uploadImageIfNeeded(args, configPath);
   if (uploaded.image_url || uploaded.image_asset_id) {
     const metadataResponse = await requestJson(
       "POST",
-      `/api/prelaunch/plans/${encodeURIComponent(String(plan.plan_id))}/metadata`,
+      `/v1/agent/prelaunch/plans/${encodeURIComponent(String(plan.plan_id))}/metadata`,
       {
         body: {
           metadata: {
@@ -309,7 +357,8 @@ const createOrUpdateRemotePlan = async (
             image_asset_id: uploaded.image_asset_id,
           },
         },
-        requireSession: true,
+        requireAgentAuth: true,
+        configPath,
       },
     );
 
@@ -320,28 +369,37 @@ const createOrUpdateRemotePlan = async (
   return plan;
 };
 
-const requestSiwaLaunchBundle = async (walletAddress: `0x${string}`, configPath?: string) => {
+const requestSiwaLaunchBundle = async (
+  walletAddress: `0x${string}`,
+  configPath?: string,
+) => {
   const privateKey = await configuredPrivateKey(configPath);
   const derivedAddress = await deriveWalletAddress(privateKey);
   if (derivedAddress.toLowerCase() !== walletAddress.toLowerCase()) {
-    throw new Error(`wallet mismatch: config signer ${derivedAddress} does not match ${walletAddress}`);
+    throw new Error(
+      `wallet mismatch: config signer ${derivedAddress} does not match ${walletAddress}`,
+    );
   }
 
   const nonceResponse = await fetch(`${baseUrl()}/v1/agent/siwa/nonce`, {
     method: "POST",
     headers: { accept: "application/json", "content-type": "application/json" },
     body: JSON.stringify({
-      walletAddress,
-      chainId: AUTOLAUNCH_CHAIN_ID,
+      wallet_address: walletAddress,
+      chain_id: AUTOLAUNCH_CHAIN_ID,
       audience: "autolaunch",
     }),
   });
 
   if (!nonceResponse.ok) {
-    throw new Error(`unable to request SIWA nonce: ${await nonceResponse.text()}`);
+    throw new Error(
+      `unable to request SIWA nonce: ${await nonceResponse.text()}`,
+    );
   }
 
-  const noncePayload = await nonceResponse.json() as { data?: { nonce?: string } };
+  const noncePayload = (await nonceResponse.json()) as {
+    data?: { nonce?: string };
+  };
   const nonce = String(noncePayload.data?.nonce ?? "");
   if (!nonce) {
     throw new Error("SIWA nonce response did not include a nonce");
@@ -366,8 +424,14 @@ const requestSiwaLaunchBundle = async (walletAddress: `0x${string}`, configPath?
   };
 };
 
-const watchJobOnce = async (jobId: string): Promise<Record<string, unknown>> =>
-  requestJson("GET", `/api/launch/jobs/${encodeURIComponent(jobId)}`, { requireSession: true });
+const watchJobOnce = async (
+  jobId: string,
+  configPath?: string,
+): Promise<Record<string, unknown>> =>
+  requestJson("GET", `/v1/agent/launch/jobs/${encodeURIComponent(jobId)}`, {
+    requireAgentAuth: true,
+    configPath,
+  });
 
 const renderWorkflowPanel = (title: string, lines: string[]): void => {
   if (!isHumanTerminal()) {
@@ -389,8 +453,8 @@ export async function runAutolaunchPrelaunchWizard(
   const plan = await createOrUpdateRemotePlan(args, configPath);
   const validation = await requestJson(
     "POST",
-    `/api/prelaunch/plans/${encodeURIComponent(String(plan.plan_id))}/validate`,
-    { body: {}, requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(String(plan.plan_id))}/validate`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
 
   saveLocalPlan(validation.plan as Record<string, unknown>, configPath);
@@ -410,9 +474,14 @@ export async function runAutolaunchPrelaunchShow(
   configPath?: string,
 ): Promise<void> {
   const planId = resolvePlanId(args, configPath);
-  const payload = await requestJson("GET", `/api/prelaunch/plans/${encodeURIComponent(planId)}`, {
-    requireSession: true,
-  });
+  const payload = await requestJson(
+    "GET",
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}`,
+    {
+      requireAgentAuth: true,
+      configPath,
+    },
+  );
   saveLocalPlan(payload.plan as Record<string, unknown>, configPath);
   printJson(payload);
 }
@@ -424,8 +493,8 @@ export async function runAutolaunchPrelaunchValidate(
   const planId = resolvePlanId(args, configPath);
   const payload = await requestJson(
     "POST",
-    `/api/prelaunch/plans/${encodeURIComponent(planId)}/validate`,
-    { body: {}, requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}/validate`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
   saveLocalPlan(payload.plan as Record<string, unknown>, configPath);
   printJson(payload);
@@ -438,8 +507,8 @@ export async function runAutolaunchPrelaunchPublish(
   const planId = resolvePlanId(args, configPath);
   const payload = await requestJson(
     "POST",
-    `/api/prelaunch/plans/${encodeURIComponent(planId)}/publish`,
-    { body: {}, requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}/publish`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
   saveLocalPlan(payload.plan as Record<string, unknown>, configPath);
   printJson(payload);
@@ -452,19 +521,24 @@ export async function runAutolaunchLaunchRun(
   const planId = resolvePlanId(args, configPath);
   const planPayload = await requestJson(
     "GET",
-    `/api/prelaunch/plans/${encodeURIComponent(planId)}`,
-    { requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}`,
+    { requireAgentAuth: true, configPath },
   );
   const plan = planPayload.plan as Record<string, unknown>;
   const validationPayload = await requestJson(
     "POST",
-    `/api/prelaunch/plans/${encodeURIComponent(planId)}/validate`,
-    { body: {}, requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}/validate`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
 
-  const validation = validationPayload.validation as Record<string, unknown> | undefined;
+  const validation = validationPayload.validation as
+    | Record<string, unknown>
+    | undefined;
   if (!validation?.launchable) {
-    saveLocalPlan(validationPayload.plan as Record<string, unknown>, configPath);
+    saveLocalPlan(
+      validationPayload.plan as Record<string, unknown>,
+      configPath,
+    );
     printJson(validationPayload);
     return;
   }
@@ -474,19 +548,21 @@ export async function runAutolaunchLaunchRun(
 
   const payload = await requestJson(
     "POST",
-    `/api/prelaunch/plans/${encodeURIComponent(planId)}/launch`,
-    { body: siwaBundle, requireSession: true },
+    `/v1/agent/prelaunch/plans/${encodeURIComponent(planId)}/launch`,
+    { body: siwaBundle, requireAgentAuth: true, configPath },
   );
 
   saveLocalPlan(payload.plan as Record<string, unknown>, configPath);
 
-  const jobId = String((payload.launch as Record<string, unknown>).job_id ?? "");
+  const jobId = String(
+    (payload.launch as Record<string, unknown>).job_id ?? "",
+  );
   if (!jobId) {
     printJson(payload);
     return;
   }
 
-  let current = await watchJobOnce(jobId);
+  let current = await watchJobOnce(jobId, configPath);
   printJson(current);
 
   const shouldWatch = isHumanTerminal() || getBooleanFlag(args, "watch");
@@ -503,20 +579,28 @@ export async function runAutolaunchLaunchRun(
     }
 
     await new Promise((resolve) => setTimeout(resolve, intervalSeconds * 1000));
-    current = await watchJobOnce(jobId);
+    current = await watchJobOnce(jobId, configPath);
     printJson(current);
   }
 }
 
-export async function runAutolaunchLaunchMonitor(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchLaunchMonitor(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const jobId = requireArg(getFlag(args, "job"), "job");
   const watch = getBooleanFlag(args, "watch");
   const intervalSeconds = parsePollingIntervalSeconds(args);
 
   for (;;) {
-    const payload = await requestJson("GET", `/api/lifecycle/jobs/${encodeURIComponent(jobId)}`, {
-      requireSession: true,
-    });
+    const payload = await requestJson(
+      "GET",
+      `/v1/agent/lifecycle/jobs/${encodeURIComponent(jobId)}`,
+      {
+        requireAgentAuth: true,
+        configPath,
+      },
+    );
     printJson(payload);
 
     if (!watch) {
@@ -562,8 +646,8 @@ export async function runAutolaunchLaunchFinalize(
   const jobId = requireArg(getFlag(args, "job"), "job");
   const prepared = await requestJson(
     "POST",
-    `/api/lifecycle/jobs/${encodeURIComponent(jobId)}/finalize/prepare`,
-    { body: {}, requireSession: true },
+    `/v1/agent/lifecycle/jobs/${encodeURIComponent(jobId)}/finalize/prepare`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
 
   if (!getBooleanFlag(args, "submit")) {
@@ -571,15 +655,15 @@ export async function runAutolaunchLaunchFinalize(
     return;
   }
 
-  const txRequest = (prepared.prepared as Record<string, unknown> | undefined)?.tx_request as
-    | Record<string, unknown>
-    | undefined;
+  const txRequest = (prepared.prepared as Record<string, unknown> | undefined)
+    ?.tx_request as Record<string, unknown> | undefined;
   if (!txRequest) {
     printJson(prepared);
     return;
   }
 
-  const { walletClient, publicClient, account } = await walletClientForSubmit(configPath);
+  const { walletClient, publicClient, account } =
+    await walletClientForSubmit(configPath);
   const txHash = await walletClient.sendTransaction({
     account,
     to: String(txRequest.to) as `0x${string}`,
@@ -592,19 +676,27 @@ export async function runAutolaunchLaunchFinalize(
 
   const registered = await requestJson(
     "POST",
-    `/api/lifecycle/jobs/${encodeURIComponent(jobId)}/finalize/register`,
-    { body: { tx_hash: txHash }, requireSession: true },
+    `/v1/agent/lifecycle/jobs/${encodeURIComponent(jobId)}/finalize/register`,
+    { body: { tx_hash: txHash }, requireAgentAuth: true, configPath },
   );
 
   printJson(registered);
 }
 
-export async function runAutolaunchVestingStatus(args: ParsedCliArgs): Promise<void> {
+export async function runAutolaunchVestingStatus(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
   const jobId = requireArg(getFlag(args, "job"), "job");
   printJson(
-    await requestJson("GET", `/api/lifecycle/jobs/${encodeURIComponent(jobId)}/vesting`, {
-      requireSession: true,
-    }),
+    await requestJson(
+      "GET",
+      `/v1/agent/lifecycle/jobs/${encodeURIComponent(jobId)}/vesting`,
+      {
+        requireAgentAuth: true,
+        configPath,
+      },
+    ),
   );
 }
 
@@ -618,8 +710,8 @@ export async function runAutolaunchVestingRelease(
     printJson(
       await requestJson(
         "POST",
-        `/api/contracts/jobs/${encodeURIComponent(jobId)}/vesting/release/prepare`,
-        { body: {}, requireSession: true },
+        `/v1/agent/contracts/jobs/${encodeURIComponent(jobId)}/vesting/release/prepare`,
+        { body: {}, requireAgentAuth: true, configPath },
       ),
     );
     return;
@@ -627,19 +719,19 @@ export async function runAutolaunchVestingRelease(
 
   const prepared = await requestJson(
     "POST",
-    `/api/contracts/jobs/${encodeURIComponent(jobId)}/vesting/release/prepare`,
-    { body: {}, requireSession: true },
+    `/v1/agent/contracts/jobs/${encodeURIComponent(jobId)}/vesting/release/prepare`,
+    { body: {}, requireAgentAuth: true, configPath },
   );
-  const txRequest = (prepared.prepared as Record<string, unknown> | undefined)?.tx_request as
-    | Record<string, unknown>
-    | undefined;
+  const txRequest = (prepared.prepared as Record<string, unknown> | undefined)
+    ?.tx_request as Record<string, unknown> | undefined;
 
   if (!txRequest) {
     printJson(prepared);
     return;
   }
 
-  const { walletClient, publicClient, account } = await walletClientForSubmit(configPath);
+  const { walletClient, publicClient, account } =
+    await walletClientForSubmit(configPath);
   const txHash = await walletClient.sendTransaction({
     account,
     to: String(txRequest.to) as `0x${string}`,
