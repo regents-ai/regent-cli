@@ -792,9 +792,8 @@ describe("BBH workload lanes", () => {
     );
 
     await fs.rm(path.join(workspacePath, "artifact.source.yaml"));
-    await expect(loadBbhRunSubmitRequest(workspacePath)).rejects.toThrow(
-      "missing required file: artifact.source.yaml",
-    );
+    const submitRequest = await loadBbhRunSubmitRequest(workspacePath);
+    expect(submitRequest.artifact_source).toBeNull();
   });
 
   it("writes replay validation files that pass the local review contract checks", async () => {

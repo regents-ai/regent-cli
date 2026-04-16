@@ -48,15 +48,55 @@ const baseMetadata = {
   origin_session_id: null,
 } as const;
 
-const seedWorkspace = async (workspacePath: string): Promise<void> => {
-  await fs.mkdir(path.join(workspacePath, "outputs"), { recursive: true });
-  await fs.mkdir(path.join(workspacePath, "outputs", "skydiscover"), { recursive: true });
-  await fs.mkdir(path.join(workspacePath, "dist"), { recursive: true });
-  await fs.mkdir(path.join(workspacePath, "eval"), { recursive: true });
-  await fs.mkdir(path.join(workspacePath, "solver"), { recursive: true });
+const defaultRunPaths = {
+  analysis_path: "analysis.py",
+  verdict_path: "outputs/verdict.json",
+  final_answer_path: "final_answer.md",
+  report_path: "outputs/report.html",
+  log_path: "outputs/run.log",
+  genome_path: "genome.source.yaml",
+  search_config_path: "search.config.yaml",
+  evaluator_path: "eval/hypotest_skydiscover.py",
+  seed_program_path: "solver/initial_program.py",
+  best_program_path: "outputs/skydiscover/best_program.py",
+  search_summary_path: "outputs/skydiscover/search_summary.json",
+  evaluator_artifacts_path: "outputs/skydiscover/evaluator_artifacts.json",
+  checkpoint_pointer_path: "outputs/skydiscover/latest_checkpoint.txt",
+  best_solution_patch_path: "outputs/skydiscover/best_solution.patch",
+  search_log_path: "outputs/skydiscover/search.log",
+} as const;
+
+const seedWorkspace = async (
+  workspacePath: string,
+  runPathOverrides: Partial<typeof defaultRunPaths> = {},
+): Promise<void> => {
+  const runPaths = { ...defaultRunPaths, ...runPathOverrides };
   await fs.mkdir(path.join(workspacePath, "data"), { recursive: true });
+  await Promise.all(
+    [
+      runPaths.analysis_path,
+      runPaths.verdict_path,
+      runPaths.final_answer_path,
+      runPaths.report_path,
+      runPaths.log_path,
+      runPaths.genome_path,
+      runPaths.search_config_path,
+      runPaths.evaluator_path,
+      runPaths.seed_program_path,
+      runPaths.best_program_path,
+      runPaths.search_summary_path,
+      runPaths.evaluator_artifacts_path,
+      runPaths.checkpoint_pointer_path,
+      runPaths.best_solution_patch_path,
+      runPaths.search_log_path,
+      "task.json",
+      "protocol.md",
+      "rubric.json",
+      "dist/.keep",
+    ].map((relativePath) => fs.mkdir(path.join(workspacePath, path.dirname(relativePath)), { recursive: true })),
+  );
   await fs.writeFile(
-    path.join(workspacePath, "genome.source.yaml"),
+    path.join(workspacePath, runPaths.genome_path),
     JSON.stringify({
       schema_version: "techtree.bbh.genome-source.v1",
       model_id: "gpt-test",
@@ -89,29 +129,13 @@ const seedWorkspace = async (workspacePath: string): Promise<void> => {
         scorer_version: "hypotest-v1",
       },
       instance: { instance_ref: "capsule_1" },
-      paths: {
-        analysis_path: "analysis.py",
-        verdict_path: "outputs/verdict.json",
-        final_answer_path: "final_answer.md",
-        report_path: "outputs/report.html",
-        log_path: "outputs/run.log",
-        genome_path: "genome.source.yaml",
-        search_config_path: "search.config.yaml",
-        evaluator_path: "eval/hypotest_skydiscover.py",
-        seed_program_path: "solver/initial_program.py",
-        best_program_path: "outputs/skydiscover/best_program.py",
-        search_summary_path: "outputs/skydiscover/search_summary.json",
-        evaluator_artifacts_path: "outputs/skydiscover/evaluator_artifacts.json",
-        checkpoint_pointer_path: "outputs/skydiscover/latest_checkpoint.txt",
-        best_solution_patch_path: "outputs/skydiscover/best_solution.patch",
-        search_log_path: "outputs/skydiscover/search.log",
-      },
+      paths: runPaths,
       bbh: { split: "climb", provider: "bbh_train" },
     }),
     "utf8",
   );
   await fs.writeFile(
-    path.join(workspacePath, "search.config.yaml"),
+    path.join(workspacePath, runPaths.search_config_path),
     JSON.stringify({
       schema_version: "techtree.bbh.search-config.v1",
       solver: { kind: "hermes", entrypoint: "hermes" },
@@ -128,26 +152,26 @@ const seedWorkspace = async (workspacePath: string): Promise<void> => {
   await fs.writeFile(path.join(workspacePath, "task.json"), JSON.stringify({ objective: "solve" }), "utf8");
   await fs.writeFile(path.join(workspacePath, "protocol.md"), "1. Solve it\n", "utf8");
   await fs.writeFile(path.join(workspacePath, "rubric.json"), JSON.stringify({ items: [] }), "utf8");
-  await fs.writeFile(path.join(workspacePath, "analysis.py"), "print('analysis')\n", "utf8");
-  await fs.writeFile(path.join(workspacePath, "eval", "hypotest_skydiscover.py"), "def evaluate():\n    return {}\n", "utf8");
-  await fs.writeFile(path.join(workspacePath, "solver", "initial_program.py"), "def solve(task):\n    return task\n", "utf8");
-  await fs.writeFile(path.join(workspacePath, "final_answer.md"), "", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.analysis_path), "print('analysis')\n", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.evaluator_path), "def evaluate():\n    return {}\n", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.seed_program_path), "def solve(task):\n    return task\n", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.final_answer_path), "", "utf8");
   await fs.writeFile(
-    path.join(workspacePath, "outputs", "verdict.json"),
-      JSON.stringify({
-        decision: "inconclusive",
-        justification: "Pending notebook execution.",
-        metrics: { raw_score: 0, normalized_score: 0 },
-      }),
+    path.join(workspacePath, runPaths.verdict_path),
+    JSON.stringify({
+      decision: "inconclusive",
+      justification: "Pending notebook execution.",
+      metrics: { raw_score: 0, normalized_score: 0 },
+    }),
     "utf8",
   );
-  await fs.writeFile(path.join(workspacePath, "outputs", "skydiscover", "search.log"), "", "utf8");
-  await fs.writeFile(path.join(workspacePath, "outputs", "skydiscover", "best_program.py"), "def solve(task):\n    return task\n", "utf8");
-  await fs.writeFile(path.join(workspacePath, "outputs", "skydiscover", "evaluator_artifacts.json"), JSON.stringify({}), "utf8");
-  await fs.writeFile(path.join(workspacePath, "outputs", "skydiscover", "latest_checkpoint.txt"), "", "utf8");
-  await fs.writeFile(path.join(workspacePath, "outputs", "skydiscover", "best_solution.patch"), "", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.search_log_path), "", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.best_program_path), "def solve(task):\n    return task\n", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.evaluator_artifacts_path), JSON.stringify({}), "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.checkpoint_pointer_path), "", "utf8");
+  await fs.writeFile(path.join(workspacePath, runPaths.best_solution_patch_path), "", "utf8");
   await fs.writeFile(
-    path.join(workspacePath, "outputs", "skydiscover", "search_summary.json"),
+    path.join(workspacePath, runPaths.search_summary_path),
     JSON.stringify({
       best_score: 0,
       best_iteration: 0,
@@ -301,6 +325,87 @@ describe("bbh solve workload", () => {
     );
   });
 
+  it("honors per-capsule path overrides and shows the isolated working path in the solve prompt", async () => {
+    const root = await makeTempDir("bbh-solve-overrides-");
+    const workspace = path.join(root, "run-overrides");
+    const overriddenPaths = {
+      analysis_path: "workspace/analysis.custom.py",
+      verdict_path: "artifacts/verdict.custom.json",
+      final_answer_path: "artifacts/final.custom.md",
+      report_path: "artifacts/report.custom.html",
+      log_path: "logs/solver.custom.log",
+      genome_path: "inputs/genome.custom.yaml",
+      search_config_path: "config/search.custom.yaml",
+      evaluator_path: "eval/custom_hypotest.py",
+      seed_program_path: "solver/custom_initial.py",
+      best_program_path: "artifacts/search/best.custom.py",
+      search_summary_path: "artifacts/search/summary.custom.json",
+      evaluator_artifacts_path: "artifacts/search/evaluator.custom.json",
+      checkpoint_pointer_path: "artifacts/search/checkpoint.custom.txt",
+      best_solution_patch_path: "artifacts/search/best.custom.patch",
+      search_log_path: "artifacts/search/log.custom.txt",
+    } as const;
+    await seedWorkspace(workspace, overriddenPaths);
+
+    const response = await solveBbhWorkspace(
+      baseConfig(root),
+      { workspace_path: workspace, solver: "hermes", timeout_seconds: 30 },
+      baseMetadata,
+      {
+        runSolver: async ({ workspacePath, prompt, logPath }) => {
+          expect(prompt).toContain(`Isolated working path: ${workspacePath}`);
+          expect(prompt).toContain("- workspace/analysis.custom.py");
+          expect(prompt).toContain("- artifacts/verdict.custom.json");
+          expect(prompt).toContain("- artifacts/search/summary.custom.json");
+          await fs.writeFile(path.join(workspacePath, overriddenPaths.analysis_path), "print('custom analysis')\n", "utf8");
+          await fs.writeFile(path.join(workspacePath, overriddenPaths.final_answer_path), "Solved from the isolated folder.\n", "utf8");
+          await fs.writeFile(
+            path.join(workspacePath, overriddenPaths.verdict_path),
+            JSON.stringify({
+              decision: "support",
+              justification: "Custom paths worked.",
+              metrics: { raw_score: 0.7, normalized_score: 0.8 },
+            }),
+            "utf8",
+          );
+          await fs.writeFile(
+            path.join(workspacePath, overriddenPaths.search_summary_path),
+            JSON.stringify({
+              best_score: 0.8,
+              best_iteration: 1,
+              iterations_requested: 1,
+              iterations_completed: 1,
+              total_evaluations: 1,
+              elapsed_ms: 25,
+              artifact_keys: [],
+            }),
+            "utf8",
+          );
+          await fs.writeFile(path.join(workspacePath, overriddenPaths.search_log_path), "custom search log\n", "utf8");
+          await fs.writeFile(logPath, "custom solver log\n", "utf8");
+          return { exitCode: 0 };
+        },
+      },
+    );
+
+    expect(response.produced_files).toEqual(
+      expect.arrayContaining([
+        "workspace/analysis.custom.py",
+        "artifacts/final.custom.md",
+        "artifacts/verdict.custom.json",
+        "logs/solver.custom.log",
+        "artifacts/search/log.custom.txt",
+        "artifacts/search/summary.custom.json",
+        "run.source.yaml",
+        "config/search.custom.yaml",
+      ]),
+    );
+    expect(await fs.readFile(path.join(workspace, overriddenPaths.analysis_path), "utf8")).toContain("custom analysis");
+    expect(await fs.readFile(path.join(workspace, overriddenPaths.final_answer_path), "utf8")).toContain("Solved from the isolated folder.");
+    expect(await fs.readFile(path.join(workspace, overriddenPaths.log_path), "utf8")).toContain("custom solver log");
+    expect(await fs.readFile(path.join(workspace, overriddenPaths.search_log_path), "utf8")).toContain("custom search log");
+  });
+
   it("fails clearly when a required scaffold file is missing", async () => {
     const root = await makeTempDir("bbh-solve-missing-");
     const workspace = path.join(root, "run-2");
@@ -349,8 +454,8 @@ describe("bbh solve workload", () => {
     await expect(
       solveBbhWorkspace(baseConfig(root), { workspace_path: workspace, solver: "hermes" }, baseMetadata, {
         runSolver: async ({ workspacePath, logPath }) => {
-          await fs.writeFile(path.join(workspacePath, "final_answer.md"), "", "utf8");
-          await fs.writeFile(path.join(workspacePath, "outputs", "verdict.json"), "{bad json", "utf8");
+          await fs.writeFile(path.join(workspacePath, defaultRunPaths.final_answer_path), "", "utf8");
+          await fs.writeFile(path.join(workspacePath, defaultRunPaths.verdict_path), "{bad json", "utf8");
           await fs.writeFile(path.join(workspacePath, "dist", "search-summary.json"), "{bad json", "utf8");
           await fs.writeFile(logPath, "broken\n", "utf8");
           return { exitCode: 0 };

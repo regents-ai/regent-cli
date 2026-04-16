@@ -343,6 +343,28 @@ const buildRunPaths = (assignment: BbhAssignmentResponse["data"]): NonNullable<B
   search_log_path: assignment.capsule.execution_defaults?.workspace.search_log_path ?? DEFAULT_SEARCH_LOG_PATH,
 });
 
+const resolveRunSourcePaths = (runSource: BbhRunSource) => {
+  const paths = runSource.paths ?? {};
+
+  return {
+    analysis_path: paths.analysis_path ?? "analysis.py",
+    verdict_path: paths.verdict_path ?? "outputs/verdict.json",
+    final_answer_path: paths.final_answer_path ?? "final_answer.md",
+    report_path: paths.report_path ?? "outputs/report.html",
+    log_path: paths.log_path ?? "outputs/run.log",
+    genome_path: paths.genome_path ?? "genome.source.yaml",
+    search_config_path: paths.search_config_path ?? "search.config.yaml",
+    evaluator_path: paths.evaluator_path ?? "eval/hypotest_skydiscover.py",
+    seed_program_path: paths.seed_program_path ?? "solver/initial_program.py",
+    best_program_path: paths.best_program_path ?? DEFAULT_BEST_PROGRAM_PATH,
+    search_summary_path: paths.search_summary_path ?? DEFAULT_SEARCH_SUMMARY_PATH,
+    evaluator_artifacts_path: paths.evaluator_artifacts_path ?? DEFAULT_EVALUATOR_ARTIFACTS_PATH,
+    checkpoint_pointer_path: paths.checkpoint_pointer_path ?? DEFAULT_CHECKPOINT_POINTER_PATH,
+    best_solution_patch_path: paths.best_solution_patch_path ?? DEFAULT_BEST_SOLUTION_PATCH_PATH,
+    search_log_path: paths.search_log_path ?? DEFAULT_SEARCH_LOG_PATH,
+  };
+};
+
 const buildRunSource = (
   assignment: BbhAssignmentResponse["data"],
   genome: BbhGenomeSource,
@@ -861,28 +883,28 @@ export const loadBbhRunSubmitRequest = async (workspacePath: string): Promise<Bb
   const resolved = path.resolve(workspacePath);
   const runId = path.basename(resolved);
   const runSource = await readRequiredJsonFile<BbhRunSource>(path.join(resolved, "run.source.yaml"));
-  const paths = runSource.paths ?? {};
-  const genomeSource = await readRequiredJsonFile<BbhGenomeSource>(path.join(resolved, "genome.source.yaml"));
+  const paths = resolveRunSourcePaths(runSource);
+  const genomeSource = await readRequiredJsonFile<BbhGenomeSource>(path.join(resolved, paths.genome_path));
   const taskJson = await readRequiredJsonFile<Record<string, unknown>>(path.join(resolved, "task.json"));
   const rubricJson = await readRequiredJsonFile<Record<string, unknown>>(path.join(resolved, "rubric.json"));
   const verdictJson = await readRequiredJsonFile<Record<string, unknown>>(
-    path.join(resolved, paths.verdict_path ?? "outputs/verdict.json"),
+    path.join(resolved, paths.verdict_path),
   );
   const searchSummaryJson = await readOptionalJsonFile<Record<string, unknown>>(
-    path.join(resolved, paths.search_summary_path ?? DEFAULT_SEARCH_SUMMARY_PATH),
+    path.join(resolved, paths.search_summary_path),
   );
-  const analysisPy = await readRequiredTextFile(path.join(resolved, paths.analysis_path ?? "analysis.py"));
+  const analysisPy = await readRequiredTextFile(path.join(resolved, paths.analysis_path));
   const protocolMd = await readRequiredTextFile(path.join(resolved, "protocol.md"));
   const finalAnswerMd = await fs
-    .readFile(path.join(resolved, paths.final_answer_path ?? "final_answer.md"), "utf8")
+    .readFile(path.join(resolved, paths.final_answer_path), "utf8")
     .catch(() => null);
   const reportHtml = await fs
-    .readFile(path.join(resolved, paths.report_path ?? "outputs/report.html"), "utf8")
+    .readFile(path.join(resolved, paths.report_path), "utf8")
     .catch(() => null);
-  const runLog = await fs.readFile(path.join(resolved, paths.log_path ?? "outputs/run.log"), "utf8").catch(() => null);
-  const searchLog = await readOptionalTextFile(path.join(resolved, paths.search_log_path ?? DEFAULT_SEARCH_LOG_PATH));
+  const runLog = await fs.readFile(path.join(resolved, paths.log_path), "utf8").catch(() => null);
+  const searchLog = await readOptionalTextFile(path.join(resolved, paths.search_log_path));
   const artifactSourcePath = path.join(resolved, "artifact.source.yaml");
-  const artifactSource = await readRequiredJsonFile<Record<string, unknown>>(artifactSourcePath);
+  const artifactSource = await readOptionalJsonFile<Record<string, unknown>>(artifactSourcePath);
 
   validateBbhSource("genome.source.yaml", genomeSource, (source) => {
     if (source.schema_version !== "techtree.bbh.genome-source.v1") {
@@ -968,7 +990,7 @@ export const loadBbhRunSubmitRequest = async (workspacePath: string): Promise<Bb
     run_id: runId,
     capsule_id: String(runSource.artifact_ref),
     assignment_ref: runSource.bbh.assignment_ref ?? null,
-    artifact_source: artifactSource,
+    artifact_source: artifactSource ?? null,
     genome_source: genomeSource,
     run_source: runSource,
     workspace: {

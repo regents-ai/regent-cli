@@ -13,45 +13,25 @@ import type {
   RegentResolvedRunMetadata,
 } from "../../internal-types/index.js";
 
-const REQUIRED_INPUTS = [
-  "genome.source.yaml",
-  "run.source.yaml",
-  "search.config.yaml",
-  "eval/hypotest_skydiscover.py",
-  "solver/initial_program.py",
-  "task.json",
-  "protocol.md",
-  "rubric.json",
-  "analysis.py",
-  "final_answer.md",
-  "outputs/verdict.json",
-] as const;
-
-const PROTECTED_INPUTS = [
-  "genome.source.yaml",
-  "run.source.yaml",
-  "search.config.yaml",
-  "task.json",
-  "protocol.md",
-  "rubric.json",
-  "artifact.source.yaml",
-] as const;
-
-const SYNC_BACK_PATHS = [
-  "analysis.py",
-  "final_answer.md",
-  "outputs/verdict.json",
-  "outputs/report.html",
-  "outputs/run.log",
-  "outputs/skydiscover/search.log",
-  "outputs/skydiscover/search_summary.json",
-  "outputs/skydiscover/best_program.py",
-  "outputs/skydiscover/evaluator_artifacts.json",
-  "outputs/skydiscover/latest_checkpoint.txt",
-  "outputs/skydiscover/best_solution.patch",
-] as const;
-
 type SupportedSolveSolver = BbhSolveSolverKind;
+
+interface SolveWorkspacePaths {
+  analysisPath: string;
+  verdictPath: string;
+  finalAnswerPath: string;
+  reportPath: string;
+  runLogPath: string;
+  genomePath: string;
+  searchConfigPath: string;
+  evaluatorPath: string;
+  seedProgramPath: string;
+  bestProgramPath: string;
+  searchSummaryPath: string;
+  evaluatorArtifactsPath: string;
+  checkpointPointerPath: string;
+  bestSolutionPatchPath: string;
+  searchLogPath: string;
+}
 
 interface SolveSolverInvocation {
   solver: SupportedSolveSolver;
@@ -126,14 +106,98 @@ const walkFiles = async (root: string): Promise<string[]> => {
   return collected.sort();
 };
 
-const collectProtectedFiles = async (workspacePath: string): Promise<string[]> => {
-  const files = PROTECTED_INPUTS.map((entry) => path.join(workspacePath, entry));
+const uniquePaths = (paths: string[]): string[] => [...new Set(paths)];
+
+const resolveSolveWorkspacePaths = (runSource: BbhRunSource): SolveWorkspacePaths => {
+  const paths = runSource.paths ?? {};
+
+  return {
+    analysisPath: paths.analysis_path ?? "analysis.py",
+    verdictPath: paths.verdict_path ?? "outputs/verdict.json",
+    finalAnswerPath: paths.final_answer_path ?? "final_answer.md",
+    reportPath: paths.report_path ?? "outputs/report.html",
+    runLogPath: paths.log_path ?? "outputs/run.log",
+    genomePath: paths.genome_path ?? "genome.source.yaml",
+    searchConfigPath: paths.search_config_path ?? "search.config.yaml",
+    evaluatorPath: paths.evaluator_path ?? "eval/hypotest_skydiscover.py",
+    seedProgramPath: paths.seed_program_path ?? "solver/initial_program.py",
+    bestProgramPath: paths.best_program_path ?? "outputs/skydiscover/best_program.py",
+    searchSummaryPath: paths.search_summary_path ?? "outputs/skydiscover/search_summary.json",
+    evaluatorArtifactsPath:
+      paths.evaluator_artifacts_path ?? "outputs/skydiscover/evaluator_artifacts.json",
+    checkpointPointerPath:
+      paths.checkpoint_pointer_path ?? "outputs/skydiscover/latest_checkpoint.txt",
+    bestSolutionPatchPath: paths.best_solution_patch_path ?? "outputs/skydiscover/best_solution.patch",
+    searchLogPath: paths.search_log_path ?? "outputs/skydiscover/search.log",
+  };
+};
+
+const requiredInputPaths = (solvePaths: SolveWorkspacePaths): string[] =>
+  uniquePaths([
+    solvePaths.genomePath,
+    "run.source.yaml",
+    solvePaths.searchConfigPath,
+    solvePaths.evaluatorPath,
+    solvePaths.seedProgramPath,
+    "task.json",
+    "protocol.md",
+    "rubric.json",
+    solvePaths.analysisPath,
+    solvePaths.finalAnswerPath,
+    solvePaths.verdictPath,
+  ]);
+
+const protectedInputPaths = (solvePaths: SolveWorkspacePaths): string[] =>
+  uniquePaths([
+    solvePaths.genomePath,
+    "run.source.yaml",
+    solvePaths.searchConfigPath,
+    "task.json",
+    "protocol.md",
+    "rubric.json",
+    "artifact.source.yaml",
+  ]);
+
+const syncBackPaths = (solvePaths: SolveWorkspacePaths): string[] =>
+  uniquePaths([
+    solvePaths.analysisPath,
+    solvePaths.finalAnswerPath,
+    solvePaths.verdictPath,
+    solvePaths.reportPath,
+    solvePaths.runLogPath,
+    solvePaths.searchLogPath,
+    solvePaths.searchSummaryPath,
+    solvePaths.bestProgramPath,
+    solvePaths.evaluatorArtifactsPath,
+    solvePaths.checkpointPointerPath,
+    solvePaths.bestSolutionPatchPath,
+  ]);
+
+const readRunSource = async (workspacePath: string): Promise<BbhRunSource> => {
+  const runSourcePath = path.join(workspacePath, "run.source.yaml");
+
+  if (!(await fileExists(runSourcePath))) {
+    throw new Error("missing required solver input: run.source.yaml");
+  }
+
+  try {
+    return await readJsonFile<BbhRunSource>(runSourcePath);
+  } catch {
+    throw new Error("invalid solver input: run.source.yaml must be valid JSON");
+  }
+};
+
+const collectProtectedFiles = async (workspacePath: string, solvePaths: SolveWorkspacePaths): Promise<string[]> => {
+  const files = protectedInputPaths(solvePaths).map((entry) => path.join(workspacePath, entry));
   const dataFiles = await walkFiles(path.join(workspacePath, "data"));
   return [...files, ...dataFiles.filter((filePath) => !files.includes(filePath))];
 };
 
-const snapshotProtectedFiles = async (workspacePath: string): Promise<Map<string, string>> => {
-  const files = await collectProtectedFiles(workspacePath);
+const snapshotProtectedFiles = async (
+  workspacePath: string,
+  solvePaths: SolveWorkspacePaths,
+): Promise<Map<string, string>> => {
+  const files = await collectProtectedFiles(workspacePath, solvePaths);
   const snapshot = new Map<string, string>();
 
   for (const filePath of files) {
@@ -163,8 +227,8 @@ const assertSnapshotsMatch = (
   }
 };
 
-const ensureRequiredInputs = async (workspacePath: string): Promise<void> => {
-  for (const relativePath of REQUIRED_INPUTS) {
+const ensureRequiredInputs = async (workspacePath: string, solvePaths: SolveWorkspacePaths): Promise<void> => {
+  for (const relativePath of requiredInputPaths(solvePaths)) {
     if (!(await fileExists(path.join(workspacePath, relativePath)))) {
       throw new Error(`missing required solver input: ${relativePath}`);
     }
@@ -187,10 +251,14 @@ const syncFileIfPresent = async (source: string, target: string): Promise<boolea
   return true;
 };
 
-const syncOutputsBack = async (isolatedPath: string, targetPath: string): Promise<string[]> => {
+const syncOutputsBack = async (
+  isolatedPath: string,
+  targetPath: string,
+  solvePaths: SolveWorkspacePaths,
+): Promise<string[]> => {
   const produced: string[] = [];
 
-  for (const relativePath of SYNC_BACK_PATHS) {
+  for (const relativePath of syncBackPaths(solvePaths)) {
     const synced = await syncFileIfPresent(path.join(isolatedPath, relativePath), path.join(targetPath, relativePath));
     if (synced) {
       produced.push(relativePath);
@@ -201,51 +269,36 @@ const syncOutputsBack = async (isolatedPath: string, targetPath: string): Promis
 };
 
 const buildSolvePrompt = (
-  workspacePath: string,
+  isolatedWorkspacePath: string,
   metadata: RegentResolvedRunMetadata,
+  solvePaths: SolveWorkspacePaths,
 ): string => [
   "Solve this BBH workspace locally.",
   "",
-  "Read these inputs from the current working directory:",
-  "- task.json",
-  "- protocol.md",
-  "- rubric.json",
-  "- analysis.py",
-  "- search.config.yaml",
-  "- data/**",
-  "- genome.source.yaml",
-  "- run.source.yaml",
+  `Isolated working path: ${isolatedWorkspacePath}`,
   "",
+  "Read these inputs from the current working directory:",
+  ...requiredInputPaths(solvePaths).map((relativePath) => `- ${relativePath}`),
+  "- data/**",
   "You may edit only these files:",
-  "- analysis.py",
-  "- final_answer.md",
-  "- outputs/verdict.json",
-  "- outputs/report.html",
-  "- outputs/run.log",
-  "- outputs/skydiscover/search.log",
-  "- outputs/skydiscover/search_summary.json",
-  "- outputs/skydiscover/best_program.py",
-  "- outputs/skydiscover/evaluator_artifacts.json",
-  "- outputs/skydiscover/latest_checkpoint.txt",
-  "- outputs/skydiscover/best_solution.patch",
+  ...syncBackPaths(solvePaths).map((relativePath) => `- ${relativePath}`),
   "",
   "Do not modify any other file.",
   "Do not submit the run.",
   "",
   "Required outputs before you stop:",
-  "- final_answer.md must contain the final answer in plain English.",
-  "- outputs/verdict.json must be valid JSON with decision, justification, and metrics.",
-  "- outputs/skydiscover/search_summary.json must describe the search session in valid JSON.",
+  `- ${solvePaths.finalAnswerPath} must contain the final answer in plain English.`,
+  `- ${solvePaths.verdictPath} must be valid JSON with decision, justification, and metrics.`,
+  `- ${solvePaths.searchSummaryPath} must describe the search session in valid JSON.`,
   "",
   "Optional outputs:",
-  "- outputs/report.html",
-  "- outputs/run.log",
+  `- ${solvePaths.reportPath}`,
+  `- ${solvePaths.runLogPath}`,
   "",
-  `Workspace path: ${workspacePath}`,
   `Executor harness kind: ${metadata.executor_harness.kind}`,
   `Executor harness profile: ${metadata.executor_harness.profile}`,
   "",
-  "If you cannot complete the solve, write the reason to outputs/run.log and exit.",
+  `If you cannot complete the solve, write the reason to ${solvePaths.runLogPath} and exit.`,
 ].join("\n");
 
 const parseSupportedSolver = (value: string | null | undefined): SupportedSolveSolver => {
@@ -354,17 +407,20 @@ const extractMetric = (metrics: Record<string, unknown>, key: string): number | 
   return typeof value === "number" ? value : null;
 };
 
-const readVerdictSummary = async (workspacePath: string): Promise<BbhRunSolveVerdictSummary> => {
-  const verdictPath = path.join(workspacePath, "outputs", "verdict.json");
+const readVerdictSummary = async (
+  workspacePath: string,
+  solvePaths: SolveWorkspacePaths,
+): Promise<BbhRunSolveVerdictSummary> => {
+  const verdictPath = path.join(workspacePath, solvePaths.verdictPath);
   if (!(await fileExists(verdictPath))) {
-    throw new Error("missing required solver output: outputs/verdict.json");
+    throw new Error(`missing required solver output: ${solvePaths.verdictPath}`);
   }
 
   let verdict: Record<string, unknown>;
   try {
     verdict = await readJsonFile<Record<string, unknown>>(verdictPath);
   } catch {
-    throw new Error("invalid verdict output: outputs/verdict.json must be valid JSON");
+    throw new Error(`invalid verdict output: ${solvePaths.verdictPath} must be valid JSON`);
   }
 
   const decision = verdict.decision;
@@ -390,27 +446,26 @@ const readVerdictSummary = async (workspacePath: string): Promise<BbhRunSolveVer
   };
 };
 
-const validateSolveOutputs = async (workspacePath: string): Promise<BbhRunSolveVerdictSummary> => {
-  const finalAnswer = await readRequiredTextFile(path.join(workspacePath, "final_answer.md"));
+const validateSolveOutputs = async (
+  workspacePath: string,
+  solvePaths: SolveWorkspacePaths,
+): Promise<BbhRunSolveVerdictSummary> => {
+  const finalAnswer = await readRequiredTextFile(path.join(workspacePath, solvePaths.finalAnswerPath));
   if (finalAnswer.trim() === "") {
-    throw new Error("missing required solver output: final_answer.md");
+    throw new Error(`missing required solver output: ${solvePaths.finalAnswerPath}`);
   }
 
-  const runSource = await readJsonFile<BbhRunSource>(path.join(workspacePath, "run.source.yaml"));
-  const searchSummaryPath = path.join(
-    workspacePath,
-    runSource.paths?.search_summary_path ?? "outputs/skydiscover/search_summary.json",
-  );
+  const searchSummaryPath = path.join(workspacePath, solvePaths.searchSummaryPath);
   if (!(await fileExists(searchSummaryPath))) {
-    throw new Error("missing required solver output: outputs/skydiscover/search_summary.json");
+    throw new Error(`missing required solver output: ${solvePaths.searchSummaryPath}`);
   }
   try {
     await readJsonFile<Record<string, unknown>>(searchSummaryPath);
   } catch {
-    throw new Error("invalid solver output: outputs/skydiscover/search_summary.json must be valid JSON");
+    throw new Error(`invalid solver output: ${solvePaths.searchSummaryPath} must be valid JSON`);
   }
 
-  return readVerdictSummary(workspacePath);
+  return readVerdictSummary(workspacePath, solvePaths);
 };
 
 const updateRunSourceForSolve = (
@@ -453,14 +508,12 @@ const syncRunMetadata = async (
   solver: SupportedSolveSolver,
   entrypoint: string,
   verdictSummary: BbhRunSolveVerdictSummary,
+  solvePaths: SolveWorkspacePaths,
 ): Promise<void> => {
   const runSourcePath = path.join(workspacePath, "run.source.yaml");
   const runSource = await readJsonFile<BbhRunSource>(runSourcePath);
-  const searchConfigPath = path.join(workspacePath, runSource.paths?.search_config_path ?? "search.config.yaml");
-  const searchSummaryPath = path.join(
-    workspacePath,
-    runSource.paths?.search_summary_path ?? "outputs/skydiscover/search_summary.json",
-  );
+  const searchConfigPath = path.join(workspacePath, solvePaths.searchConfigPath);
+  const searchSummaryPath = path.join(workspacePath, solvePaths.searchSummaryPath);
   const searchSummary = await readJsonFile<Record<string, unknown>>(searchSummaryPath);
 
   // Keep the run record aligned with the actual local solve path so submit,
@@ -506,9 +559,11 @@ export async function solveBbhWorkspace(
   options: SolveOptions = {},
 ): Promise<BbhRunSolveResponse> {
   const workspacePath = path.resolve(params.workspace_path);
-  await ensureRequiredInputs(workspacePath);
+  const runSource = await readRunSource(workspacePath);
+  const solvePaths = resolveSolveWorkspacePaths(runSource);
+  await ensureRequiredInputs(workspacePath, solvePaths);
 
-  const targetProtectedBefore = await snapshotProtectedFiles(workspacePath);
+  const targetProtectedBefore = await snapshotProtectedFiles(workspacePath, solvePaths);
   const solver = parseSupportedSolver(params.solver);
   const harnessWorkspaceRoot =
     solver === "skydiscover" ? config.workloads.bbh.workspaceRoot : config.agents.harnesses[solver]?.workspaceRoot;
@@ -523,12 +578,12 @@ export async function solveBbhWorkspace(
   );
 
   await copyWorkspace(workspacePath, isolatedWorkspacePath);
-  const isolatedProtectedBefore = await snapshotProtectedFiles(isolatedWorkspacePath);
-  const logPath = path.join(isolatedWorkspacePath, "outputs", "run.log");
+  const isolatedProtectedBefore = await snapshotProtectedFiles(isolatedWorkspacePath, solvePaths);
+  const logPath = path.join(isolatedWorkspacePath, solvePaths.runLogPath);
   const timeoutSeconds = parseTimeoutSeconds(params.timeout_seconds);
 
   const runner = options.runSolver ?? defaultRunSolver;
-  const prompt = buildSolvePrompt(workspacePath, metadata);
+  const prompt = buildSolvePrompt(isolatedWorkspacePath, metadata, solvePaths);
   const invocation: SolveSolverInvocation = {
     solver,
     entrypoint:
@@ -541,29 +596,29 @@ export async function solveBbhWorkspace(
 
   const result = await runner(invocation);
   if (result.exitCode !== 0) {
-    await syncFileIfPresent(logPath, path.join(workspacePath, "outputs", "run.log"));
+    await syncFileIfPresent(logPath, path.join(workspacePath, solvePaths.runLogPath));
     throw new Error(`${solver} solve adapter exited with code ${result.exitCode}`);
   }
 
-  const isolatedProtectedAfter = await snapshotProtectedFiles(isolatedWorkspacePath);
+  const isolatedProtectedAfter = await snapshotProtectedFiles(isolatedWorkspacePath, solvePaths);
   assertSnapshotsMatch(
     isolatedProtectedBefore,
     isolatedProtectedAfter,
     "solver modified protected workspace inputs",
   );
 
-  const verdictSummary = await validateSolveOutputs(isolatedWorkspacePath);
-  const producedFiles = await syncOutputsBack(isolatedWorkspacePath, workspacePath);
+  const verdictSummary = await validateSolveOutputs(isolatedWorkspacePath, solvePaths);
+  const producedFiles = await syncOutputsBack(isolatedWorkspacePath, workspacePath, solvePaths);
 
-  const targetProtectedAfter = await snapshotProtectedFiles(workspacePath);
+  const targetProtectedAfter = await snapshotProtectedFiles(workspacePath, solvePaths);
   assertSnapshotsMatch(
     targetProtectedBefore,
     targetProtectedAfter,
     "solver modified protected workspace inputs",
   );
 
-  await syncRunMetadata(workspacePath, solver, invocation.entrypoint, verdictSummary);
-  const syncedFiles = [...producedFiles, "run.source.yaml", "search.config.yaml"];
+  await syncRunMetadata(workspacePath, solver, invocation.entrypoint, verdictSummary, solvePaths);
+  const syncedFiles = uniquePaths([...producedFiles, "run.source.yaml", solvePaths.searchConfigPath]);
 
   return {
     ok: true,
