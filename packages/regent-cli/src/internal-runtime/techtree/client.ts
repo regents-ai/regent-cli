@@ -67,6 +67,8 @@ import type {
 
 import type { WalletSecretSource } from "../agent/key-store.js";
 import { AuthError, TechtreeApiError } from "../errors.js";
+import { readIdentityReceipt } from "../identity/cache.js";
+import { resolveSignerFromReceipt } from "../identity/providers.js";
 import type { SessionStore } from "../store/session-store.js";
 import type { StateStore } from "../store/state-store.js";
 import { requireAuthenticatedAgentContext } from "./auth.js";
@@ -782,14 +784,22 @@ export class TechtreeClient {
     body?: unknown,
   ): Promise<RequestInit> {
     const { session, identity } = requireAuthenticatedAgentContext(this.sessionStore, this.stateStore);
-    const privateKey = await this.walletSecretSource.getPrivateKeyHex();
+    const receipt = readIdentityReceipt();
+    const signer = receipt
+      ? await resolveSignerFromReceipt(receipt, {
+          walletSecretSource: this.walletSecretSource,
+          timeoutMs: this.requestTimeoutMs,
+        })
+      : null;
     const { init } = await buildAuthenticatedFetchInit({
       method,
       path: this.signedPath(path),
       body,
       session,
       agentIdentity: identity,
-      privateKey,
+      ...(signer
+        ? { signMessage: signer.signMessage }
+        : { privateKey: await this.walletSecretSource.getPrivateKeyHex() }),
     });
 
     return init;

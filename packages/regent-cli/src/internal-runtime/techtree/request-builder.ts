@@ -1,6 +1,6 @@
 import type { LocalAgentIdentity, SiwaSession } from "../../internal-types/index.js";
 
-import { buildSignedAgentHeaders } from "./signing.js";
+import { buildSignedAgentHeaders, buildSignerBackedAgentHeaders } from "./signing.js";
 
 const AUTH_DEBUG_HEADER_NAMES = [
   "x-siwa-receipt",
@@ -38,7 +38,8 @@ export interface AuthenticatedRequestInput {
   body?: unknown;
   session: SiwaSession;
   agentIdentity: LocalAgentIdentity;
-  privateKey: `0x${string}`;
+  signMessage?(message: string): Promise<`0x${string}`>;
+  privateKey?: `0x${string}`;
 }
 
 const serializeJsonBody = (body: unknown): string | undefined => (body === undefined ? undefined : JSON.stringify(body));
@@ -59,7 +60,7 @@ export async function buildAuthenticatedFetchInit(
   input: AuthenticatedRequestInput,
 ): Promise<{ urlPath: string; serializedJsonBody?: string; init: RequestInit }> {
   const serializedBody = serializeJsonBody(input.body);
-  const signedHeaders = await buildSignedAgentHeaders({
+  const sharedInput = {
     method: input.method,
     path: input.path,
     walletAddress: input.agentIdentity.walletAddress,
@@ -67,8 +68,16 @@ export async function buildAuthenticatedFetchInit(
     registryAddress: input.agentIdentity.registryAddress,
     tokenId: input.agentIdentity.tokenId,
     receipt: input.session.receipt,
-    privateKey: input.privateKey,
-  });
+  };
+  const signedHeaders = input.signMessage
+    ? await buildSignerBackedAgentHeaders({
+        ...sharedInput,
+        signMessage: input.signMessage,
+      })
+    : await buildSignedAgentHeaders({
+        ...sharedInput,
+        privateKey: input.privateKey as `0x${string}`,
+      });
 
   const headers: Record<string, string> = {
     ...signedHeaders,

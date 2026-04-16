@@ -4,31 +4,63 @@ import path from "node:path";
 
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
-import { callJsonRpc, RegentRuntime, writeInitialConfig } from "../../../src/internal-runtime/index.js";
+import { callJsonRpc, ensureIdentity, loadConfig, RegentRuntime, writeInitialConfig } from "../../../src/internal-runtime/index.js";
 import { TechtreeContractServer } from "../../../../../test-support/techtree-contract-server.js";
 import { describeNetwork } from "../../../../../test-support/integration.js";
 
 const TEST_PRIVATE_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
 const TEST_WALLET = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
-const TEST_REGISTRY = "0x2222222222222222222222222222222222222222";
 
 describeNetwork.sequential("doctor JSON-RPC methods", () => {
   let server: TechtreeContractServer;
   let runtime: RegentRuntime | null = null;
+  let tempDir = "";
   let configPath = "";
   let socketPath = "";
   let originalPrivateKey: string | undefined;
+  let originalHome: string | undefined;
+
+  const writeManagedIdentity = (): void => {
+    const managedIdentityPath = path.join(tempDir, ".regent", "managed-identity.json");
+    fs.mkdirSync(path.dirname(managedIdentityPath), { recursive: true });
+    fs.writeFileSync(
+      managedIdentityPath,
+      `${JSON.stringify(
+        {
+          provider: "regent",
+          network: "base",
+          address: TEST_WALLET,
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+  };
+
+  const seedIdentityReceipt = async (): Promise<void> => {
+    writeManagedIdentity();
+    await ensureIdentity({
+      provider: "regent",
+      network: "base",
+      forceRefresh: true,
+      timeoutSeconds: 1,
+      config: loadConfig(configPath),
+    });
+  };
 
   beforeEach(async () => {
     server = new TechtreeContractServer();
     await server.start();
 
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-doctor-daemon-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-doctor-daemon-"));
     configPath = path.join(tempDir, "regent.config.json");
     socketPath = path.join(tempDir, "runtime", "regent.sock");
 
     originalPrivateKey = process.env.REGENT_WALLET_PRIVATE_KEY;
+    originalHome = process.env.HOME;
     process.env.REGENT_WALLET_PRIVATE_KEY = TEST_PRIVATE_KEY;
+    process.env.HOME = tempDir;
 
     writeInitialConfig(configPath, {
       runtime: {
@@ -39,7 +71,7 @@ describeNetwork.sequential("doctor JSON-RPC methods", () => {
       auth: {
         baseUrl: server.baseUrl,
         audience: "regent-cli",
-        defaultChainId: 11155111,
+        defaultChainId: 8453,
         requestTimeoutMs: 1_000,
       },
       techtree: {
@@ -62,17 +94,23 @@ describeNetwork.sequential("doctor JSON-RPC methods", () => {
     }
     await server.stop();
     process.env.REGENT_WALLET_PRIVATE_KEY = originalPrivateKey;
+    process.env.HOME = originalHome;
   });
 
   it("returns structured default, scoped, and full doctor reports over JSON-RPC", async () => {
     const initial = await callJsonRpc(socketPath, "doctor.run");
     expect(initial.mode).toBe("default");
-    expect(initial.summary.fail).toBeGreaterThan(0);
+    expect(initial.summary.fail).toBe(0);
+    expect(initial.summary.warn).toBeGreaterThan(0);
     expect(initial.checks).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
           id: "auth.siwa.verify.endpoint",
           status: "ok",
+        }),
+        expect.objectContaining({
+          id: "auth.identity.headers",
+          status: "warn",
         }),
         expect.objectContaining({
           id: "auth.session.present",
@@ -81,13 +119,7 @@ describeNetwork.sequential("doctor JSON-RPC methods", () => {
       ]),
     );
 
-    await callJsonRpc(socketPath, "auth.siwa.login", {
-      walletAddress: TEST_WALLET,
-      chainId: 11155111,
-      registryAddress: TEST_REGISTRY,
-      tokenId: "99",
-      audience: "techtree",
-    });
+    await seedIdentityReceipt();
 
     const scoped = await callJsonRpc(socketPath, "doctor.runScoped", {
       scope: "techtree",
@@ -131,13 +163,7 @@ describeNetwork.sequential("doctor JSON-RPC methods", () => {
   }, 15_000);
 
   it("preserves backend denial metadata on authenticated probe failures", async () => {
-    await callJsonRpc(socketPath, "auth.siwa.login", {
-      walletAddress: TEST_WALLET,
-      chainId: 11155111,
-      registryAddress: TEST_REGISTRY,
-      tokenId: "99",
-      audience: "techtree",
-    });
+    await seedIdentityReceipt();
 
     runtime.sessionStore.setSiwaSession({
       ...(runtime.sessionStore.getSiwaSession() as NonNullable<ReturnType<typeof runtime.sessionStore.getSiwaSession>>),
@@ -207,13 +233,7 @@ describeNetwork.sequential("doctor JSON-RPC methods", () => {
     runtime = new RegentRuntime(configPath);
     await runtime.start();
 
-    await callJsonRpc(socketPath, "auth.siwa.login", {
-      walletAddress: TEST_WALLET,
-      chainId: 11155111,
-      registryAddress: TEST_REGISTRY,
-      tokenId: "99",
-      audience: "techtree",
-    });
+    await seedIdentityReceipt();
 
     const report = await callJsonRpc(socketPath, "doctor.runScoped", {
       scope: "techtree",

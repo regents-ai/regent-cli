@@ -1040,7 +1040,7 @@ describe("autolaunch CLI command group", () => {
 
   it("rejects autolaunch job watch requests without a signed-in session", async () => {
     buildAgentAuthHeadersMock.mockRejectedValueOnce(
-      new Error("Run `regent auth siwa login` before using this command."),
+      new Error("Run `regent identity ensure` before using this command."),
     );
     const output = await captureOutput(() =>
       runCliEntrypoint(["autolaunch", "jobs", "watch", "job_123"]),
@@ -1049,7 +1049,7 @@ describe("autolaunch CLI command group", () => {
     expect(output.result).toBe(1);
     expect(fetchMock).not.toHaveBeenCalled();
     expect(output.stderr).toContain(
-      "Run `regent auth siwa login` before using this command.",
+      "Run `regent identity ensure` before using this command.",
     );
   });
 

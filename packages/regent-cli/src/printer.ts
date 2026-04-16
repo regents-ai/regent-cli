@@ -135,9 +135,7 @@ export function renderUsageScreen(configPath: string): string {
       "regent config write",
     ]),
     ...renderUsageGroup("Identity + Lower-Level Setup", [
-      "regent auth siwa login",
-      "regent auth siwa status",
-      "regent auth siwa logout",
+      "regent identity ensure",
       "regent agent init",
       "regent agent status",
       "regent techtree identities list",

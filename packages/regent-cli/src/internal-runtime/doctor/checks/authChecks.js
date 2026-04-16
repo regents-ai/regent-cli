@@ -19,13 +19,13 @@ export function authChecks() {
                 const missingFields = getMissingAgentIdentityFields(ctx.stateStore);
                 if (!identity) {
                     return {
-                        status: "fail",
+                        status: "warn",
                         message: "Protected-route identity is missing",
                         details: {
                             identity,
                             missingFields,
                         },
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 if (missingFields.length > 0) {
@@ -36,7 +36,7 @@ export function authChecks() {
                             identity,
                             missingFields,
                         },
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 const signerWalletAddress = await deriveSignerWalletAddress(ctx).catch(() => null);
@@ -64,7 +64,7 @@ export function authChecks() {
                             signerWalletAddress,
                             issues,
                         },
-                        remediation: "Re-run `regent auth siwa login` with the intended signer and agent identity",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 return {
@@ -130,7 +130,7 @@ export function authChecks() {
                     return {
                         status: "skip",
                         message: "SIWA verify probe skipped because protected-route identity is incomplete",
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 const walletAddress = identity?.walletAddress ?? (await deriveSignerWalletAddress(ctx)) ?? PLACEHOLDER_WALLET;
@@ -197,7 +197,7 @@ export function authChecks() {
                     return {
                         status: "warn",
                         message: "No active SIWA session found",
-                        remediation: "Run `regent auth siwa login`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 return {
@@ -224,7 +224,7 @@ export function authChecks() {
                     return {
                         status: "skip",
                         message: "No SIWA session is stored locally",
-                        remediation: "Run `regent auth siwa login`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 const expiresAt = Date.parse(session.receiptExpiresAt);
@@ -235,7 +235,7 @@ export function authChecks() {
                         details: {
                             receiptExpiresAt: session.receiptExpiresAt,
                         },
-                        remediation: "Run `regent auth siwa login` again",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 const remainingMs = expiresAt - Date.now();
@@ -246,7 +246,7 @@ export function authChecks() {
                         details: {
                             receiptExpiresAt: session.receiptExpiresAt,
                         },
-                        remediation: "Run `regent auth siwa login` again",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 if (remainingMs <= FRESHNESS_THRESHOLD_MS) {
@@ -257,7 +257,7 @@ export function authChecks() {
                             receiptExpiresAt: session.receiptExpiresAt,
                             remainingMs,
                         },
-                        remediation: "Run `regent auth siwa login` again soon",
+                        remediation: "Run `regent identity ensure` again soon",
                     };
                 }
                 return {
@@ -283,7 +283,7 @@ export function authChecks() {
                     return {
                         status: "skip",
                         message: "No SIWA session is stored locally",
-                        remediation: "Run `regent auth siwa login`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 const identity = getCurrentAgentIdentity(ctx.stateStore);
@@ -291,7 +291,7 @@ export function authChecks() {
                     return {
                         status: "fail",
                         message: "A SIWA session exists, but local protected-route identity is missing",
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 const mismatches = [
@@ -318,7 +318,7 @@ export function authChecks() {
                             identity,
                             mismatches,
                         },
-                        remediation: "Run `regent auth siwa login` again with the current signer and agent identity",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 if (!session.registryAddress || !session.tokenId) {
@@ -332,7 +332,7 @@ export function authChecks() {
                             },
                             identity,
                         },
-                        remediation: "Run `regent auth siwa login` again to refresh the stored binding metadata",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 return {
@@ -361,14 +361,14 @@ export function authChecks() {
                     return {
                         status: "skip",
                         message: "No SIWA session is stored locally",
-                        remediation: "Run `regent auth siwa login`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 if (!identity) {
                     return {
                         status: "skip",
                         message: "Protected-route identity is unavailable locally",
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 try {

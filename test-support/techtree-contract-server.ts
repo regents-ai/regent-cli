@@ -7,6 +7,11 @@ import type {
   AgentInboxResponse,
   AgentOpportunitiesResponse,
   CommentCreateResponse,
+  IdentityRegistrationCompletionResponse,
+  IdentityRegistrationIntentResponse,
+  IdentitySiwaNonceResponse,
+  IdentitySiwaVerifyResponse,
+  IdentityStatusResponse,
   NodeStarRecord,
   NodeCreateResponse,
   SiwaNonceResponse,
@@ -38,11 +43,14 @@ const REQUIRED_AUTH_HEADERS = [
 const REQUIRED_SIGNATURE_COMPONENTS = [...HTTP_SIGNATURE_BASE_COMPONENTS] as const;
 
 const TEST_AGENT_WALLET = "0x1111111111111111111111111111111111111111" as const;
+const TEST_AGENT_REGISTRY = "0x2222222222222222222222222222222222222222" as const;
 const TEST_AGENT_SUMMARY = {
   id: 1,
   label: "Contract test agent",
   wallet_address: TEST_AGENT_WALLET,
 } as const;
+const agentRegistryBinding = (network: "base" | "base-sepolia"): string =>
+  `eip155:${network === "base" ? "8453" : "84532"}/erc8004:${TEST_AGENT_REGISTRY}`;
 
 export interface ForcedRouteResponse {
   statusCode: number;
@@ -68,6 +76,30 @@ export interface ContractRequestRecord {
 interface IssuedNonceRecord {
   walletAddress: `0x${string}`;
   chainId: number;
+  expiresAtUnixSeconds: number;
+}
+
+interface RegistrationIntentRecord {
+  intentId: string;
+  address: `0x${string}`;
+  network: "base" | "base-sepolia";
+  provider: "regent" | "moonpay" | "bankr" | "privy";
+  message: string;
+}
+
+interface RegisteredIdentityRecord {
+  address: `0x${string}`;
+  network: "base" | "base-sepolia";
+  agentId: number;
+  agentRegistry: string;
+}
+
+interface IssuedIdentityNonceRecord {
+  nonceToken: string;
+  address: `0x${string}`;
+  network: "base" | "base-sepolia";
+  agentId: number;
+  agentRegistry: string;
   expiresAtUnixSeconds: number;
 }
 
@@ -244,6 +276,9 @@ export class TechtreeContractServer {
   private nextStarId = 900;
   private nextEventId = 2_002;
   private readonly issuedNonces = new Map<string, IssuedNonceRecord>();
+  private readonly issuedRegistrationIntents = new Map<string, RegistrationIntentRecord>();
+  private readonly registeredIdentities = new Map<string, RegisteredIdentityRecord>();
+  private readonly issuedIdentityNonces = new Map<string, IssuedIdentityNonceRecord>();
   private readonly consumedEnvelopeNonces = new Set<string>();
   private server: http.Server | null = null;
 
@@ -463,6 +498,254 @@ export class TechtreeContractServer {
           walletAddress,
           chainId: chainId as number,
           expiresAt: "2999-01-01T00:00:00.000Z",
+        },
+      };
+      json(res, 200, response);
+      return;
+    }
+
+    if (method === "POST" && requestUrl.pathname === "/v1/identity/status") {
+      const payload = body as {
+        network?: "base" | "base-sepolia";
+        address?: `0x${string}`;
+        provider?: "regent" | "moonpay" | "bankr" | "privy";
+      };
+      const network = payload.network ?? "base";
+      const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
+      const registered = this.registeredIdentities.get(`${network}:${address}`);
+      const response: IdentityStatusResponse = {
+        ok: true,
+        code: "identity_status_resolved",
+        data: {
+          network,
+          address,
+          provider: payload.provider ?? "regent",
+          registered: registered !== undefined,
+          verified: registered ? "onchain" : "unregistered",
+          ...(registered
+            ? {
+                agent_id: registered.agentId,
+                agent_registry: registered.agentRegistry,
+                receipt_expires_at: "2999-01-01T00:00:00.000Z",
+              }
+            : {}),
+        },
+      };
+      json(res, 200, response);
+      return;
+    }
+
+    if (method === "POST" && requestUrl.pathname === "/v1/identity/registration-intents") {
+      const payload = body as {
+        network?: "base" | "base-sepolia";
+        address?: `0x${string}`;
+        provider?: "regent" | "moonpay" | "bankr" | "privy";
+      };
+      const network = payload.network ?? "base";
+      const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
+      const intentId = `intent-${Date.now()}`;
+      const message = `Register Regent identity for ${address} on ${network}`;
+      this.issuedRegistrationIntents.set(intentId, {
+        intentId,
+        address,
+        network,
+        provider: payload.provider ?? "regent",
+        message,
+      });
+      const response: IdentityRegistrationIntentResponse = {
+        ok: true,
+        code: "identity_registration_intent_created",
+        data: {
+          intent_id: intentId,
+          intent_kind: "erc8004_registration",
+          signing_payload: {
+            message,
+          },
+        },
+      };
+      json(res, 200, response);
+      return;
+    }
+
+    if (method === "POST" && requestUrl.pathname === "/v1/identity/registration-completions") {
+      const payload = body as {
+        intent_id?: string;
+        address?: `0x${string}`;
+        signature?: `0x${string}`;
+        message?: string;
+      };
+      const intent = payload.intent_id ? this.issuedRegistrationIntents.get(payload.intent_id) : undefined;
+      const issues: string[] = [];
+
+      if (!intent) {
+        issues.push("intent_id was not issued");
+      }
+      if (!payload.address) {
+        issues.push("address is required");
+      }
+      if (!payload.signature || !/^0x[0-9a-fA-F]{130}$/.test(payload.signature)) {
+        issues.push("signature is invalid");
+      }
+      if (intent && payload.address?.toLowerCase() !== intent.address.toLowerCase()) {
+        issues.push("intent address binding mismatch");
+      }
+      if (intent && payload.message !== intent.message) {
+        issues.push("registration message mismatch");
+      }
+
+      if (issues.length > 0) {
+        json(res, 422, {
+          error: {
+            code: "registration_failed",
+            message: "registration request failed validation",
+            details: { issues },
+          },
+        });
+        return;
+      }
+
+      this.issuedRegistrationIntents.delete(payload.intent_id as string);
+      const registered: RegisteredIdentityRecord = {
+        address: intent!.address,
+        network: intent!.network,
+        agentId: 99,
+        agentRegistry: agentRegistryBinding(intent!.network),
+      };
+      this.registeredIdentities.set(`${registered.network}:${registered.address}`, registered);
+
+      const response: IdentityRegistrationCompletionResponse = {
+        ok: true,
+        code: "identity_registration_completed",
+        data: {
+          registered: true,
+          agent_id: registered.agentId,
+          agent_registry: registered.agentRegistry,
+        },
+      };
+      json(res, 200, response);
+      return;
+    }
+
+    if (method === "POST" && requestUrl.pathname === "/v1/identity/siwa/nonce") {
+      const payload = body as {
+        network?: "base" | "base-sepolia";
+        address?: `0x${string}`;
+        agent_id?: number;
+        agent_registry?: string;
+      };
+      const network = payload.network ?? "base";
+      const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
+      const nonceToken = `identity-nonce-${Date.now()}`;
+      const agentId = payload.agent_id ?? 99;
+      const agentRegistry = payload.agent_registry ?? agentRegistryBinding(network);
+      const message = [
+        "Sign in with Regent",
+        `Address: ${address}`,
+        `Network: ${network}`,
+        `Agent ID: ${agentId}`,
+        `Agent Registry: ${agentRegistry}`,
+        `Nonce: ${nonceToken}`,
+      ].join("\n");
+
+      this.issuedIdentityNonces.set(nonceToken, {
+        nonceToken,
+        address,
+        network,
+        agentId,
+        agentRegistry,
+        expiresAtUnixSeconds: currentUnixSeconds() + 300,
+      });
+
+      const response: IdentitySiwaNonceResponse = {
+        ok: true,
+        code: "identity_siwa_nonce_issued",
+        data: {
+          nonce_token: nonceToken,
+          message,
+          address,
+          agent_id: agentId,
+          agent_registry: agentRegistry,
+          expires_at: "2999-01-01T00:00:00.000Z",
+        },
+      };
+      json(res, 200, response);
+      return;
+    }
+
+    if (method === "POST" && requestUrl.pathname === "/v1/identity/siwa/verify") {
+      const payload = body as {
+        network?: "base" | "base-sepolia";
+        address?: `0x${string}`;
+        agent_id?: number;
+        agent_registry?: string;
+        message?: string;
+        signature?: `0x${string}`;
+        nonce_token?: string;
+      };
+      const issued = payload.nonce_token ? this.issuedIdentityNonces.get(payload.nonce_token) : undefined;
+      const issues: string[] = [];
+
+      if (!issued) {
+        issues.push("nonce_token was not issued");
+      }
+      if (!payload.message) {
+        issues.push("message is required");
+      }
+      if (!payload.signature || !/^0x[0-9a-fA-F]{130}$/.test(payload.signature)) {
+        issues.push("signature is invalid");
+      }
+      if (issued && payload.address?.toLowerCase() !== issued.address.toLowerCase()) {
+        issues.push("address binding mismatch");
+      }
+      if (issued && payload.agent_id !== issued.agentId) {
+        issues.push("agent_id binding mismatch");
+      }
+      if (issued && payload.agent_registry !== issued.agentRegistry) {
+        issues.push("agent_registry binding mismatch");
+      }
+      if (issued && payload.network !== issued.network) {
+        issues.push("network binding mismatch");
+      }
+      if (issued && issued.expiresAtUnixSeconds <= currentUnixSeconds()) {
+        issues.push("nonce token is expired");
+      }
+      if (issued && payload.message && !payload.message.includes(`Nonce: ${issued.nonceToken}`)) {
+        issues.push("message does not include nonce token");
+      }
+
+      if (issues.length > 0) {
+        json(res, 422, {
+          error: {
+            code: "siwa_verify_failed",
+            message: "identity verify request failed validation",
+            details: { issues },
+          },
+        });
+        return;
+      }
+
+      this.issuedIdentityNonces.delete(payload.nonce_token as string);
+      const receiptClaims: ReceiptClaims = {
+        walletAddress: issued!.address,
+        chainId: issued!.network === "base" ? 8453 : 84532,
+        registryAddress: TEST_AGENT_REGISTRY,
+        tokenId: String(issued!.agentId),
+        keyId: issued!.address.toLowerCase(),
+        expiresAt: "2999-01-01T00:00:00.000Z",
+      };
+      const response: IdentitySiwaVerifyResponse = {
+        ok: true,
+        code: "identity_siwa_verified",
+        data: {
+          verified: "onchain",
+          network: issued!.network,
+          address: issued!.address,
+          agent_id: issued!.agentId,
+          agent_registry: issued!.agentRegistry,
+          signer_type: "evm_personal_sign",
+          receipt: makeReceipt(receiptClaims),
+          receipt_issued_at: "2026-03-10T00:00:00.000Z",
+          receipt_expires_at: "2999-01-01T00:00:00.000Z",
         },
       };
       json(res, 200, response);

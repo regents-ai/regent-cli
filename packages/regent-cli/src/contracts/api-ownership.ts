@@ -320,7 +320,6 @@ export const autolaunchApiCommandGroups = [
       "autolaunch strategy sweep-token",
       "autolaunch strategy sweep-currency",
       "autolaunch fee-registry show",
-      "autolaunch fee-registry set-hook-enabled",
       "autolaunch fee-vault show",
       "autolaunch fee-vault withdraw-treasury",
       "autolaunch fee-vault withdraw-regent",
@@ -331,7 +330,6 @@ export const autolaunchApiCommandGroups = [
       "autolaunch splitter cancel-treasury-recipient-rotation",
       "autolaunch splitter execute-treasury-recipient-rotation",
       "autolaunch splitter set-protocol-recipient",
-      "autolaunch splitter set-protocol-skim-bps",
       "autolaunch splitter sweep-treasury-residual",
       "autolaunch splitter sweep-protocol-reserve",
       "autolaunch splitter reassign-dust",
@@ -363,10 +361,16 @@ export const autolaunchApiCommandGroups = [
 
 export const sharedServicesApiCommandGroups = [
   {
-    commands: ["auth siwa login", "auth siwa status", "auth siwa logout"],
+    commands: ["regent identity ensure"],
     owner: "shared-services",
     status: "current",
-    pathTemplates: ["/v1/agent/siwa/nonce", "/v1/agent/siwa/verify"],
+    pathTemplates: [
+      "/v1/identity/status",
+      "/v1/identity/registration-intents",
+      "/v1/identity/registration-completions",
+      "/v1/identity/siwa/nonce",
+      "/v1/identity/siwa/verify",
+    ],
   },
   {
     commands: [

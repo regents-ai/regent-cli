@@ -62,7 +62,7 @@ trap cleanup EXIT
 
 cd "${ROOT}"
 pnpm build >/dev/null
-pnpm --filter @regentlabs/cli deploy --prod "${STAGE_DIR}" >/dev/null
+pnpm --filter @regentslabs/cli deploy --prod "${STAGE_DIR}" >/dev/null
 pack_workspace_package "${STAGE_DIR}"
 
 cat > "${WORK_DIR}/package.json" <<'EOF'
@@ -73,7 +73,7 @@ cat > "${WORK_DIR}/package.json" <<'EOF'
 }
 EOF
 
-pnpm --dir "${WORK_DIR}" add "${PACK_DIR}"/regentlabs-cli-*.tgz >/dev/null
+pnpm --dir "${WORK_DIR}" add "${PACK_DIR}"/regentslabs-cli-*.tgz >/dev/null
 
 cat > "${WORK_DIR}/mock-techtree.mjs" <<'EOF'
 import http from "node:http";
@@ -106,33 +106,79 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  if (req.method === "POST" && requestUrl.pathname === "/v1/agent/siwa/nonce") {
+  if (req.method === "POST" && requestUrl.pathname === "/v1/identity/status") {
     json(res, 200, {
       ok: true,
-      code: "nonce_issued",
+      code: "identity_status_resolved",
       data: {
-        nonce: "packed-install-nonce",
-        walletAddress: body?.wallet_address ?? "0x0",
-        chainId: body?.chain_id ?? 11155111,
-        expiresAt: "2999-01-01T00:00:00.000Z"
+        network: body?.network ?? "base",
+        address: String(body?.address ?? "0x0").toLowerCase(),
+        provider: body?.provider ?? "regent",
+        registered: false,
+        verified: "unregistered"
       }
     });
     return;
   }
 
-  if (req.method === "POST" && requestUrl.pathname === "/v1/agent/siwa/verify") {
+  if (req.method === "POST" && requestUrl.pathname === "/v1/identity/registration-intents") {
     json(res, 200, {
       ok: true,
-      code: "siwa_verified",
+      code: "identity_registration_intent_created",
       data: {
-        verified: true,
-        walletAddress: body?.wallet_address ?? "0x0",
-        chainId: body?.chain_id ?? 11155111,
-        nonce: body?.nonce ?? "packed-install-nonce",
-        keyId: String(body?.wallet_address ?? "0x0").toLowerCase(),
-        signatureScheme: "evm_personal_sign",
-        receipt: "receipt-valid.eyJ3YWxsZXRBZGRyZXNzIjoiMHgwIiwiY2hhaW5JZCI6MTExNTUxMTEsImtleUlkIjoiMHgwIiwiZXhwaXJlc0F0IjoiMjk5OS0wMS0wMVQwMDowMDowMC4wMDBaIn0",
-        receiptExpiresAt: "2999-01-01T00:00:00.000Z"
+        intent_id: "packed-install-intent",
+        intent_kind: "erc8004_registration",
+        signing_payload: {
+          message: `Register Regent identity for ${String(body?.address ?? "0x0").toLowerCase()}`
+        }
+      }
+    });
+    return;
+  }
+
+  if (req.method === "POST" && requestUrl.pathname === "/v1/identity/registration-completions") {
+    json(res, 200, {
+      ok: true,
+      code: "identity_registration_completed",
+      data: {
+        registered: true,
+        agent_id: 99,
+        agent_registry: "eip155:8453/erc8004:0x2222222222222222222222222222222222222222"
+      }
+    });
+    return;
+  }
+
+  if (req.method === "POST" && requestUrl.pathname === "/v1/identity/siwa/nonce") {
+    json(res, 200, {
+      ok: true,
+      code: "identity_siwa_nonce_issued",
+      data: {
+        nonce_token: "packed-install-nonce",
+        message: `Sign in with Regent\nAddress: ${String(body?.address ?? "0x0").toLowerCase()}\nNetwork: base\nAgent ID: 99\nAgent Registry: eip155:8453/erc8004:0x2222222222222222222222222222222222222222\nNonce: packed-install-nonce`,
+        address: String(body?.address ?? "0x0").toLowerCase(),
+        agent_id: body?.agent_id ?? 99,
+        agent_registry: body?.agent_registry ?? "eip155:8453/erc8004:0x2222222222222222222222222222222222222222",
+        expires_at: "2999-01-01T00:00:00.000Z"
+      }
+    });
+    return;
+  }
+
+  if (req.method === "POST" && requestUrl.pathname === "/v1/identity/siwa/verify") {
+    json(res, 200, {
+      ok: true,
+      code: "identity_siwa_verified",
+      data: {
+        verified: "onchain",
+        network: body?.network ?? "base",
+        address: String(body?.address ?? "0x0").toLowerCase(),
+        agent_id: body?.agent_id ?? 99,
+        agent_registry: body?.agent_registry ?? "eip155:8453/erc8004:0x2222222222222222222222222222222222222222",
+        signer_type: "evm_personal_sign",
+        receipt: "receipt-valid.eyJ3YWxsZXRBZGRyZXNzIjoiMHgwIiwgImNoYWluSWQiOjg0NTMsICJyZWdpc3RyeUFkZHJlc3MiOiIweDIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIiLCAidG9rZW5JZCI6Ijk5IiwgImtleUlkIjoiMHgwIiwgImV4cGlyZXNBdCI6IjI5OTktMDEtMDFUMDA6MDA6MDAuMDAwWiJ9",
+        receipt_issued_at: "2026-03-10T00:00:00.000Z",
+        receipt_expires_at: "2999-01-01T00:00:00.000Z"
       }
     });
     return;
@@ -287,26 +333,33 @@ EOF
 
 pnpm --dir "${WORK_DIR}" exec regent config write --config "${CONFIG_PATH}" --input "@${WORK_DIR}/replacement.json" >/dev/null
 
-REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
+mkdir -p "${WORK_DIR}/.regent"
+cat > "${WORK_DIR}/.regent/managed-identity.json" <<EOF
+{
+  "provider": "regent",
+  "network": "base",
+  "address": "${TEST_WALLET}"
+}
+EOF
+
+HOME="${WORK_DIR}" REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
   pnpm --dir "${WORK_DIR}" exec regent run --config "${CONFIG_PATH}" >"${RUNTIME_LOG}" 2>&1 &
 RUNTIME_PID=$!
 
 wait_for_file "${WORK_DIR}/regent.sock"
 
-REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
-  pnpm --dir "${WORK_DIR}" exec regent auth siwa login \
+HOME="${WORK_DIR}" REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
+  pnpm --dir "${WORK_DIR}" exec regent identity ensure \
     --config "${CONFIG_PATH}" \
-    --wallet-address "${TEST_WALLET}" \
-    --chain-id 11155111 \
-    --registry-address "${TEST_REGISTRY}" \
-    --token-id 99 >/dev/null
+    --provider regent \
+    --network base >/dev/null
 
-REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
+HOME="${WORK_DIR}" REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
   pnpm --dir "${WORK_DIR}" exec regent techtree nodes list --config "${CONFIG_PATH}" --limit 1 >/dev/null
 
 printf "print('packed install smoke')\n" > "${NOTEBOOK_PATH}"
 
-REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
+HOME="${WORK_DIR}" REGENT_WALLET_PRIVATE_KEY="${TEST_PRIVATE_KEY}" \
   pnpm --dir "${WORK_DIR}" exec regent techtree node create \
     --config "${CONFIG_PATH}" \
     --seed ml \

@@ -1168,14 +1168,6 @@ export async function runAutolaunchFeeRegistryShow(
   await runAutolaunchContractsJobShow(args);
 }
 
-export async function runAutolaunchFeeRegistrySetHookEnabled(
-  args: ParsedCliArgs,
-): Promise<void> {
-  await postPrepareJobAction(args, "fee_registry", "set_hook_enabled", {
-    enabled: requireArg(getFlag(args, "enabled"), "enabled"),
-  });
-}
-
 export async function runAutolaunchFeeVaultShow(
   args: ParsedCliArgs,
 ): Promise<void> {
@@ -1262,14 +1254,6 @@ export async function runAutolaunchSplitterSetProtocolRecipient(
 ): Promise<void> {
   await postPrepareSubjectAction(args, "splitter", "set_protocol_recipient", {
     recipient: requireArg(getFlag(args, "recipient"), "recipient"),
-  });
-}
-
-export async function runAutolaunchSplitterSetProtocolSkimBps(
-  args: ParsedCliArgs,
-): Promise<void> {
-  await postPrepareSubjectAction(args, "splitter", "set_protocol_skim_bps", {
-    skim_bps: requireArg(getFlag(args, "skim-bps"), "skim-bps"),
   });
 }
 

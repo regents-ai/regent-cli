@@ -4,6 +4,7 @@ export * from "./bbh.js";
 export * from "./config.js";
 export * from "./doctor.js";
 export * from "./gossipsub.js";
+export * from "./identity.js";
 export * from "./jsonrpc.js";
 export * from "./runtime.js";
 export * from "./techtree.js";

@@ -2,12 +2,20 @@ import type { LocalAgentIdentity } from "../../internal-types/index.js";
 import type { RequiredAgentIdentityField } from "../../internal-types/index.js";
 
 import { AuthError } from "../errors.js";
+import { readIdentityReceipt } from "../identity/cache.js";
+import { receiptToIdentity } from "../identity/shared.js";
 import type { StateStore } from "../store/state-store.js";
 
 export type { LocalAgentIdentity } from "../../internal-types/index.js";
 
 export function getCurrentAgentIdentity(stateStore: StateStore): LocalAgentIdentity | null {
-  return stateStore.read().agent ?? null;
+  const storedIdentity = stateStore.read().agent;
+  if (storedIdentity) {
+    return storedIdentity;
+  }
+
+  const receipt = readIdentityReceipt();
+  return receipt ? receiptToIdentity(receipt) : null;
 }
 
 export function getMissingAgentIdentityFields(stateStore: StateStore): RequiredAgentIdentityField[] {
@@ -26,7 +34,7 @@ export function requireCurrentAgentIdentity(stateStore: StateStore): LocalAgentI
   if (!identity) {
     throw new AuthError(
       "agent_identity_missing",
-      "current agent identity is missing; provide registryAddress, tokenId via --registry-address and --token-id first",
+      "current agent identity is missing; run `regent identity ensure` first",
     );
   }
 

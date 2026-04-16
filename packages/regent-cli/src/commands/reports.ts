@@ -7,6 +7,8 @@ import type {
   JsonSuccessResponseFor,
 } from "../contracts/openapi-helpers.js";
 import { loadConfig, StateStore } from "../internal-runtime/index.js";
+import { readIdentityReceipt } from "../internal-runtime/identity/cache.js";
+import { receiptToIdentity } from "../internal-runtime/identity/shared.js";
 import { buildAgentAuthHeaders } from "./agent-auth.js";
 import { getFlag, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
@@ -40,8 +42,13 @@ const platformPhxBaseUrl = (): string =>
 
 const readLocalAgentIdentity = (configPath?: string): NonNullable<BugReportRequest["reporting_agent"]> => {
   const config = loadConfig(configPath);
-  const stateFilePath = path.join(config.runtime.stateDir, "runtime-state.json");
-  const identity = new StateStore(stateFilePath).read().agent;
+  const receipt = readIdentityReceipt();
+  const identity = receipt
+    ? receiptToIdentity(receipt)
+    : (() => {
+        const stateFilePath = path.join(config.runtime.stateDir, "runtime-state.json");
+        return new StateStore(stateFilePath).read().agent;
+      })();
 
   if (
     !identity?.walletAddress ||
@@ -50,7 +57,7 @@ const readLocalAgentIdentity = (configPath?: string): NonNullable<BugReportReque
     !identity.tokenId
   ) {
     throw new Error(
-      "This machine does not have a saved Regent agent identity yet. Start with `regent techtree start`. Only use `regent auth siwa login --registry-address ... --token-id ...` directly if you already know you need the lower-level auth path.",
+      "This machine does not have a saved Regent identity yet. Run `regent identity ensure` first.",
     );
   }
 

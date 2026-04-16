@@ -8,6 +8,7 @@ import {
   TEST_REGISTRY,
   TEST_WALLET,
   daemonCallMock,
+  ensureIdentityMock,
   runDoctorMock,
   runFullDoctorMock,
   runScopedDoctorMock,
@@ -18,35 +19,33 @@ const harness = setupCliEntrypointHarness();
 
 const commandCases: CommandCase[] = [
   {
-    name: "auth siwa login",
+    name: "identity ensure",
     args: [
-      "auth",
-      "siwa",
-      "login",
-      "--wallet-address",
-      TEST_WALLET,
-      "--chain-id",
-      "11155111",
-      "--registry-address",
-      TEST_REGISTRY,
-      "--token-id",
-      "99",
-      "--audience",
-      "techtree",
+      "identity",
+      "ensure",
+      "--provider",
+      "regent",
+      "--network",
+      "base",
+      "--wallet",
+      "main",
+      "--force-refresh",
+      "--timeout",
+      "45",
+      "--json",
     ],
     expected: {
-      method: "auth.siwa.login",
-      params: {
-        walletAddress: TEST_WALLET,
-        chainId: 11155111,
-        registryAddress: TEST_REGISTRY,
-        tokenId: "99",
-        audience: "techtree",
-      },
+      status: "ok",
+      provider: "regent",
+      network: "base",
+      address: TEST_WALLET,
+      agent_id: 99,
+      agent_registry: TEST_REGISTRY,
+      verified: "onchain",
+      receipt_expires_at: "2999-01-01T00:00:00.000Z",
+      cache_path: expect.stringContaining("receipt-v1.json"),
     },
   },
-  { name: "auth siwa status", args: ["auth", "siwa", "status"], expected: { method: "auth.siwa.status" } },
-  { name: "auth siwa logout", args: ["auth", "siwa", "logout"], expected: { method: "auth.siwa.logout" } },
   {
     name: "agent init",
     args: ["agent", "init"],
@@ -1438,16 +1437,21 @@ describe("CLI command dispatch", () => {
   });
 
   it("returns daemon errors as JSON", async () => {
-    const { JsonRpcError } = await import("../src/internal-runtime/index.js");
-    daemonCallMock.mockRejectedValueOnce(new JsonRpcError("daemon exploded", { code: "daemon_exploded" }));
-
-    const output = await captureOutput(async () =>
-      harness.runCliEntrypoint(["auth", "siwa", "login", "--config", harness.configPath]),
+    const { CommandExitError } = await import("../src/internal-runtime/errors.js");
+    ensureIdentityMock.mockRejectedValueOnce(
+      new CommandExitError("SERVICE_UNAVAILABLE", "Shared Regent service unavailable.", 30),
     );
 
-    expect(output.result).toBe(1);
-    expect(JSON.parse(output.stderr)).toEqual({
-      error: { code: "daemon_exploded", message: "daemon exploded" },
+    const output = await captureOutput(async () =>
+      harness.runCliEntrypoint(["identity", "ensure", "--json", "--config", harness.configPath]),
+    );
+
+    expect(output.result).toBe(30);
+    expect(output.stderr).toBe("");
+    expect(JSON.parse(output.stdout)).toEqual({
+      status: "error",
+      code: "SERVICE_UNAVAILABLE",
+      message: "Shared Regent service unavailable.",
     });
   });
 

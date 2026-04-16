@@ -32,7 +32,6 @@ import {
   runAutolaunchEnsPrepareBidirectional,
   runAutolaunchEnsPrepareErc8004,
   runAutolaunchEnsPrepareEnsip25,
-  runAutolaunchFeeRegistrySetHookEnabled,
   runAutolaunchFeeRegistryShow,
   runAutolaunchFeeVaultShow,
   runAutolaunchFeeVaultWithdrawRegent,
@@ -68,7 +67,6 @@ import {
   runAutolaunchSplitterSetLabel,
   runAutolaunchSplitterSetPaused,
   runAutolaunchSplitterSetProtocolRecipient,
-  runAutolaunchSplitterSetProtocolSkimBps,
   runAutolaunchSplitterSweepProtocolReserve,
   runAutolaunchSplitterSweepTreasuryResidual,
   runAutolaunchSplitterShow,
@@ -115,7 +113,7 @@ import {
   runAgentStatus,
 } from "./commands/agent.js";
 import { runDoctorCommand } from "./commands/doctor.js";
-import { runAuthSiwaLogin, runAuthSiwaLogout, runAuthSiwaStatus } from "./commands/auth.js";
+import { runIdentityEnsure } from "./commands/identity.js";
 import { runCreateInit, runCreateWallet } from "./commands/create.js";
 import { runGossipsubStatus } from "./commands/gossipsub.js";
 import { runRuntime } from "./commands/run.js";
@@ -324,19 +322,8 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
       return await runDoctorCommand(parsedArgs, configPath);
     }
 
-    if (namespace === "auth" && subcommand === "siwa" && maybeThird === "login") {
-      await runAuthSiwaLogin(parsedArgs, configPath);
-      return 0;
-    }
-
-    if (namespace === "auth" && subcommand === "siwa" && maybeThird === "status") {
-      await runAuthSiwaStatus(configPath);
-      return 0;
-    }
-
-    if (namespace === "auth" && subcommand === "siwa" && maybeThird === "logout") {
-      await runAuthSiwaLogout(configPath);
-      return 0;
+    if (namespace === "identity" && subcommand === "ensure") {
+      return await runIdentityEnsure(parsedArgs, configPath);
     }
 
     if (namespace === "agent" && subcommand === "init") {
@@ -1337,15 +1324,6 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
       return 0;
     }
 
-    if (
-      namespace === "autolaunch" &&
-        subcommand === "fee-registry" &&
-        maybeThird === "set-hook-enabled"
-    ) {
-      await runAutolaunchFeeRegistrySetHookEnabled(parsedArgs);
-      return 0;
-    }
-
     if (namespace === "autolaunch" && subcommand === "fee-vault" && maybeThird === "show") {
       await runAutolaunchFeeVaultShow(parsedArgs);
       return 0;
@@ -1417,15 +1395,6 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
         maybeThird === "set-protocol-recipient"
     ) {
       await runAutolaunchSplitterSetProtocolRecipient(parsedArgs);
-      return 0;
-    }
-
-    if (
-      namespace === "autolaunch" &&
-        subcommand === "splitter" &&
-        maybeThird === "set-protocol-skim-bps"
-    ) {
-      await runAutolaunchSplitterSetProtocolSkimBps(parsedArgs);
       return 0;
     }
 

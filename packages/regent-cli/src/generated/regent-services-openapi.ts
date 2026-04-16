@@ -4,7 +4,7 @@
  */
 
 export interface paths {
-    "/v1/agent/siwa/nonce": {
+    "/v1/identity/status": {
         parameters: {
             query?: never;
             header?: never;
@@ -13,14 +13,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["createSharedSiwaNonce"];
+        post: operations["getIdentityStatus"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/v1/agent/siwa/verify": {
+    "/v1/identity/registration-intents": {
         parameters: {
             query?: never;
             header?: never;
@@ -29,7 +29,55 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["verifySharedSiwaSession"];
+        post: operations["createIdentityRegistrationIntent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/identity/registration-completions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["completeIdentityRegistration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/identity/siwa/nonce": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createIdentitySiwaNonce"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/identity/siwa/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["verifyIdentitySiwaSession"];
         delete?: never;
         options?: never;
         head?: never;
@@ -347,51 +395,125 @@ export interface components {
         Address: string;
         HexData: string;
         DecimalString: string;
-        SiwaNonceRequest: {
-            wallet_address: components["schemas"]["Address"];
-            chain_id: number;
-            audience: string;
+        /** @enum {string} */
+        IdentityNetwork: "base" | "base-sepolia";
+        /** @enum {string} */
+        IdentityProvider: "regent" | "moonpay" | "bankr" | "privy";
+        /** @enum {string} */
+        IdentityVerificationStatus: "unregistered" | "onchain";
+        IdentityStatusRequest: {
+            network: components["schemas"]["IdentityNetwork"];
+            address: components["schemas"]["Address"];
+            provider: components["schemas"]["IdentityProvider"];
+            wallet_hint?: string;
         };
-        SiwaNonceResponse: {
+        IdentityStatusResponse: {
             /** @enum {boolean} */
             ok: true;
             /** @enum {string} */
-            code: "nonce_issued";
+            code: "identity_status_resolved";
             data: {
-                nonce: string;
-                walletAddress: components["schemas"]["Address"];
-                chainId: number;
+                network: components["schemas"]["IdentityNetwork"];
+                address: components["schemas"]["Address"];
+                provider: components["schemas"]["IdentityProvider"];
+                registered: boolean;
+                verified: components["schemas"]["IdentityVerificationStatus"];
+                agent_id?: number;
+                agent_registry?: string;
                 /** Format: date-time */
-                expiresAt: string;
+                receipt_expires_at?: string;
             };
             meta?: components["schemas"]["LooseObject"];
         };
-        SiwaVerifyRequest: {
-            wallet_address: components["schemas"]["Address"];
-            chain_id: number;
-            nonce: string;
-            message: string;
-            signature: components["schemas"]["HexData"];
-            registry_address?: components["schemas"]["Address"];
-            token_id?: string;
+        IdentityRegistrationIntentRequest: {
+            network: components["schemas"]["IdentityNetwork"];
+            address: components["schemas"]["Address"];
+            provider: components["schemas"]["IdentityProvider"];
+            wallet_hint?: string;
         };
-        SiwaVerifyResponse: {
+        IdentityRegistrationIntentResponse: {
             /** @enum {boolean} */
             ok: true;
             /** @enum {string} */
-            code: "siwa_verified";
+            code: "identity_registration_intent_created";
+            data: {
+                intent_id: string;
+                intent_kind: string;
+                signing_payload: {
+                    message: string;
+                } & {
+                    [key: string]: unknown;
+                };
+            };
+            meta?: components["schemas"]["LooseObject"];
+        };
+        IdentityRegistrationCompletionRequest: {
+            intent_id: string;
+            message?: string;
+            signature: components["schemas"]["HexData"];
+            address: components["schemas"]["Address"];
+        };
+        IdentityRegistrationCompletionResponse: {
+            /** @enum {boolean} */
+            ok: true;
+            /** @enum {string} */
+            code: "identity_registration_completed";
             data: {
                 /** @enum {boolean} */
-                verified: true;
-                walletAddress: components["schemas"]["Address"];
-                chainId: number;
-                nonce: string;
-                keyId: string;
-                /** @enum {string} */
-                signatureScheme: "evm_personal_sign";
+                registered: true;
+                agent_id: number;
+                agent_registry: string;
+            };
+            meta?: components["schemas"]["LooseObject"];
+        };
+        IdentitySiwaNonceRequest: {
+            network: components["schemas"]["IdentityNetwork"];
+            address: components["schemas"]["Address"];
+            agent_id: number;
+            agent_registry: string;
+        };
+        IdentitySiwaNonceResponse: {
+            /** @enum {boolean} */
+            ok: true;
+            /** @enum {string} */
+            code: "identity_siwa_nonce_issued";
+            data: {
+                nonce_token: string;
+                message: string;
+                address: components["schemas"]["Address"];
+                agent_id: number;
+                agent_registry: string;
+                /** Format: date-time */
+                expires_at: string;
+            };
+            meta?: components["schemas"]["LooseObject"];
+        };
+        IdentitySiwaVerifyRequest: {
+            network: components["schemas"]["IdentityNetwork"];
+            address?: components["schemas"]["Address"];
+            agent_id?: number;
+            agent_registry?: string;
+            message: string;
+            signature: components["schemas"]["HexData"];
+            nonce_token: string;
+        };
+        IdentitySiwaVerifyResponse: {
+            /** @enum {boolean} */
+            ok: true;
+            /** @enum {string} */
+            code: "identity_siwa_verified";
+            data: {
+                verified: components["schemas"]["IdentityVerificationStatus"];
+                network: components["schemas"]["IdentityNetwork"];
+                address: components["schemas"]["Address"];
+                agent_id: number;
+                agent_registry: string;
+                signer_type: string;
                 receipt: string;
                 /** Format: date-time */
-                receiptExpiresAt: string;
+                receipt_issued_at: string;
+                /** Format: date-time */
+                receipt_expires_at: string;
             };
             meta?: components["schemas"]["LooseObject"];
         };
@@ -577,7 +699,7 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    createSharedSiwaNonce: {
+    getIdentityStatus: {
         parameters: {
             query?: never;
             header?: never;
@@ -586,20 +708,20 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SiwaNonceRequest"];
+                "application/json": components["schemas"]["IdentityStatusRequest"];
             };
         };
         responses: {
-            /** @description Nonce issued */
+            /** @description Identity status resolved */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SiwaNonceResponse"];
+                    "application/json": components["schemas"]["IdentityStatusResponse"];
                 };
             };
-            /** @description Invalid nonce request */
+            /** @description Invalid identity status request */
             400: {
                 headers: {
                     [name: string]: unknown;
@@ -610,7 +732,7 @@ export interface operations {
             };
         };
     };
-    verifySharedSiwaSession: {
+    createIdentityRegistrationIntent: {
         parameters: {
             query?: never;
             header?: never;
@@ -619,17 +741,125 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["SiwaVerifyRequest"];
+                "application/json": components["schemas"]["IdentityRegistrationIntentRequest"];
             };
         };
         responses: {
-            /** @description Session verified */
+            /** @description Registration intent created */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["SiwaVerifyResponse"];
+                    "application/json": components["schemas"]["IdentityRegistrationIntentResponse"];
+                };
+            };
+            /** @description Invalid registration intent request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    completeIdentityRegistration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentityRegistrationCompletionRequest"];
+            };
+        };
+        responses: {
+            /** @description Registration completed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentityRegistrationCompletionResponse"];
+                };
+            };
+            /** @description Invalid registration completion request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Registration authorization failed */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    createIdentitySiwaNonce: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentitySiwaNonceRequest"];
+            };
+        };
+        responses: {
+            /** @description SIWA nonce issued */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentitySiwaNonceResponse"];
+                };
+            };
+            /** @description Invalid SIWA nonce request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    verifyIdentitySiwaSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IdentitySiwaVerifyRequest"];
+            };
+        };
+        responses: {
+            /** @description Identity verified */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IdentitySiwaVerifyResponse"];
                 };
             };
             /** @description Invalid SIWA verification request */

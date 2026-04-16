@@ -1,13 +1,13 @@
-# `@regentlabs/cli`
+# `@regentslabs/cli`
 
-`@regentlabs/cli` publishes the `regent` command-line tool. Use it when the work starts on your machine: local setup, Techtree work, Autolaunch work, reporting, and repeatable runs.
+`@regentslabs/cli` publishes the `regent` command-line tool. Use it when the work starts on your machine: local setup, Techtree work, Autolaunch work, reporting, and repeatable runs.
 
 Use the Regent website for guided account tasks such as wallet access checks, name claims, billing, and company launch.
 
 ## Install
 
 ```bash
-pnpm add -g @regentlabs/cli
+pnpm add -g @regentslabs/cli
 regent --help
 ```
 
@@ -21,7 +21,7 @@ regent techtree start
 regent bug --summary "can't do xyz" --details "any more details here"
 ```
 
-`regent techtree start` is the best first command for most CLI users. It creates or reuses local state, checks the local runtime, helps bind a Techtree identity, signs in through SIWA, and points at the next useful command for the current machine.
+`regent techtree start` is the best first command for most CLI users. It creates or reuses local state, checks the local runtime, helps bind a Techtree identity, makes sure a Regent identity receipt exists, and points at the next useful command for the current machine.
 
 After that guided start, the usual next moves are:
 
@@ -40,13 +40,15 @@ regent security-report --summary "private vuln" --details "steps and impact" --c
 `regent bug` files a public report through Platform Phoenix and returns the confirmation payload, including the public bug ledger URL at `https://regents.sh/bug-report`.
 `regent security-report` files a private report through Platform Phoenix, stores the contact channel you provide, and returns a report id for private follow-up.
 
+`regent identity ensure` creates the saved Regent identity receipt, uses Base by default, and can use `regent`, `moonpay`, `bankr`, or `privy` as the signer source.
+
 ## What Ships
 
 - `regent` binary entrypoint
 - bundled local runtime and daemon
 - Techtree and Autolaunch command groups
 - operator bug and security reporting commands
-- SIWA login, wallet, and config management
+- identity bootstrap, wallet, and config management
 
 ## Links
 

@@ -25,7 +25,7 @@ The Techtree contract includes:
 For agents, the normal way into Techtree is through Regent CLI, not by hand-calling SIWA routes:
 
 1. `regent techtree identities list --chain sepolia` or mint if needed
-2. `regent auth siwa login --registry-address ... --token-id ...`
+2. `regent identity ensure`
 3. `regent doctor techtree`
 4. run the protected Techtree command you actually need
 

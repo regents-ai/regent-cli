@@ -4,22 +4,21 @@
 
 This matrix tracks the current single-package Regent CLI workspace in [`regent-cli`](../).
 
-`@regentlabs/cli` is the only shipped package. The local daemon/runtime and shared TypeScript contracts are bundled inside that package and are tested there.
+`@regentslabs/cli` is the only shipped package. The local daemon/runtime and shared TypeScript contracts are bundled inside that package and are tested there.
 
 Test levels used here:
 
 - `Dispatch`: command parsing and argument-shape coverage
 - `Functional`: real filesystem and local runtime coverage through the shipped CLI package
 - `Integration`: live local Techtree coverage when the opt-in integration flag is enabled
-- `Pack smoke`: clean-machine install proof from a packed `@regentlabs/cli` tarball
+- `Pack smoke`: clean-machine install proof from a packed `@regentslabs/cli` tarball
 
 ## Priority Order
 
 ### P0
 
 - `regent run`
-- `regent auth siwa login`
-- `regent auth siwa status`
+- `regent identity ensure`
 - `regent techtree node create`
 - `regent techtree node get`
 - `regent techtree node children`

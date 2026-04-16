@@ -14,21 +14,104 @@ import { captureOutput } from "../../../../test-support/test-helpers.js";
 const TEST_PRIVATE_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
 const TEST_WALLET = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8";
 const TEST_REGISTRY = "0x2222222222222222222222222222222222222222";
+const TEST_AGENT_REGISTRY = `eip155:8453/erc8004:${TEST_REGISTRY}`;
 
 describeNetwork.sequential("CLI functional flows against the real runtime", () => {
   let server: TechtreeContractServer;
   let runtime: RegentRuntime | null = null;
+  let tempDir = "";
   let configPath = "";
   let originalPrivateKey: string | undefined;
+  let originalHome: string | undefined;
+  let originalPath: string | undefined;
+
+  const receiptPath = (): string => path.join(tempDir, ".regent", "identity", "receipt-v1.json");
+
+  const writeManagedIdentity = (network: "base" | "base-sepolia" = "base"): void => {
+    const managedIdentityPath = path.join(tempDir, ".regent", "managed-identity.json");
+    fs.mkdirSync(path.dirname(managedIdentityPath), { recursive: true });
+    fs.writeFileSync(
+      managedIdentityPath,
+      `${JSON.stringify(
+        {
+          provider: "regent",
+          network,
+          address: TEST_WALLET,
+        },
+        null,
+        2,
+      )}\n`,
+      "utf8",
+    );
+  };
+
+  const identityRequestCount = (): number =>
+    server.requests.filter((request) => request.pathname.startsWith("/v1/identity/")).length;
+
+  const ensureIdentity = async (extraArgs: string[] = []) =>
+    captureOutput(async () =>
+      runCliEntrypoint([
+        "identity",
+        "ensure",
+        "--json",
+        "--config",
+        configPath,
+        ...extraArgs,
+      ]),
+    );
+
+  const writePrivyCli = (): void => {
+    const binDir = path.join(tempDir, "bin");
+    fs.mkdirSync(binDir, { recursive: true });
+    const scriptPath = path.join(binDir, "privy-agent-wallets");
+    fs.writeFileSync(
+      scriptPath,
+      `#!/bin/bash
+set -euo pipefail
+
+case "\${1:-}" in
+  list-wallets)
+    cat <<'EOF'
+Ethereum:  ${TEST_WALLET}  (wallet_id_eth)
+Solana:    7hQ5p11111111111111111111111111111111111111  (wallet_id_sol)
+EOF
+    ;;
+  rpc)
+    if [[ "\${2:-}" != "--json" ]]; then
+      echo "expected --json" >&2
+      exit 1
+    fi
+    printf '{"signature":"${`0x${"1".repeat(130)}`}"}\\n'
+    ;;
+  *)
+    echo "unsupported privy command: $*" >&2
+    exit 1
+    ;;
+esac
+`,
+      "utf8",
+    );
+    fs.chmodSync(scriptPath, 0o755);
+    process.env.PATH = `${binDir}:${originalPath ?? ""}`;
+  };
+
+  const clearExternalSignerPath = (): void => {
+    const emptyBinDir = path.join(tempDir, "empty-bin");
+    fs.mkdirSync(emptyBinDir, { recursive: true });
+    process.env.PATH = emptyBinDir;
+  };
 
   beforeEach(async () => {
     server = new TechtreeContractServer();
     await server.start();
 
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-cli-functional-"));
+    tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-cli-functional-"));
     configPath = path.join(tempDir, "regent.config.json");
     originalPrivateKey = process.env.REGENT_WALLET_PRIVATE_KEY;
+    originalHome = process.env.HOME;
+    originalPath = process.env.PATH;
     process.env.REGENT_WALLET_PRIVATE_KEY = TEST_PRIVATE_KEY;
+    process.env.HOME = tempDir;
 
     writeInitialConfig(configPath, {
       runtime: {
@@ -39,7 +122,7 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
       auth: {
         baseUrl: server.baseUrl,
         audience: "regent-cli",
-        defaultChainId: 11155111,
+        defaultChainId: 8453,
         requestTimeoutMs: 1_000,
       },
       techtree: {
@@ -62,156 +145,142 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     }
     await server.stop();
     process.env.REGENT_WALLET_PRIVATE_KEY = originalPrivateKey;
+    process.env.HOME = originalHome;
+    process.env.PATH = originalPath;
   });
 
-  it("logs in, reports auth status, and logs out", async () => {
-    const loginOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "auth",
-        "siwa",
-        "login",
-        "--config",
-        configPath,
-        "--wallet-address",
-        TEST_WALLET,
-        "--chain-id",
-        "11155111",
-        "--registry-address",
-        TEST_REGISTRY,
-        "--token-id",
-        "99",
-        "--audience",
-        "techtree",
-      ]),
-    );
+  it("creates a shared identity receipt, reuses the cache, and refreshes on demand", async () => {
+    writeManagedIdentity();
 
-    expect(loginOutput.result).toBe(0);
-    expect(JSON.parse(loginOutput.stdout)).toEqual(
-      expect.objectContaining({
-        code: "siwa_verified",
-        data: expect.objectContaining({
-          walletAddress: TEST_WALLET,
-        }),
-      }),
-    );
-
-    const statusOutput = await captureOutput(async () =>
-      runCliEntrypoint(["auth", "siwa", "status", "--config", configPath]),
-    );
-    expect(statusOutput.result).toBe(0);
-    expect(JSON.parse(statusOutput.stdout)).toEqual({
-      authenticated: true,
-      session: expect.objectContaining({
-        walletAddress: TEST_WALLET,
-      }),
-      agentIdentity: {
-        walletAddress: TEST_WALLET,
-        chainId: 11155111,
-        registryAddress: TEST_REGISTRY,
-        tokenId: "99",
-      },
-      protectedRoutesReady: true,
-      missingIdentityFields: [],
+    const firstEnsure = await ensureIdentity(["--provider", "regent", "--network", "base"]);
+    expect(firstEnsure.result).toBe(0);
+    expect(JSON.parse(firstEnsure.stdout)).toEqual({
+      status: "ok",
+      provider: "regent",
+      network: "base",
+      address: TEST_WALLET.toLowerCase(),
+      agent_id: 99,
+      agent_registry: TEST_AGENT_REGISTRY,
+      verified: "onchain",
+      receipt_expires_at: "2999-01-01T00:00:00.000Z",
+      cache_path: receiptPath(),
     });
 
-    const logoutOutput = await captureOutput(async () =>
-      runCliEntrypoint(["auth", "siwa", "logout", "--config", configPath]),
-    );
-    expect(logoutOutput.result).toBe(0);
-    expect(JSON.parse(logoutOutput.stdout)).toEqual({ ok: true });
+    expect(fs.existsSync(receiptPath())).toBe(true);
+    expect(JSON.parse(fs.readFileSync(receiptPath(), "utf8"))).toEqual({
+      version: 1,
+      regent_base_url: server.baseUrl,
+      network: "base",
+      provider: "regent",
+      address: TEST_WALLET.toLowerCase(),
+      agent_id: 99,
+      agent_registry: TEST_AGENT_REGISTRY,
+      signer_type: "evm_personal_sign",
+      verified: "onchain",
+      receipt: expect.stringContaining("receipt-valid."),
+      receipt_issued_at: "2026-03-10T00:00:00.000Z",
+      receipt_expires_at: "2999-01-01T00:00:00.000Z",
+      cached_at: expect.any(String),
+    });
+
+    const requestsAfterFirstEnsure = identityRequestCount();
+    expect(requestsAfterFirstEnsure).toBeGreaterThan(0);
+
+    const secondEnsure = await ensureIdentity(["--provider", "regent", "--network", "base"]);
+    expect(secondEnsure.result).toBe(0);
+    expect(identityRequestCount()).toBe(requestsAfterFirstEnsure);
+
+    const refreshedEnsure = await ensureIdentity(["--provider", "regent", "--network", "base", "--force-refresh"]);
+    expect(refreshedEnsure.result).toBe(0);
+    expect(identityRequestCount()).toBeGreaterThan(requestsAfterFirstEnsure);
   }, 15_000);
 
-  it("makes the protected-route identity prerequisite explicit in auth status and failures", async () => {
-    const loginOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "auth",
-        "siwa",
-        "login",
-        "--config",
-        configPath,
-        "--wallet-address",
-        TEST_WALLET,
-        "--chain-id",
-        "11155111",
-      ]),
-    );
-    expect(loginOutput.result).toBe(0);
+  it("fails cleanly when no signer provider is configured", async () => {
+    clearExternalSignerPath();
 
-    const statusOutput = await captureOutput(async () =>
-      runCliEntrypoint(["auth", "siwa", "status", "--config", configPath]),
+    const output = await captureOutput(async () =>
+      runCliEntrypoint(["identity", "ensure", "--json", "--config", configPath]),
     );
-    expect(statusOutput.result).toBe(0);
-    expect(JSON.parse(statusOutput.stdout)).toEqual({
-      authenticated: true,
-      session: expect.objectContaining({
-        walletAddress: TEST_WALLET,
-      }),
-      agentIdentity: null,
-      protectedRoutesReady: false,
-      missingIdentityFields: ["walletAddress", "chainId", "registryAddress", "tokenId"],
-    });
 
-    const workPacketOutput = await captureOutput(async () =>
-      runCliEntrypoint(["techtree", "node", "work-packet", "1", "--config", configPath]),
-    );
-    expect(workPacketOutput.result).toBe(1);
-    expect(JSON.parse(workPacketOutput.stderr)).toEqual({
-      error: {
-        code: "agent_identity_missing",
-        message: "current agent identity is missing; run `regent auth siwa login` first",
+    expect(output.result).toBe(10);
+    expect(JSON.parse(output.stdout)).toEqual({
+      status: "error",
+      code: "NO_SIGNER_PROVIDER_FOUND",
+      message: "No supported signer provider was found on this machine.",
+      details: {
+        provider: "auto",
+        failures: [
+          {
+            provider: "regent",
+            code: "NO_SIGNER_PROVIDER_FOUND",
+            message: "No Regent managed signer is configured on this machine.",
+          },
+          {
+            provider: "moonpay",
+            code: "MOONPAY_MISSING",
+            message: "MoonPay signer not ready.",
+            cause: expect.stringContaining("spawn mp"),
+          },
+          {
+            provider: "bankr",
+            code: "BANKR_MISSING",
+            message: "Bankr signer not ready.",
+            cause: expect.stringContaining("spawn bankr"),
+          },
+          {
+            provider: "privy",
+            code: "PRIVY_MISSING",
+            message: "Privy signer not ready.",
+            cause: expect.stringContaining("spawn privy-agent-wallets"),
+          },
+        ],
       },
     });
   }, 15_000);
 
-  it("rejects partial protected-route identity flags during SIWA login", async () => {
-    const loginOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "auth",
-        "siwa",
-        "login",
-        "--config",
-        configPath,
-        "--wallet-address",
-        TEST_WALLET,
-        "--chain-id",
-        "11155111",
-        "--registry-address",
-        TEST_REGISTRY,
-      ]),
-    );
+  it("fails with the privy-specific exit code when privy is requested but unavailable", async () => {
+    clearExternalSignerPath();
 
-    expect(loginOutput.result).toBe(1);
-    expect(JSON.parse(loginOutput.stderr)).toEqual({
-      error: {
-        code: "invalid_agent_identity",
-        message:
-          "provide --registry-address and --token-id together so protected Techtree routes can identify the current agent",
+    const output = await ensureIdentity(["--provider", "privy", "--network", "base"]);
+
+    expect(output.result).toBe(13);
+    expect(JSON.parse(output.stdout)).toEqual({
+      status: "error",
+      code: "PRIVY_MISSING",
+      message: "Privy signer not ready.",
+      details: {
+        provider: "privy",
+        cause: expect.stringContaining("spawn privy-agent-wallets"),
       },
     });
   }, 15_000);
 
-  it("covers public reads and transport status through the CLI", async () => {
+  it("uses privy when auto-detect reaches it and the signer is available", async () => {
+    writePrivyCli();
+
+    const output = await ensureIdentity(["--network", "base"]);
+
+    expect(output.result).toBe(0);
+    expect(JSON.parse(output.stdout)).toEqual({
+      status: "ok",
+      provider: "privy",
+      network: "base",
+      address: TEST_WALLET.toLowerCase(),
+      agent_id: 99,
+      agent_registry: TEST_AGENT_REGISTRY,
+      verified: "onchain",
+      receipt_expires_at: "2999-01-01T00:00:00.000Z",
+      cache_path: receiptPath(),
+    });
+  }, 15_000);
+
+  it("covers public reads and protected routes through the CLI", async () => {
     const targetNodeId = 1;
     const childNodeId = 2;
 
-    const loginOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "auth",
-        "siwa",
-        "login",
-        "--config",
-        configPath,
-        "--wallet-address",
-        TEST_WALLET,
-        "--chain-id",
-        "11155111",
-        "--registry-address",
-        TEST_REGISTRY,
-        "--token-id",
-        "99",
-      ]),
-    );
-    expect(loginOutput.result).toBe(0);
+    writeManagedIdentity();
+    const ensureOutput = await ensureIdentity(["--provider", "regent", "--network", "base"]);
+    expect(ensureOutput.result).toBe(0);
 
     const techtreeStatusOutput = await captureOutput(async () =>
       runCliEntrypoint(["techtree", "status", "--config", configPath]),
@@ -329,14 +398,7 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     });
 
     const workPacketOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "techtree",
-        "node",
-        "work-packet",
-        String(targetNodeId),
-        "--config",
-        configPath,
-      ]),
+      runCliEntrypoint(["techtree", "node", "work-packet", String(targetNodeId), "--config", configPath]),
     );
     expect(workPacketOutput.result).toBe(0);
     expect(JSON.parse(workPacketOutput.stdout)).toEqual({
@@ -521,7 +583,7 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     expect(JSON.parse(unauthenticatedWatchOutput.stderr)).toEqual({
       error: {
         code: "siwa_session_missing",
-        message: "no SIWA session found; run `regent auth siwa login`",
+        message: "no Regent identity receipt found; run `regent identity ensure`",
       },
     });
 
@@ -532,51 +594,15 @@ describeNetwork.sequential("CLI functional flows against the real runtime", () =
     expect(JSON.parse(unauthenticatedUnwatchOutput.stderr)).toEqual({
       error: {
         code: "siwa_session_missing",
-        message: "no SIWA session found; run `regent auth siwa login`",
-      },
-    });
-  }, 15_000);
-
-  it("surfaces a daemon-unavailable failure path for logout", async () => {
-    if (!runtime) {
-      throw new Error("runtime was not initialized");
-    }
-
-    await runtime.stop();
-    runtime = null;
-
-    const logoutOutput = await captureOutput(async () =>
-      runCliEntrypoint(["auth", "siwa", "logout", "--config", configPath]),
-    );
-
-    expect(logoutOutput.result).toBe(1);
-    expect(JSON.parse(logoutOutput.stderr)).toEqual({
-      error: {
-        code: "jsonrpc_error",
-        message: expect.stringContaining("unable to connect to daemon"),
+        message: "no Regent identity receipt found; run `regent identity ensure`",
       },
     });
   }, 15_000);
 
   it("runs doctor in human, json, scoped, and full modes through the CLI", async () => {
-    const loginOutput = await captureOutput(async () =>
-      runCliEntrypoint([
-        "auth",
-        "siwa",
-        "login",
-        "--config",
-        configPath,
-        "--wallet-address",
-        TEST_WALLET,
-        "--chain-id",
-        "11155111",
-        "--registry-address",
-        TEST_REGISTRY,
-        "--token-id",
-        "99",
-      ]),
-    );
-    expect(loginOutput.result).toBe(0);
+    writeManagedIdentity();
+    const ensureOutput = await ensureIdentity(["--provider", "regent", "--network", "base"]);
+    expect(ensureOutput.result).toBe(0);
 
     const humanDoctor = await captureOutput(async () =>
       runCliEntrypoint(["doctor", "--config", configPath]),

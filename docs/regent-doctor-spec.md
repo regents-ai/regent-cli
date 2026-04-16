@@ -67,7 +67,7 @@ regent doctor xmtp
 
 ## 4. Architecture placement
 
-The diagnostic logic belongs in the bundled runtime layer inside `@regentlabs/cli`, not in the shell-only command layer.
+The diagnostic logic belongs in the bundled runtime layer inside `@regentslabs/cli`, not in the shell-only command layer.
 
 ### 4.1 Responsibilities
 
@@ -226,7 +226,7 @@ Regent Doctor
 [skip] authenticated probe skipped (login required)
 
 Summary: 5 ok, 1 warn, 1 skip
-Next: run `regent auth siwa login`
+Next: run `regent identity ensure`
 ```
 
 ### 7.4 JSON output format
@@ -243,13 +243,13 @@ Next: run `regent auth siwa login`
       "status": "warn",
       "title": "SIWA session",
       "message": "No active SIWA session found",
-      "remediation": "Run `regent auth siwa login`",
+      "remediation": "Run `regent identity ensure`",
       "startedAt": "2026-03-11T15:00:00.000Z",
       "finishedAt": "2026-03-11T15:00:00.010Z",
       "durationMs": 10
     }
   ],
-  "nextSteps": ["Run `regent auth siwa login`"],
+  "nextSteps": ["Run `regent identity ensure`"],
   "generatedAt": "2026-03-11T15:00:00.011Z"
 }
 ```
@@ -668,7 +668,7 @@ For milestone proof, run against true local Phoenix + sidecar and verify:
 Examples:
 - missing config -> `Run \`regent create init\``
 - missing wallet source -> `Set AGENT_WALLET_KEY or configure a wallet file`
-- no SIWA session -> `Run \`regent auth siwa login\``
+- no SIWA session -> `Run \`regent identity ensure\``
 - runtime not running -> `Run \`regent run\``
 - authenticated probe failed -> `Inspect auth headers and SIWA sidecar configuration`
 - full proof needs parent -> `Re-run with --full --known-parent-id <id>`

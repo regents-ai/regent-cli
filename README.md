@@ -4,7 +4,7 @@
 
 ## Agents
 
-- Published package: `@regentlabs/cli`
+- Published package: `@regentslabs/cli`
 - Primary binary: `regent`
 - Best first command for most Techtree work: `regent techtree start`
 - Local config commands: `regent config read` and `regent config write --input @file.json`
@@ -21,7 +21,7 @@ Use the Regent website when a person wants guided browser setup for wallet acces
 
 The practical setup path is:
 
-1. Install `@regentlabs/cli`.
+1. Install `@regentslabs/cli`.
 2. Run `regent create init`.
 3. Run `regent create wallet --write-env`.
 4. Paste the printed export line into the shell.
@@ -39,9 +39,9 @@ The practical setup path is:
 
 For the current v0.1 launch:
 
-- `@regentlabs/cli` is the only shipped package
+- `@regentslabs/cli` is the only shipped package
 - the daemon/runtime is bundled inside that package and is not a separate release artifact
-- SIWA login uses Ethereum Sepolia identity
+- `regent identity ensure` creates the saved Regent identity receipt, uses Base by default, and can use `regent`, `moonpay`, `bankr`, or `privy` signers
 - Techtree publishing uses Base Sepolia
 - Regent chat transport stays local-only, including `regent chatbox tail --webapp` and `regent chatbox tail --agent`
 - paid node unlocks use Base Sepolia onchain settlement and server-verified entitlement
@@ -59,7 +59,7 @@ The standalone Python wrapper that used to sit beside the Phoenix app is retired
 ## Quick Start
 
 ```bash
-pnpm add -g @regentlabs/cli
+pnpm add -g @regentslabs/cli
 regent --help
 regent create init
 regent create wallet --write-env
@@ -112,7 +112,7 @@ pnpm test:pack-smoke
 The packaged-install smoke test is part of the real release gate. A release is not ready unless the shipped tarball installs and completes the Techtree smoke flow.
 The packed-content audit proves the tarball only ships the package manifest, package docs, license, and built CLI output.
 
-The repo now includes GitHub Actions for required CI on pull requests and `main`, plus tag-based npm publishing for `@regentlabs/cli`. The human-facing release path is documented in [docs/release-runbook.md](docs/release-runbook.md).
+The repo now includes GitHub Actions for required CI on pull requests and `main`, plus tag-based npm publishing for `@regentslabs/cli`. The human-facing release path is documented in [docs/release-runbook.md](docs/release-runbook.md).
 The local release helper now hard-fails on a dirty worktree before it bumps the package version, so release commits cannot quietly scoop up unrelated files.
 
 HTTP contract changes now follow a contract-first workflow. Edit the owning OpenAPI file first, regenerate the CLI contract types with `pnpm generate:openapi`, and let `pnpm check:openapi` enforce that the checked-in generated files stay in sync.
@@ -120,7 +120,7 @@ HTTP contract changes now follow a contract-first workflow. Edit the owning Open
 Autolaunch commands are routed through the same package:
 
 ```bash
-pnpm --filter @regentlabs/cli exec regent autolaunch ...
+pnpm --filter @regentslabs/cli exec regent autolaunch ...
 ```
 
 Operator reports are also shipped through the same package:

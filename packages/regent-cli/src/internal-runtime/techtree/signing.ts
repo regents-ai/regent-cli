@@ -31,6 +31,11 @@ export interface BuildSignedHeadersInput {
   nonce?: string;
 }
 
+export interface BuildSignerBackedHeadersInput
+  extends Omit<BuildSignedHeadersInput, "privateKey"> {
+  signMessage(message: string): Promise<`0x${string}`>;
+}
+
 export interface ParsedSignatureInputHeader {
   label: string;
   coveredComponents: string[];
@@ -153,6 +158,15 @@ export function coveredComponentsForAgentHeaders(input: {
 export async function buildSignedAgentHeaders(
   input: BuildSignedHeadersInput,
 ): Promise<Record<string, string>> {
+  return buildSignerBackedAgentHeaders({
+    ...input,
+    signMessage: async (message) => signPersonalMessage(input.privateKey, message),
+  });
+}
+
+export async function buildSignerBackedAgentHeaders(
+  input: BuildSignerBackedHeadersInput,
+): Promise<Record<string, string>> {
   const created = input.nowUnixSeconds ?? Math.floor(Date.now() / 1000);
   const expires = created + (input.expiresInSeconds ?? 120);
   const nonce = input.nonce ?? `sig-nonce-${crypto.randomUUID()}`;
@@ -189,7 +203,7 @@ export async function buildSignedAgentHeaders(
     },
   });
 
-  const signature = await signPersonalMessage(input.privateKey, signingMessage);
+  const signature = await input.signMessage(signingMessage);
 
   return {
     ...unsignedHeaders,

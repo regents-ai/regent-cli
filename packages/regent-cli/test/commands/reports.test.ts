@@ -206,7 +206,7 @@ describe("reporting CLI commands", () => {
     );
 
     expect(output.result).toBe(1);
-    expect(output.stderr).toContain("does not have a saved Regent agent identity yet");
+    expect(output.stderr).toContain("does not have a saved Regent identity yet");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

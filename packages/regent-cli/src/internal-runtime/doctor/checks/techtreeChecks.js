@@ -81,14 +81,14 @@ export function techtreeChecks() {
                     return {
                         status: "skip",
                         message: "Authenticated probe skipped because no SIWA session is stored locally",
-                        remediation: "Run `regent auth siwa login`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 if (ctx.sessionStore.isReceiptExpired()) {
                     return {
                         status: "skip",
                         message: "Authenticated probe skipped because the stored SIWA receipt is expired",
-                        remediation: "Run `regent auth siwa login` again",
+                        remediation: "Run `regent identity ensure` again",
                     };
                 }
                 const identity = getCurrentAgentIdentity(ctx.stateStore);
@@ -97,7 +97,7 @@ export function techtreeChecks() {
                     return {
                         status: "skip",
                         message: "Authenticated probe skipped because protected-route identity is incomplete",
-                        remediation: "Run `regent auth siwa login --registry-address <addr> --token-id <id>`",
+                        remediation: "Run `regent identity ensure`",
                     };
                 }
                 try {

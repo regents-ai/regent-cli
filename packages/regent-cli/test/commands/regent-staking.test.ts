@@ -105,7 +105,7 @@ describe("regent-staking CLI command group", () => {
     );
 
     expect(output.result).toBe(1);
-    expect(output.stderr).toContain("Run `regent auth siwa login` before using this command.");
+    expect(output.stderr).toContain("Run `regent identity ensure` before using this command.");
   });
 
   it("builds the direct stake request when shared sign-in is present", async () => {

@@ -1,17 +1,18 @@
 version: 1
 product: shared-services
 command_groups:
-  - name: auth-siwa
+  - name: identity
     interface: http
-    auth_mode: agent-siwa
+    auth_mode: none
     output_envelope: loose-object
     commands:
-      - auth siwa login
-      - auth siwa status
-      - auth siwa logout
+      - identity ensure
     path_templates:
-      - /v1/agent/siwa/nonce
-      - /v1/agent/siwa/verify
+      - /v1/identity/status
+      - /v1/identity/registration-intents
+      - /v1/identity/registration-completions
+      - /v1/identity/siwa/nonce
+      - /v1/identity/siwa/verify
   - name: regent-staking
     interface: http
     auth_mode: agent-siwa

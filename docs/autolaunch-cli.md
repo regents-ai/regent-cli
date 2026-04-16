@@ -60,7 +60,7 @@ regent autolaunch ...
 From the source checkout:
 
 ```bash
-pnpm --filter @regentlabs/cli exec regent autolaunch ...
+pnpm --filter @regentslabs/cli exec regent autolaunch ...
 ```
 
 Before a real launch, the Autolaunch launch node should pass:
@@ -349,7 +349,6 @@ regent autolaunch strategy sweep-currency --job <job-id> [--json]
 regent autolaunch vesting release --job <job-id> [--json]
 
 regent autolaunch fee-registry show --job <job-id> [--json]
-regent autolaunch fee-registry set-hook-enabled --job <job-id> --enabled true|false [--json]
 
 regent autolaunch fee-vault show --job <job-id> [--json]
 regent autolaunch fee-vault withdraw-treasury --job <job-id> --currency <address> --amount <raw-units> --recipient <address> [--json]
@@ -362,7 +361,6 @@ regent autolaunch splitter propose-treasury-recipient-rotation --subject <subjec
 regent autolaunch splitter cancel-treasury-recipient-rotation --subject <subject-id> [--json]
 regent autolaunch splitter execute-treasury-recipient-rotation --subject <subject-id> [--json]
 regent autolaunch splitter set-protocol-recipient --subject <subject-id> --recipient <address> [--json]
-regent autolaunch splitter set-protocol-skim-bps --subject <subject-id> --skim-bps <bps> [--json]
 regent autolaunch splitter sweep-treasury-residual --subject <subject-id> --amount <raw-units> [--json]
 regent autolaunch splitter sweep-protocol-reserve --subject <subject-id> --amount <raw-units> [--json]
 regent autolaunch splitter reassign-dust --subject <subject-id> --amount <raw-units> [--json]

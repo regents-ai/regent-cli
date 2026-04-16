@@ -84,23 +84,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/api/auth/privy/xmtp/complete": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** @description Complete XMTP setup for the wallet already opened by the current Privy session. */
-        post: operations["completeTechtreePrivyXmtpIdentity"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/v1/tree/nodes": {
         parameters: {
             query?: never;
@@ -1679,12 +1662,6 @@ export interface components {
             wallet_address: components["schemas"]["Address"];
             display_name?: string;
         };
-        PlatformPrivyXmtpCompleteRequest: {
-            wallet_address: components["schemas"]["Address"];
-            client_id: string;
-            signature_request_id: string;
-            signature: string;
-        };
         PlatformPrivyHuman: {
             id: number;
             privy_user_id: string;
@@ -1695,12 +1672,9 @@ export interface components {
         };
         PlatformPrivyXmtpState: {
             /** @enum {string} */
-            status: "ready" | "signature_required";
-            inbox_id?: string | null;
-            wallet_address?: components["schemas"]["Address"] | null;
-            client_id?: string | null;
-            signature_request_id?: string | null;
-            signature_text?: string | null;
+            status: "ready";
+            inbox_id: string | null;
+            wallet_address: components["schemas"]["Address"] | null;
         };
         PrivySessionResponse: {
             /** @enum {boolean} */
@@ -2393,30 +2367,6 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Current browser session profile */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PrivySessionResponse"];
-                };
-            };
-        };
-    };
-    completeTechtreePrivyXmtpIdentity: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["PlatformPrivyXmtpCompleteRequest"];
-            };
-        };
-        responses: {
-            /** @description Platform XMTP identity ready */
             200: {
                 headers: {
                     [name: string]: unknown;

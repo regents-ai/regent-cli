@@ -3,6 +3,7 @@ export * from "./agent/profile.js";
 export * from "./agent/wallet.js";
 export * from "./config.js";
 export * from "./errors.js";
+export * from "./identity/ensure.js";
 export * from "./doctor/index.js";
 export * from "./jsonrpc/client.js";
 export * from "./jsonrpc/server.js";

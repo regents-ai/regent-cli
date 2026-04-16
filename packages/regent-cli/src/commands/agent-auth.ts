@@ -3,18 +3,13 @@ import path from "node:path";
 import type { LocalAgentIdentity, RegentConfig, SiwaSession } from "../internal-types/index.js";
 
 import { EnvWalletSecretSource, FileWalletSecretSource } from "../internal-runtime/agent/key-store.js";
+import { signPersonalMessage } from "../internal-runtime/agent/wallet.js";
 import { loadConfig, StateStore } from "../internal-runtime/index.js";
-import { buildSignedAgentHeaders } from "../internal-runtime/techtree/signing.js";
+import { readIdentityReceipt } from "../internal-runtime/identity/cache.js";
+import { receiptToIdentity, receiptToSession } from "../internal-runtime/identity/shared.js";
+import { resolveSignerFromReceipt } from "../internal-runtime/identity/providers.js";
+import { buildSignerBackedAgentHeaders } from "../internal-runtime/techtree/signing.js";
 import { SessionStore } from "../internal-runtime/store/session-store.js";
-
-const loadWalletPrivateKey = async (config: RegentConfig): Promise<`0x${string}`> => {
-  const envVarName = config.wallet.privateKeyEnv;
-  const source = process.env[envVarName]
-    ? new EnvWalletSecretSource(envVarName)
-    : new FileWalletSecretSource(config.wallet.keystorePath);
-
-  return source.getPrivateKeyHex();
-};
 
 export const loadAgentAuthState = (
   configPath?: string,
@@ -28,18 +23,21 @@ export const loadAgentAuthState = (
   const stateFilePath = path.join(config.runtime.stateDir, "runtime-state.json");
   const stateStore = new StateStore(stateFilePath);
   const sessionStore = new SessionStore(stateStore);
-  const session = sessionStore.getSiwaSession();
+  const receipt = readIdentityReceipt();
+  const session = receipt ? receiptToSession(receipt) : sessionStore.getSiwaSession();
   const storedIdentity = stateStore.read().agent;
   const identity =
-    storedIdentity ??
-    (session
-      ? {
-          walletAddress: session.walletAddress,
-          chainId: session.chainId,
-          ...(session.registryAddress ? { registryAddress: session.registryAddress } : {}),
-          ...(session.tokenId ? { tokenId: session.tokenId } : {}),
-        }
-      : null);
+    receipt
+      ? receiptToIdentity(receipt)
+      : storedIdentity ??
+        (session
+          ? {
+              walletAddress: session.walletAddress,
+              chainId: session.chainId,
+              ...(session.registryAddress ? { registryAddress: session.registryAddress } : {}),
+              ...(session.tokenId ? { tokenId: session.tokenId } : {}),
+            }
+          : null);
 
   return {
     config,
@@ -60,21 +58,19 @@ export const requireAgentAuthState = (
   const { config, sessionStore, session, identity } = loadAgentAuthState(configPath);
 
   if (!session) {
-    throw new Error("Run `regent auth siwa login` before using this command.");
+    throw new Error("Run `regent identity ensure` before using this command.");
   }
 
   if (sessionStore.isReceiptExpired()) {
-    throw new Error("Your sign-in expired. Run `regent auth siwa login` again.");
+    throw new Error("Your saved Regent identity expired. Run `regent identity ensure` again.");
   }
 
   if (!identity?.walletAddress || typeof identity.chainId !== "number") {
-    throw new Error("This machine does not have a saved Regent agent identity yet. Run `regent auth siwa login` first.");
+    throw new Error("This machine does not have a saved Regent identity yet. Run `regent identity ensure` first.");
   }
 
   if (options?.requireBoundIdentity && (!identity.registryAddress || !identity.tokenId)) {
-    throw new Error(
-      "This command needs a Techtree-bound agent identity. Run `regent auth siwa login --registry-address ... --token-id ...` first.",
-    );
+    throw new Error("This command needs a bound Regent identity. Run `regent identity ensure` again.");
   }
 
   return {
@@ -95,9 +91,15 @@ export const buildAgentAuthHeaders = async (
   const { config, session, identity } = requireAgentAuthState(input.configPath, {
     requireBoundIdentity: input.requireBoundIdentity,
   });
-  const privateKey = await loadWalletPrivateKey(config);
+  const receipt = readIdentityReceipt();
+  const signer = receipt
+    ? await resolveSignerFromReceipt(receipt, {
+        config,
+        timeoutMs: config.auth.requestTimeoutMs,
+      })
+    : null;
 
-  return buildSignedAgentHeaders({
+  return buildSignerBackedAgentHeaders({
     method: input.method,
     path: input.path,
     walletAddress: identity.walletAddress,
@@ -105,6 +107,15 @@ export const buildAgentAuthHeaders = async (
     ...(identity.registryAddress ? { registryAddress: identity.registryAddress } : {}),
     ...(identity.tokenId ? { tokenId: identity.tokenId } : {}),
     receipt: session.receipt,
-    privateKey,
+    signMessage:
+      signer?.signMessage ??
+      (async (message) => {
+        const envVarName = config.wallet.privateKeyEnv;
+        const source = process.env[envVarName]
+          ? new EnvWalletSecretSource(envVarName)
+          : new FileWalletSecretSource(config.wallet.keystorePath);
+        const privateKey = await source.getPrivateKeyHex();
+        return signPersonalMessage(privateKey, message);
+      }),
   });
 };

@@ -9,6 +9,7 @@ export const TEST_REGISTRY = "0x2222222222222222222222222222222222222222";
 
 const cliMocks = vi.hoisted(() => ({
   daemonCallMock: vi.fn(),
+  ensureIdentityMock: vi.fn(),
   runDoctorMock: vi.fn(),
   runScopedDoctorMock: vi.fn(),
   runFullDoctorMock: vi.fn(),
@@ -50,6 +51,7 @@ vi.mock("../../src/daemon-client.js", () => ({
 
 export const {
   daemonCallMock,
+  ensureIdentityMock,
   runDoctorMock,
   runScopedDoctorMock,
   runFullDoctorMock,
@@ -1006,6 +1008,7 @@ export function setupCliEntrypointHarness(): CliEntrypointHarness {
 
       return {
         ...actual,
+        ensureIdentity: ensureIdentityMock,
         runDoctor: runDoctorMock,
         runScopedDoctor: runScopedDoctorMock,
         runFullDoctor: runFullDoctorMock,
@@ -1052,6 +1055,19 @@ export function setupCliEntrypointHarness(): CliEntrypointHarness {
 
     daemonCallMock.mockReset();
     daemonCallMock.mockImplementation(defaultDaemonResponse);
+
+    ensureIdentityMock.mockReset();
+    ensureIdentityMock.mockImplementation(async () => ({
+      status: "ok",
+      provider: "regent",
+      network: "base",
+      address: TEST_WALLET,
+      agent_id: 99,
+      agent_registry: TEST_REGISTRY,
+      verified: "onchain",
+      receipt_expires_at: "2999-01-01T00:00:00.000Z",
+      cache_path: path.join(tempDir, "identity", "receipt-v1.json"),
+    }));
 
     runDoctorMock.mockReset();
     runDoctorMock.mockImplementation(async () => doctorReport("default"));
