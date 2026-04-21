@@ -31,6 +31,15 @@ const isReceipt = (value: unknown): value is RegentIdentityReceipt => {
     return false;
   }
 
+  const world = value.world;
+  const worldValid =
+    world === undefined ||
+    (isObject(world) &&
+      typeof world.human_id === "string" &&
+      typeof world.connected_at === "string" &&
+      typeof world.source === "string" &&
+      typeof world.platform_session_id === "string");
+
   return (
     value.version === 1 &&
     typeof value.regent_base_url === "string" &&
@@ -45,7 +54,8 @@ const isReceipt = (value: unknown): value is RegentIdentityReceipt => {
     typeof value.receipt_issued_at === "string" &&
     typeof value.receipt_expires_at === "string" &&
     typeof value.cached_at === "string" &&
-    (value.wallet_hint === undefined || typeof value.wallet_hint === "string")
+    (value.wallet_hint === undefined || typeof value.wallet_hint === "string") &&
+    worldValid
   );
 };
 
@@ -112,4 +122,23 @@ export const writeIdentityReceipt = (receipt: RegentIdentityReceipt): string => 
   }
 
   return cachePath;
+};
+
+export const updateIdentityReceipt = (
+  updater: (receipt: RegentIdentityReceipt) => RegentIdentityReceipt,
+): RegentIdentityReceipt => {
+  const receipt = readIdentityReceipt();
+
+  if (!receipt) {
+    throw new CommandExitError(
+      "CACHE_WRITE_FAILED",
+      "This machine does not have a saved Regent identity yet. Run `regents identity ensure` first.",
+      22,
+      { details: { cachePath: identityCachePath() } },
+    );
+  }
+
+  const updated = updater(receipt);
+  writeIdentityReceipt(updated);
+  return updated;
 };

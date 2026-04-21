@@ -77,6 +77,14 @@ command_groups:
     path_templates:
       - /v1/agent/bug-report
       - /v1/agent/security-report
+  - name: ens
+    interface: http
+    auth_mode: agent-siwa
+    output_envelope: loose-object
+    commands:
+      - ens set-primary
+    path_templates:
+      - /api/agent-platform/ens/prepare-primary
   - name: xmtp
     interface: runtime
     auth_mode: none

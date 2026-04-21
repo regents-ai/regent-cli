@@ -1,8 +1,9 @@
 import type { paths as AutolaunchPaths } from "../generated/autolaunch-openapi.js";
+import type { paths as PlatformPaths } from "../generated/platform-openapi.js";
 import type { paths as RegentServicePaths } from "../generated/regent-services-openapi.js";
 import type { paths as TechtreePaths } from "../generated/techtree-openapi.js";
 
-export type ApiContractOwner = "techtree" | "autolaunch" | "shared-services";
+export type ApiContractOwner = "techtree" | "autolaunch" | "platform" | "shared-services";
 export type ApiCommandStatus = "current" | "current-hybrid" | "stale" | "remove-before-freeze";
 
 export interface ApiCommandGroup {
@@ -178,18 +179,6 @@ export const techtreeApiCommandGroups = [
 
 export const autolaunchApiCommandGroups = [
   {
-    commands: ["agentbook register", "agentbook sessions watch", "agentbook lookup", "agentbook verify-header"],
-    owner: "autolaunch",
-    status: "current",
-    pathTemplates: [
-      "/api/agentbook/sessions",
-      "/api/agentbook/sessions/{id}",
-      "/api/agentbook/sessions/{id}/submit",
-      "/api/agentbook/lookup",
-      "/api/agentbook/verify",
-    ],
-  },
-  {
     commands: ["autolaunch agents list", "autolaunch agent <id>", "autolaunch agent readiness <id>"],
     owner: "autolaunch",
     status: "current",
@@ -359,6 +348,19 @@ export const autolaunchApiCommandGroups = [
   readonly pathTemplates: readonly (keyof AutolaunchPaths)[];
 })[];
 
+export const platformApiCommandGroups = [
+  {
+    commands: ["agentbook register", "agentbook sessions watch", "agentbook lookup"],
+    owner: "platform",
+    status: "current",
+    pathTemplates: [
+      "/api/agentbook/sessions",
+      "/api/agentbook/sessions/{id}",
+      "/api/agentbook/lookup",
+    ],
+  },
+] as const satisfies readonly ApiCommandGroup[];
+
 export const sharedServicesApiCommandGroups = [
   {
     commands: ["identity status"],
@@ -406,12 +408,19 @@ export const sharedServicesApiCommandGroups = [
     status: "current",
     pathTemplates: ["/v1/agent/bug-report", "/v1/agent/security-report"],
   },
+  {
+    commands: ["ens set-primary"],
+    owner: "shared-services",
+    status: "current",
+    pathTemplates: ["/api/agent-platform/ens/prepare-primary"],
+  },
 ] as const satisfies readonly (Omit<ApiCommandGroup, "pathTemplates"> & {
-  readonly pathTemplates: readonly (keyof RegentServicePaths)[];
+  readonly pathTemplates: readonly ((keyof RegentServicePaths) | (keyof PlatformPaths))[];
 })[];
 
 export const apiCommandOwnership = [
   ...techtreeApiCommandGroups,
   ...autolaunchApiCommandGroups,
+  ...platformApiCommandGroups,
   ...sharedServicesApiCommandGroups,
 ] as const;

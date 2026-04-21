@@ -1,178 +1,269 @@
-import { getBooleanFlag, getFlag, requireArg, type ParsedCliArgs } from "../parse.js";
-import { printJson } from "../printer.js";
 import {
-  appendQuery,
-  parsePollingIntervalSeconds,
-  requestJson,
-  requirePositional,
-} from "./autolaunch/shared.js";
+  readIdentityReceipt,
+  updateIdentityReceipt,
+} from "../internal-runtime/identity/cache.js";
+import { getBooleanFlag, type ParsedCliArgs } from "../parse.js";
+import { printJson } from "../printer.js";
+import { parsePollingIntervalSeconds, requirePositional } from "./autolaunch/shared.js";
+import { buildAgentAuthHeaders, requireAgentAuthState } from "./agent-auth.js";
+
+interface CreateAgentbookTrustSessionRequest {
+  source: string;
+}
+
+interface AgentbookTrustSummary {
+  connected: boolean;
+  world_human_id: string | null;
+  unique_agent_count: number;
+  connected_at: string | null;
+  source: string | null;
+}
+
+interface AgentbookFrontendRequest {
+  app_id: string;
+  action: string;
+  signal: string;
+  rp_context: Record<string, unknown>;
+  allow_legacy_proofs: boolean;
+}
+
+interface AgentbookSessionPayload {
+  session_id: string;
+  status: string;
+  wallet_address: string;
+  chain_id: number;
+  registry_address: string;
+  token_id: string;
+  network: string;
+  source: string;
+  approval_url: string | null;
+  connector_uri: string | null;
+  deep_link_uri: string | null;
+  expires_at: string;
+  error_text: string | null;
+  frontend_request: AgentbookFrontendRequest | null;
+  tx_request: Record<string, unknown> | null;
+  trust: AgentbookTrustSummary;
+}
+
+interface AgentbookSessionResponse {
+  ok: boolean;
+  session: AgentbookSessionPayload;
+}
+
+interface AgentbookLookupResult {
+  wallet_address: string;
+  chain_id: number;
+  registry_address: string;
+  token_id: string;
+  connected: boolean;
+  world_human_id: string | null;
+  unique_agent_count: number;
+  connected_at: string | null;
+  source: string | null;
+}
+
+interface AgentbookLookupResponse {
+  ok: boolean;
+  result: AgentbookLookupResult;
+}
+
+const DEFAULT_PLATFORM_PHX_BASE_URL = "http://127.0.0.1:4000";
+const PLATFORM_PHX_BASE_URL_ENV = "PLATFORM_PHX_BASE_URL";
+const TERMINAL_SESSION_STATUSES = new Set(["proof_ready", "registered", "failed"]);
+
+const platformPhxBaseUrl = (): string =>
+  (process.env[PLATFORM_PHX_BASE_URL_ENV] ?? DEFAULT_PLATFORM_PHX_BASE_URL).replace(/\/+$/, "");
 
 const watchInterval = async (seconds: number): Promise<void> => {
   await new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 };
 
-const submissionMode = (args: ParsedCliArgs): "auto" | "manual" => {
-  if (getBooleanFlag(args, "manual")) return "manual";
-  return "auto";
-};
-
 const shouldWatch = (args: ParsedCliArgs): boolean => getBooleanFlag(args, "watch");
 
-export const legacyWorldIdKitLoader: {
-  load: () => Promise<{
-    IDKit: { request: (input: unknown) => { preset: (preset: unknown) => Promise<any> } };
-    orbLegacy: (input: { signal: string }) => unknown;
-  }>;
-} = {
-  load: async (): Promise<{
-    IDKit: { request: (input: unknown) => { preset: (preset: unknown) => Promise<any> } };
-    orbLegacy: (input: { signal: string }) => unknown;
-  }> => {
-    const worldIdKitCore = (await import("@worldcoin/idkit-core")) as {
-      IDKit?: { request: (input: unknown) => { preset: (preset: unknown) => Promise<any> } };
-      orbLegacy?: (input: { signal: string }) => unknown;
-    };
+const parsePlatformError = (text: string, status: number): string => {
+  if (!text.trim()) {
+    return `Platform request failed (${status}).`;
+  }
 
-    if (!worldIdKitCore.IDKit || !worldIdKitCore.orbLegacy) {
-      throw new Error("installed @worldcoin/idkit-core build does not expose the legacy agentbook helpers");
-    }
+  try {
+    const parsed = JSON.parse(text) as Record<string, unknown>;
+    const statusMessage = typeof parsed.statusMessage === "string" ? parsed.statusMessage : undefined;
+    const errorMessage =
+      parsed.error &&
+      typeof parsed.error === "object" &&
+      typeof (parsed.error as { message?: unknown }).message === "string"
+        ? String((parsed.error as { message: string }).message)
+        : undefined;
 
-    return {
-      IDKit: worldIdKitCore.IDKit,
-      orbLegacy: worldIdKitCore.orbLegacy,
-    };
-  },
+    return statusMessage ?? errorMessage ?? `Platform request failed (${status}).`;
+  } catch {
+    return text;
+  }
 };
 
-export async function runAgentbookRegister(args: ParsedCliArgs): Promise<void> {
-  const { IDKit, orbLegacy } = await legacyWorldIdKitLoader.load();
-
-  const agentAddress = requirePositional(args, 2, "agent-address");
-  const network = getFlag(args, "network") ?? "world";
-  const relayUrl = getFlag(args, "relay-url");
-
-  const created = await requestJson("POST", "/api/agentbook/sessions", {
-    body: {
-      agent_address: agentAddress,
-      network,
-      relay_url: relayUrl,
-    },
+const requestPlatformJson = async <TResponse>(
+  method: "GET" | "POST",
+  endpointPath: string,
+  input?: { body?: unknown; configPath?: string },
+): Promise<TResponse> => {
+  const authHeaders = await buildAgentAuthHeaders({
+    method,
+    path: endpointPath,
+    configPath: input?.configPath,
+    requireBoundIdentity: true,
   });
 
-  const session = created.session as Record<string, unknown>;
-  const frontendRequest = session.frontend_request as Record<string, unknown>;
-
-  const builder = IDKit.request({
-    app_id: String(frontendRequest.app_id) as `app_${string}`,
-    action: String(frontendRequest.action),
-    rp_context: frontendRequest.rp_context as {
-      rp_id: string;
-      nonce: string;
-      created_at: number;
-      expires_at: number;
-      signature: string;
+  const response = await fetch(`${platformPhxBaseUrl()}${endpointPath}`, {
+    method,
+    headers: {
+      accept: "application/json",
+      ...(method === "POST" ? { "content-type": "application/json" } : {}),
+      ...authHeaders,
     },
-    allow_legacy_proofs: Boolean(frontendRequest.allow_legacy_proofs),
+    ...(method === "POST" ? { body: JSON.stringify(input?.body ?? {}) } : {}),
   });
-  const request = await builder.preset(orbLegacy({ signal: String(frontendRequest.signal ?? "") }));
 
-  const connectorURI = request.connectorURI;
-  const initial = {
-    ...created,
-    session: {
-      ...session,
-      connector_uri: connectorURI,
-      deep_link_uri: connectorURI,
+  const text = await response.text();
+  if (!response.ok) {
+    throw new Error(parsePlatformError(text, response.status));
+  }
+
+  return JSON.parse(text) as TResponse;
+};
+
+const requireSavedIdentityReceipt = () => {
+  const receipt = readIdentityReceipt();
+
+  if (!receipt) {
+    throw new Error("This machine does not have a saved Regent identity yet. Run `regents identity ensure` first.");
+  }
+
+  if (!receipt.agent_registry || !Number.isFinite(receipt.agent_id)) {
+    throw new Error("This command needs a saved Regent identity. Run `regents identity ensure` again.");
+  }
+
+  return receipt;
+};
+
+const syncWorldTrustFromSession = (session: AgentbookSessionPayload): void => {
+  if (
+    session.trust.connected !== true ||
+    typeof session.trust.world_human_id !== "string" ||
+    typeof session.trust.connected_at !== "string" ||
+    typeof session.trust.source !== "string"
+  ) {
+    return;
+  }
+
+  const humanId = session.trust.world_human_id;
+  const connectedAt = session.trust.connected_at;
+  const source = session.trust.source;
+
+  updateIdentityReceipt((receipt) => ({
+    ...receipt,
+    world: {
+      human_id: humanId,
+      connected_at: connectedAt,
+      source,
+      platform_session_id: session.session_id,
     },
+  }));
+};
+
+const printApprovalHint = (session: AgentbookSessionPayload): void => {
+  if (!process.stderr.isTTY) {
+    return;
+  }
+
+  if (typeof session.approval_url === "string" && session.approval_url !== "") {
+    process.stderr.write(`Open this approval page: ${session.approval_url}\n`);
+  }
+};
+
+export async function runAgentbookRegister(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  requireSavedIdentityReceipt();
+  requireAgentAuthState(configPath, { requireBoundIdentity: true });
+
+  const payload: CreateAgentbookTrustSessionRequest = {
+    source: "regents-cli",
   };
 
-  if (process.stdout.isTTY) {
-    console.error(`World App deep link: ${connectorURI}`);
+  const created = await requestPlatformJson<AgentbookSessionResponse>("POST", "/api/agentbook/sessions", {
+    body: payload,
+    configPath,
+  });
+
+  const createdSession = created.session;
+
+  if (createdSession) {
+    syncWorldTrustFromSession(createdSession);
+    printApprovalHint(createdSession);
   }
 
   if (!shouldWatch(args)) {
-    printJson(initial);
+    printJson(created);
     return;
   }
 
-  const completion = await request.pollUntilCompletion({
-    pollInterval: 2_000,
-    timeout: 120_000,
-  });
-
-  if (!completion.success) {
-    printJson({
-      ok: false,
-      session,
-      connector_uri: connectorURI,
-      error: {
-        code: completion.error || "verification_failed",
-        message: completion.error || "World App verification failed.",
-      },
-    });
+  if (!createdSession || typeof createdSession.session_id !== "string") {
+    printJson(created);
     return;
   }
 
-  const submitted = await requestJson(
-    "POST",
-    `/api/agentbook/sessions/${encodeURIComponent(String(session.session_id))}/submit`,
-    {
-      body: {
-        proof: completion.result,
-        submission: submissionMode(args),
-      },
-    },
-  );
+  const watched = await watchAgentbookSession(createdSession.session_id, args, configPath);
+  const watchedSession = watched.session;
 
-  printJson({
-    ...submitted,
-    connector_uri: connectorURI,
-  });
+  if (watchedSession) {
+    syncWorldTrustFromSession(watchedSession);
+  }
+
+  printJson(watched);
 }
 
-export async function runAgentbookSessionsWatch(args: ParsedCliArgs): Promise<void> {
-  const sessionId = requirePositional(args, 3, "session-id");
+const watchAgentbookSession = async (
+  sessionId: string,
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<AgentbookSessionResponse> => {
   const intervalSeconds = parsePollingIntervalSeconds(args);
 
   for (;;) {
-    const payload = await requestJson("GET", `/api/agentbook/sessions/${encodeURIComponent(sessionId)}`);
-    printJson(payload);
+    const payload = await requestPlatformJson<AgentbookSessionResponse>(
+      "GET",
+      `/api/agentbook/sessions/${encodeURIComponent(sessionId)}`,
+      { configPath },
+    );
 
-    const session = payload.session as Record<string, unknown> | undefined;
-    const status = typeof session?.status === "string" ? session.status : "";
-    if (status === "proof_ready" || status === "registered" || status === "failed") {
-      return;
+    const session = payload.session;
+
+    if (session) {
+      syncWorldTrustFromSession(session);
+      const status = typeof session.status === "string" ? session.status : "";
+      if (TERMINAL_SESSION_STATUSES.has(status)) {
+        return payload;
+      }
     }
 
     await watchInterval(intervalSeconds);
   }
+};
+
+export async function runAgentbookSessionsWatch(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  requireSavedIdentityReceipt();
+  requireAgentAuthState(configPath, { requireBoundIdentity: true });
+
+  const sessionId = requirePositional(args, 3, "session-id");
+  printJson(await watchAgentbookSession(sessionId, args, configPath));
 }
 
-export async function runAgentbookLookup(args: ParsedCliArgs): Promise<void> {
-  const agentAddress = requireArg(getFlag(args, "address"), "address");
-  const network = getFlag(args, "network") ?? "world";
+export async function runAgentbookLookup(_args: ParsedCliArgs, configPath?: string): Promise<void> {
+  requireSavedIdentityReceipt();
+  requireAgentAuthState(configPath, { requireBoundIdentity: true });
 
-  printJson(
-    await requestJson(
-      "GET",
-      appendQuery("/api/agentbook/lookup", {
-        agent_address: agentAddress,
-        network,
-      }),
-    ),
-  );
-}
+  const payload = await requestPlatformJson<AgentbookLookupResponse>("GET", "/api/agentbook/lookup", {
+    configPath,
+  });
 
-export async function runAgentbookVerifyHeader(args: ParsedCliArgs): Promise<void> {
-  const header = requireArg(getFlag(args, "header"), "header");
-  const resourceUri = requireArg(getFlag(args, "resource-uri"), "resource-uri");
-
-  printJson(
-    await requestJson("POST", "/api/agentbook/verify", {
-      body: {
-        header,
-        resource_uri: resourceUri,
-      },
-    }),
-  );
+  printJson(payload);
 }

@@ -127,6 +127,12 @@ export interface RegentIdentityReceipt {
   receipt_expires_at: string;
   cached_at: string;
   wallet_hint?: string;
+  world?: {
+    human_id: string;
+    connected_at: string;
+    source: string;
+    platform_session_id: string;
+  };
 }
 
 export interface IdentityEnsureSuccess {

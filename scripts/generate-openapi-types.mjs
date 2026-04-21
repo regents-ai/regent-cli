@@ -8,6 +8,10 @@ const root = resolve(scriptDir, "..");
 
 const targets = [
   {
+    input: resolve(root, "../platform/api-contract.openapiv3.yaml"),
+    output: resolve(root, "packages/regents-cli/src/generated/platform-openapi.ts"),
+  },
+  {
     input: resolve(root, "../techtree/docs/api-contract.openapiv3.yaml"),
     output: resolve(root, "packages/regents-cli/src/generated/techtree-openapi.ts"),
   },

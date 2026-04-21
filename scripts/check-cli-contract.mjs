@@ -6,12 +6,14 @@ import YAML from "yaml";
 const root = resolve(import.meta.dirname, "..");
 
 const openApiFiles = {
+  platform: resolve(root, "../platform/api-contract.openapiv3.yaml"),
   techtree: resolve(root, "../techtree/docs/api-contract.openapiv3.yaml"),
   autolaunch: resolve(root, "../autolaunch/docs/api-contract.openapiv3.yaml"),
   "shared-services": resolve(root, "docs/regent-services-contract.openapiv3.yaml"),
 };
 
 const cliContractFiles = {
+  platform: resolve(root, "../platform/cli-contract.yaml"),
   techtree: resolve(root, "../techtree/docs/cli-contract.yaml"),
   autolaunch: resolve(root, "../autolaunch/docs/cli-contract.yaml"),
   "shared-services": resolve(root, "docs/shared-cli-contract.yaml"),
@@ -23,6 +25,27 @@ const cliIndexPath = resolve(root, "packages/regents-cli/src/index.ts");
 const parseYaml = (file) => YAML.parse(fs.readFileSync(file, "utf8"));
 
 const readPaths = (file) => new Set(Object.keys(parseYaml(file).paths ?? {}));
+
+const readOperationPaths = (file) => {
+  const document = parseYaml(file);
+  const operationPaths = new Map();
+
+  for (const [path, methods] of Object.entries(document.paths ?? {})) {
+    if (!methods || typeof methods !== "object") {
+      continue;
+    }
+
+    for (const operation of Object.values(methods)) {
+      if (!operation || typeof operation !== "object" || typeof operation.operationId !== "string") {
+        continue;
+      }
+
+      operationPaths.set(operation.operationId, path);
+    }
+  }
+
+  return operationPaths;
+};
 
 const extractStrings = (input) => Array.from(input.matchAll(/"([^"]+)"/g), (match) => match[1]);
 
@@ -50,7 +73,42 @@ const extractOwnershipGroups = (source, exportName) => {
   return groups;
 };
 
-const flattenContract = (contract) => {
+const normalizeCommandName = (command) => command.replace(/^regents?\s+/u, "");
+
+const flattenContract = (contract, operationPaths) => {
+  if (Array.isArray(contract.commands)) {
+    const commands = new Set();
+    const paths = new Set();
+    const rpcMethods = new Set();
+
+    for (const command of contract.commands) {
+      if (!command || typeof command !== "object") {
+        continue;
+      }
+
+      if (typeof command.name === "string") {
+        commands.add(normalizeCommandName(command.name));
+      }
+
+      const transport = command.transport;
+      if (!transport || typeof transport !== "object") {
+        continue;
+      }
+
+      for (const operationId of transport.operationIds ?? []) {
+        const path = operationPaths.get(operationId);
+        if (!path) {
+          fail(`CLI contract references unknown OpenAPI operationId: ${operationId}`);
+          continue;
+        }
+
+        paths.add(path);
+      }
+    }
+
+    return { commands, paths, rpcMethods };
+  }
+
   const groups = contract.command_groups ?? [];
   const commands = new Set();
   const paths = new Set();
@@ -78,6 +136,7 @@ const fail = (message) => {
 
 const ownershipSource = fs.readFileSync(ownershipPath, "utf8");
 const expectedByOwner = {
+  platform: extractOwnershipGroups(ownershipSource, "platformApiCommandGroups"),
   techtree: extractOwnershipGroups(ownershipSource, "techtreeApiCommandGroups"),
   autolaunch: extractOwnershipGroups(ownershipSource, "autolaunchApiCommandGroups"),
   "shared-services": extractOwnershipGroups(ownershipSource, "sharedServicesApiCommandGroups"),
@@ -87,12 +146,28 @@ const contracts = Object.fromEntries(
   Object.entries(cliContractFiles).map(([owner, file]) => [owner, parseYaml(file)]),
 );
 
-const flattenedContracts = Object.fromEntries(
-  Object.entries(contracts).map(([owner, contract]) => [owner, flattenContract(contract)]),
+const operationPathsByOwner = Object.fromEntries(
+  Object.entries(openApiFiles).map(([owner, file]) => [owner, readOperationPaths(file)]),
 );
 
-for (const [owner, apiFile] of Object.entries(openApiFiles)) {
-  const openApiPaths = readPaths(apiFile);
+const flattenedContracts = Object.fromEntries(
+  Object.entries(contracts).map(([owner, contract]) => [
+    owner,
+    flattenContract(contract, operationPathsByOwner[owner]),
+  ]),
+);
+
+const allowedPathsByOwner = {
+  platform: new Set(readPaths(openApiFiles.platform)),
+  techtree: new Set(readPaths(openApiFiles.techtree)),
+  autolaunch: new Set(readPaths(openApiFiles.autolaunch)),
+  "shared-services": new Set([
+    ...readPaths(openApiFiles["shared-services"]),
+    ...readPaths(openApiFiles.platform),
+  ]),
+};
+
+for (const [owner, openApiPaths] of Object.entries(allowedPathsByOwner)) {
   for (const path of flattenedContracts[owner].paths) {
     if (!openApiPaths.has(path)) {
       fail(`CLI contract ${owner} references missing API path: ${path}`);

@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 import { defaultConfigPath, expandHome } from "./internal-runtime/index.js";
 
-import { runAgentbookLookup, runAgentbookRegister, runAgentbookSessionsWatch, runAgentbookVerifyHeader } from "./commands/agentbook.js";
+import { runAgentbookLookup, runAgentbookRegister, runAgentbookSessionsWatch } from "./commands/agentbook.js";
 import {
   runAutolaunchContractsAdminShow,
   runAutolaunchContractsJobShow,
@@ -254,6 +254,7 @@ import {
   runRegentStakingStake,
   runRegentStakingUnstake,
 } from "./commands/regent-staking.js";
+import { runEnsSetPrimary } from "./commands/ens.js";
 import { runBugReport, runSecurityReport } from "./commands/reports.js";
 import { getFlag, parseCliArgs, requireArg } from "./parse.js";
 import { printError, printText, renderUsageScreen } from "./printer.js";
@@ -431,6 +432,11 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
 
     if (namespace === "regent-staking" && subcommand === "claim-and-restake-regent") {
       await runRegentStakingClaimAndRestakeRegent(parsedArgs, configPath);
+      return 0;
+    }
+
+    if (namespace === "ens" && subcommand === "set-primary") {
+      await runEnsSetPrimary(parsedArgs, configPath);
       return 0;
     }
 
@@ -999,22 +1005,17 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
     }
 
     if (namespace === "agentbook" && subcommand === "register") {
-      await runAgentbookRegister(parsedArgs);
+      await runAgentbookRegister(parsedArgs, configPath);
       return 0;
     }
 
     if (namespace === "agentbook" && subcommand === "sessions" && maybeThird === "watch") {
-      await runAgentbookSessionsWatch(parsedArgs);
+      await runAgentbookSessionsWatch(parsedArgs, configPath);
       return 0;
     }
 
     if (namespace === "agentbook" && subcommand === "lookup") {
-      await runAgentbookLookup(parsedArgs);
-      return 0;
-    }
-
-    if (namespace === "agentbook" && subcommand === "verify-header") {
-      await runAgentbookVerifyHeader(parsedArgs);
+      await runAgentbookLookup(parsedArgs, configPath);
       return 0;
     }
 
