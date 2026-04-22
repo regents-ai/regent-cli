@@ -81,6 +81,7 @@ command_groups:
     interface: http
     auth_mode: agent-siwa
     output_envelope: loose-object
+    note: Ethereum mainnet only. The Regent ENS name must already be attached to the authenticated agent and already resolve to that wallet. This command only prepares and submits the reverse-name transaction.
     commands:
       - ens set-primary
     path_templates:

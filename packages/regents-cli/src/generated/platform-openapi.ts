@@ -1342,6 +1342,11 @@ export interface components {
             claim_id?: number | null;
             name?: string | null;
             claim_status: ("reserved" | "upgrade_pending" | "onchain_live" | "upgrade_failed") | null;
+            ensip25_verified: boolean;
+            forward_resolution_verified: boolean;
+            reverse_resolution_verified: boolean;
+            primary_name_verified: boolean;
+            fully_synced: boolean;
         };
         PreparedTxRequest: {
             chain_id: number;
@@ -1355,6 +1360,7 @@ export interface components {
             chain_id: number;
             target?: string | null;
             description?: string | null;
+            caller_wallet_address?: string | null;
             tx_request: components["schemas"]["PreparedTxRequest"];
         };
         PreparedEnsUpgrade: {
@@ -1372,10 +1378,15 @@ export interface components {
         };
         EnsLinkPlanRequest: {
             include_reverse?: boolean;
-            signer_address?: string | null;
             registry_address?: string | null;
             agent_id?: number | string | null;
             current_agent_uri?: string | null;
+        };
+        EnsLinkAction: {
+            kind: string;
+            status: string;
+            description: string;
+            reason?: string | null;
         };
         EnsLinkPlan: {
             ens_name: string;
@@ -1383,13 +1394,27 @@ export interface components {
             ensip25_status: string;
             erc8004_status: string;
             reverse_status: string;
+            ensip25_verified: boolean;
+            forward_resolution_verified: boolean;
+            reverse_resolution_verified: boolean;
+            primary_name_verified: boolean;
+            fully_synced: boolean;
+            actions: components["schemas"]["EnsLinkAction"][];
             warnings?: string[];
         };
-        PreparedBidirectionalEnsLink: {
-            plan: components["schemas"]["EnsLinkPlan"];
+        PreparedEnsCleanupSet: {
+            forward: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
             ensip25: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
             erc8004: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
             reverse: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked" | "skipped");
+        };
+        PreparedBidirectionalEnsLink: {
+            plan: components["schemas"]["EnsLinkPlan"];
+            forward: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
+            ensip25: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
+            erc8004: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked");
+            reverse: components["schemas"]["PreparedTxAction"] | ("noop" | "blocked" | "skipped");
+            cleanup: components["schemas"]["PreparedEnsCleanupSet"];
         };
         PreparePrimaryEnsNameRequest: {
             ens_name: string;
@@ -1399,6 +1424,7 @@ export interface components {
             action: string;
             chain_id: number;
             ens_name: string;
+            caller_wallet_address: string;
             tx_request: components["schemas"]["PreparedTxRequest"];
         };
         BillingAccount: {
@@ -3290,7 +3316,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Attached one upgraded Regent ENS name to the selected agent */
+            /** @description Attached one upgraded Regent ENS name to the selected agent and prepared the remaining sync work */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3300,6 +3326,7 @@ export interface operations {
                         ok: boolean;
                         agent: components["schemas"]["AgentRecord"];
                         claim: components["schemas"]["ClaimedName"];
+                        prepared: components["schemas"]["PreparedBidirectionalEnsLink"];
                     };
                 };
             };
@@ -3321,7 +3348,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Detached the current Regent ENS name from the selected agent */
+            /** @description Detached the current Regent ENS name from the selected agent and prepared the cleanup work for stale onchain links */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3330,6 +3357,8 @@ export interface operations {
                     "application/json": {
                         ok: boolean;
                         agent: components["schemas"]["AgentRecord"];
+                        claim: components["schemas"]["ClaimedName"];
+                        cleanup: components["schemas"]["PreparedEnsCleanupSet"];
                     };
                 };
             };
@@ -3389,7 +3418,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared the next mainnet and Base requests needed to finish the ENS plus ERC-8004 linkage */
+            /** @description Prepared the next Ethereum mainnet and Base requests needed to finish the ENS sync, primary-name readiness, and ERC-8004 linkage */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3422,7 +3451,7 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared Ethereum mainnet request for setting the caller wallet's primary ENS name */
+            /** @description Prepared the Ethereum mainnet request for setting the caller wallet's primary ENS name after the attached Regent ENS name already forward-resolves to that wallet */
             200: {
                 headers: {
                     [name: string]: unknown;
