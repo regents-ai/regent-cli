@@ -371,11 +371,13 @@ describe("autolaunch CLI command group", () => {
     expect(
       parsePrintedJson<{
         browser_opened: boolean;
+        fallback: string;
         manual_open_url: string;
         message: string;
       }>(output.stdout),
     ).toMatchObject({
       browser_opened: false,
+      fallback: "browser_open_failed",
       manual_open_url: `${expectedBaseUrl}/trust/x/redirect?token=manual`,
       message: `Open this URL manually: ${expectedBaseUrl}/trust/x/redirect?token=manual`,
     });
