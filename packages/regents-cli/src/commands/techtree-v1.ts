@@ -249,14 +249,7 @@ const laneToExecSplit = (lane: Exclude<BbhLane, "draft">): "climb" | "benchmark"
   throw new Error("invalid public BBH lane");
 };
 
-const assertNoLegacyBbhSplitFlag = (args: ParsedCliArgs): void => {
-  if (getFlag(args, "split") !== undefined) {
-    throw new Error("invalid BBH flag; use --lane with `climb`, `benchmark`, `challenge`, or `draft`");
-  }
-};
-
 const readBbhLane = (args: ParsedCliArgs, allowDraft = false): BbhLane | undefined => {
-  assertNoLegacyBbhSplitFlag(args);
   const lane = getFlag(args, "lane");
   if (!lane) {
     return undefined;

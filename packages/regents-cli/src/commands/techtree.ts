@@ -3,9 +3,11 @@ import fs from "node:fs";
 import type { NodeCreateInput } from "../internal-types/index.js";
 
 import { daemonCall } from "../daemon-client.js";
-import { getFlag, parseIntegerFlag, requireArg, type ParsedCliArgs } from "../parse.js";
+import { getFlag, getFlags, parseIntegerFlag, requireArg, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
-import { runChatboxTail } from "./chatbox.js";
+
+export * from "./techtree-science-tasks.js";
+export * from "./techtree-watch.js";
 
 const readAtPathValue = (value: string): string => {
   if (!value.startsWith("@")) {
@@ -27,33 +29,6 @@ const readJsonObjectValue = (value: string, name: string): Record<string, unknow
   } catch {
     throw new Error(`invalid ${name}`);
   }
-};
-
-const getRepeatedFlagValues = (args: string[], name: string): string[] => {
-  const values: string[] = [];
-
-  for (let index = 0; index < args.length; index += 1) {
-    const value = args[index];
-    if (!value) {
-      continue;
-    }
-
-    if (value === `--${name}`) {
-      const next = args[index + 1];
-      if (next && !next.startsWith("--")) {
-        values.push(next);
-        index += 1;
-      }
-
-      continue;
-    }
-
-    if (value.startsWith(`--${name}=`)) {
-      values.push(value.slice(name.length + 3));
-    }
-  }
-
-  return values;
 };
 
 const parseSidelink = (value: string): { node_id: number; tag: string; ordinal?: number } => {
@@ -100,16 +75,6 @@ const assertSkillTriplet = (input: {
   }
 };
 
-const parseCsvFlag = (args: string[] | ParsedCliArgs, name: string): string[] | undefined => {
-  const value = getFlag(args, name);
-  if (!value) {
-    return undefined;
-  }
-
-  const parsed = value.split(",").map((entry) => entry.trim()).filter(Boolean);
-  return parsed.length > 0 ? parsed : undefined;
-};
-
 const parseNodeId = (value: string | undefined, name = "node id"): number => {
   const parsed = Number.parseInt(requireArg(value, name), 10);
   if (!Number.isSafeInteger(parsed) || parsed <= 0) {
@@ -119,51 +84,10 @@ const parseNodeId = (value: string | undefined, name = "node id"): number => {
   return parsed;
 };
 
-const parseNonNegativeIntegerFlag = (args: string[], name: string): number | undefined => {
-  const value = getFlag(args, name);
-  if (value === undefined) {
-    return undefined;
-  }
-
-  const parsed = Number.parseInt(value, 10);
-  if (!Number.isSafeInteger(parsed) || parsed < 0 || String(parsed) !== value) {
-    throw new Error(`invalid integer for --${name}`);
-  }
-
-  return parsed;
-};
-
 const parseClaimId = (value: string | undefined): string => requireArg(value, "--claim-id");
 
 export async function runTechtreeStatus(configPath?: string): Promise<void> {
   printJson(await daemonCall("techtree.status", undefined, configPath));
-}
-
-export async function runTechtreeScienceTasksList(args: string[], configPath?: string): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.list",
-      {
-        limit: parseIntegerFlag(args, "limit"),
-        stage: getFlag(args, "stage"),
-        science_domain: getFlag(args, "science-domain"),
-        science_field: getFlag(args, "science-field"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksGet(args: string[], configPath?: string): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.get",
-      {
-        id: parseNodeId(args[3], "science task id"),
-      },
-      configPath,
-    ),
-  );
 }
 
 export async function runTechtreeActivity(args: string[] | ParsedCliArgs, configPath?: string): Promise<void> {
@@ -320,7 +244,7 @@ export async function runTechtreeNodeCreate(args: string[], configPath?: string)
   const skillMdBody = skillMdFlag ? readAtPathValue(skillMdFlag) : undefined;
   const crossChainLinkFlag = getFlag(args, "cross-chain-link");
   const paidPayloadFlag = getFlag(args, "paid-payload");
-  const sidelinks = getRepeatedFlagValues(args, "sidelink").map(parseSidelink);
+  const sidelinks = getFlags(args, "sidelink").map(parseSidelink);
 
   assertSkillTriplet({ skillSlug, skillVersion, skillMdBody });
 
@@ -365,168 +289,6 @@ export async function runTechtreeCommentAdd(args: string[], configPath?: string)
         body_markdown: requireArg(getFlag(args, "body-markdown"), "--body-markdown"),
         body_plaintext: getFlag(args, "body-plaintext"),
         idempotency_key: getFlag(args, "idempotency-key"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeWatch(nodeId: number, configPath?: string): Promise<void> {
-  printJson(await daemonCall("techtree.watch.create", { nodeId }, configPath));
-}
-
-export async function runTechtreeWatchList(configPath?: string): Promise<void> {
-  printJson(await daemonCall("techtree.watch.list", undefined, configPath));
-}
-
-export async function runTechtreeWatchTail(args?: ParsedCliArgs, configPath?: string): Promise<void> {
-  await runChatboxTail(args, configPath);
-}
-
-export async function runTechtreeUnwatch(nodeId: number, configPath?: string): Promise<void> {
-  printJson(await daemonCall("techtree.watch.delete", { nodeId }, configPath));
-}
-
-export async function runTechtreeStar(nodeId: number, configPath?: string): Promise<void> {
-  printJson(await daemonCall("techtree.stars.create", { nodeId }, configPath));
-}
-
-export async function runTechtreeUnstar(nodeId: number, configPath?: string): Promise<void> {
-  printJson(await daemonCall("techtree.stars.delete", { nodeId }, configPath));
-}
-
-export async function runTechtreeInbox(args: string[], configPath?: string): Promise<void> {
-  const kind = parseCsvFlag(args, "kind");
-  printJson(
-    await daemonCall(
-      "techtree.inbox.get",
-      {
-        cursor: parseIntegerFlag(args, "cursor"),
-        limit: parseIntegerFlag(args, "limit"),
-        seed: getFlag(args, "seed"),
-        kind,
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeOpportunities(args: string[], configPath?: string): Promise<void> {
-  const limit = parseIntegerFlag(args, "limit");
-  const seed = getFlag(args, "seed");
-  const kind = parseCsvFlag(args, "kind");
-  const params = {
-    ...(limit !== undefined ? { limit } : {}),
-    ...(seed ? { seed } : {}),
-    ...(kind ? { kind } : {}),
-  };
-
-  printJson(
-    await daemonCall(
-      "techtree.opportunities.list",
-      params,
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksInit(args: string[], configPath?: string): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.init",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-        title: getFlag(args, "title"),
-        summary: getFlag(args, "summary"),
-        science_domain: getFlag(args, "science-domain"),
-        science_field: getFlag(args, "science-field"),
-        task_slug: getFlag(args, "task-slug"),
-        claimed_expert_time: getFlag(args, "claimed-expert-time"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksChecklist(
-  args: string[],
-  configPath?: string,
-): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.checklist",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksEvidence(
-  args: string[],
-  configPath?: string,
-): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.evidence",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksExport(args: string[], configPath?: string): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.export",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-        output_path: getFlag(args, "output-path"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksSubmit(args: string[], configPath?: string): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.submit",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-        harbor_pr_url: getFlag(args, "pr-url"),
-        latest_review_follow_up_note: getFlag(args, "follow-up-note"),
-      },
-      configPath,
-    ),
-  );
-}
-
-export async function runTechtreeScienceTasksReviewUpdate(
-  args: string[],
-  configPath?: string,
-): Promise<void> {
-  printJson(
-    await daemonCall(
-      "techtree.scienceTasks.reviewUpdate",
-      {
-        workspace_path: requireArg(getFlag(args, "workspace-path"), "--workspace-path"),
-        harbor_pr_url: getFlag(args, "pr-url"),
-        latest_review_follow_up_note: getFlag(args, "follow-up-note"),
-        open_reviewer_concerns_count: parseNonNegativeIntegerFlag(args, "open-reviewer-concerns-count"),
-        any_concern_unanswered:
-          getFlag(args, "any-concern-unanswered") === undefined
-            ? undefined
-            : getFlag(args, "any-concern-unanswered") === "true",
-        latest_rerun_after_latest_fix:
-          getFlag(args, "latest-rerun-after-latest-fix") === undefined
-            ? undefined
-            : getFlag(args, "latest-rerun-after-latest-fix") === "true",
-        latest_fix_at: getFlag(args, "latest-fix-at"),
-        last_rerun_at: getFlag(args, "last-rerun-at"),
       },
       configPath,
     ),

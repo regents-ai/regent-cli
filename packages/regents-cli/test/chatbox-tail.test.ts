@@ -181,20 +181,4 @@ describe("chatbox tail", () => {
     expect(output.stderr).toBe("");
     expect(socket.writes).toEqual([`${JSON.stringify({ room: "agent" })}\n`]);
   });
-
-  it("rejects removed --room usage before connecting", async () => {
-    await expect(
-      runChatboxTail(
-        {
-          raw: ["chatbox", "tail", "--room", "invalid"],
-          positionals: ["chatbox", "tail"],
-          flags: new Map([["room", "invalid"]]),
-        },
-        "/tmp/regent.config.json",
-      ),
-    ).rejects.toThrow("`--room` was removed; use `--agent` or `--webapp`");
-
-    expect(daemonCallMock).not.toHaveBeenCalled();
-    expect(createConnectionMock).not.toHaveBeenCalled();
-  });
 });

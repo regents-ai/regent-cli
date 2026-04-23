@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import {
   handleTechtreeScienceTasksExport,
   handleTechtreeScienceTasksInit,
+  handleTechtreeScienceTasksReviewLoop,
   handleTechtreeScienceTasksReviewUpdate,
   handleTechtreeScienceTasksSubmit,
 } from "../../src/internal-runtime/handlers/techtree.js";
@@ -15,6 +16,8 @@ import {
   loadScienceTaskChecklistPayload,
   loadScienceTaskEvidencePayload,
   readScienceTaskWorkspaceMetadata,
+  runScienceTaskReviewLoop,
+  type ScienceTaskHermesRunner,
   writeScienceTaskWorkspaceMetadata,
 } from "../../src/internal-runtime/workloads/science-tasks.js";
 
@@ -24,6 +27,72 @@ const makeTempDir = async (prefix: string): Promise<string> => {
   const dir = await fs.mkdtemp(path.join(os.tmpdir(), prefix));
   tempRoots.push(dir);
   return dir;
+};
+
+const hermesHarness = {
+  enabled: true,
+  entrypoint: "hermes",
+  workspaceRoot: "/tmp",
+  profiles: [],
+};
+
+const buildReviewLoopOutput = (
+  checklistKeys: string[],
+  overrides: Record<string, unknown> = {},
+): Record<string, unknown> => ({
+  schema_version: "techtree.science-task.harbor-review-loop.v1",
+  checklist: Object.fromEntries(checklistKeys.map((key) => [key, { status: "pass" }])),
+  oracle_run: {
+    command: "harbor run oracle",
+    summary: "Oracle passed the task.",
+    key_lines: ["oracle ok"],
+  },
+  frontier_run: {
+    command: "harbor run frontier",
+    summary: "Frontier missed the required output.",
+    key_lines: ["frontier failed expected check"],
+  },
+  failure_analysis: "Frontier missed a required output while the task remained clear and reproducible.",
+  review: {
+    harbor_pr_url: "https://harbor.example/pr/905",
+    latest_review_follow_up_note: "All reviewer concerns are answered with current evidence.",
+    open_reviewer_concerns_count: 0,
+    any_concern_unanswered: false,
+    latest_rerun_after_latest_fix: true,
+    latest_fix_at: "2026-04-20T12:00:00.000Z",
+    last_rerun_at: "2026-04-20T13:00:00.000Z",
+  },
+  ...overrides,
+});
+
+const prepareLinkedWorkspace = async (prefix = "science-task-review-loop-"): Promise<{
+  workspace: string;
+  checklistKeys: string[];
+}> => {
+  const workspace = await makeTempDir(prefix);
+
+  await initScienceTaskWorkspace(workspace, {
+    title: "Review loop task",
+    science_domain: "life-sciences",
+    science_field: "biology",
+    task_slug: "review-loop-task",
+  });
+
+  const metadata = await readScienceTaskWorkspaceMetadata(workspace);
+  await writeScienceTaskWorkspaceMetadata(workspace, {
+    ...metadata,
+    node_id: 905,
+  });
+
+  return { workspace, checklistKeys: Object.keys(metadata.checklist) };
+};
+
+const writingHermesRunner = (
+  outputFactory: (invocation: Parameters<ScienceTaskHermesRunner>[0]) => Record<string, unknown>,
+): ScienceTaskHermesRunner => async (invocation) => {
+  await fs.writeFile(invocation.output_path, `${JSON.stringify(outputFactory(invocation), null, 2)}\n`, "utf8");
+  await fs.writeFile(invocation.log_path, "Hermes review loop completed.\n", "utf8");
+  return { exitCode: 0 };
 };
 
 afterEach(async () => {
@@ -61,9 +130,18 @@ describe("science-task workspace flows", () => {
 
     expect(result.node_id).toBe(777);
     expect(result.files).toContain("instruction.md");
+    expect(result.files).toContain("environment/Dockerfile");
+    expect(result.files).toContain("tests/test.sh");
     expect(result.files).toContain("science-task.json");
     expect(metadata.node_id).toBe(777);
     expect(metadata.task_slug).toBe("cell-atlas-benchmark");
+    expect(await fs.readFile(path.join(workspace, "environment", "Dockerfile"), "utf8")).toContain(
+      "python:3.12-slim",
+    );
+    expect(await fs.readFile(path.join(workspace, "tests", "test.sh"), "utf8")).toContain(
+      "pytest tests/test_task.py",
+    );
+    expect((await fs.stat(path.join(workspace, "tests", "test.sh"))).mode & 0o111).toBeTruthy();
   });
 
   it("fails clearly when checklist or evidence payloads are incomplete", async () => {
@@ -281,5 +359,158 @@ describe("science-task workspace flows", () => {
     expect(persisted.latest_rerun_after_latest_fix).toBe(true);
     expect(persisted.latest_fix_at).toBe("2026-04-20T12:00:00.000Z");
     expect(persisted.last_rerun_at).toBe("2026-04-20T13:00:00.000Z");
+  });
+
+  it("runs the Hermes review loop, stores the review file, and syncs Techtree in order", async () => {
+    const { workspace, checklistKeys } = await prepareLinkedWorkspace();
+    const calls: string[] = [];
+
+    const result = await handleTechtreeScienceTasksReviewLoop(
+      {
+        config: {
+          agents: {
+            harnesses: {
+              hermes: hermesHarness,
+            },
+          },
+        },
+        techtree: {
+          updateScienceTaskChecklist: async () => {
+            calls.push("checklist");
+            return { data: { workflow_state: "checklist_ready" } };
+          },
+          updateScienceTaskEvidence: async () => {
+            calls.push("evidence");
+            return { data: { workflow_state: "evidence_ready" } };
+          },
+          submitScienceTask: async () => {
+            calls.push("submit");
+            return { data: { workflow_state: "submitted" } };
+          },
+          reviewUpdateScienceTask: async () => {
+            calls.push("review-update");
+            return { data: { workflow_state: "merge_ready" } };
+          },
+        },
+      } as any,
+      {
+        workspace_path: workspace,
+        harbor_pr_url: "https://harbor.example/pr/905",
+        timeout_seconds: 60,
+        runner: writingHermesRunner(() => buildReviewLoopOutput(checklistKeys)),
+      },
+    );
+
+    const metadata = await readScienceTaskWorkspaceMetadata(workspace);
+
+    expect(calls).toEqual(["checklist", "evidence", "submit", "review-update"]);
+    expect(result.workflow_state).toBe("merge_ready");
+    expect(result.output_path).toBe(path.join(workspace, "dist", "harbor-review-loop.json"));
+    expect(result.log_path).toContain(path.join(workspace, "dist", "harbor-review-loop"));
+    expect(metadata.harbor_pr_url).toBe("https://harbor.example/pr/905");
+    expect(metadata.oracle_run?.command).toBe("harbor run oracle");
+    expect(metadata.frontier_run?.command).toBe("harbor run frontier");
+    expect(metadata.open_reviewer_concerns_count).toBe(0);
+  });
+
+  it("does not sync Techtree when Hermes fails", async () => {
+    const { workspace } = await prepareLinkedWorkspace("science-task-review-loop-fail-");
+    const calls: string[] = [];
+
+    await expect(
+      handleTechtreeScienceTasksReviewLoop(
+        {
+          config: {
+            agents: {
+              harnesses: {
+                hermes: hermesHarness,
+              },
+            },
+          },
+          techtree: {
+            updateScienceTaskChecklist: async () => {
+              calls.push("checklist");
+              return { data: { workflow_state: "checklist_ready" } };
+            },
+          },
+        } as any,
+        {
+          workspace_path: workspace,
+          harbor_pr_url: "https://harbor.example/pr/905",
+          runner: async () => ({ exitCode: 2 }),
+        },
+      ),
+    ).rejects.toThrow("Hermes review loop failed with exit code 2");
+
+    expect(calls).toEqual([]);
+  });
+
+  it.each([
+    {
+      name: "missing output JSON",
+      runner: async () => ({ exitCode: 0 }),
+      message: "Hermes did not write dist/harbor-review-loop.json",
+    },
+    {
+      name: "malformed JSON",
+      runner: async (invocation: Parameters<ScienceTaskHermesRunner>[0]) => {
+        await fs.writeFile(invocation.output_path, "{", "utf8");
+        return { exitCode: 0 };
+      },
+      message: "Hermes wrote malformed review-loop JSON",
+    },
+    {
+      name: "invalid checklist status",
+      output: (keys: string[]) =>
+        buildReviewLoopOutput(keys, {
+          checklist: Object.fromEntries(keys.map((key, index) => [key, { status: index === 0 ? "done" : "pass" }])),
+        }),
+      message: "invalid checklist status",
+    },
+    {
+      name: "invalid evidence run",
+      output: (keys: string[]) =>
+        buildReviewLoopOutput(keys, {
+          oracle_run: {
+            command: "harbor run oracle",
+            key_lines: ["missing summary"],
+          },
+        }),
+      message: "invalid summary",
+    },
+    {
+      name: "invalid review timestamp",
+      output: (keys: string[]) =>
+        buildReviewLoopOutput(keys, {
+          review: {
+            harbor_pr_url: "https://harbor.example/pr/905",
+            latest_review_follow_up_note: "All reviewer concerns are answered.",
+            open_reviewer_concerns_count: 0,
+            any_concern_unanswered: false,
+            latest_rerun_after_latest_fix: true,
+            latest_fix_at: "not-a-date",
+            last_rerun_at: "2026-04-20T13:00:00.000Z",
+          },
+        }),
+      message: "invalid latest_fix_at",
+    },
+  ])("rejects $name before local metadata changes", async (scenario) => {
+    const { workspace, checklistKeys } = await prepareLinkedWorkspace("science-task-review-loop-invalid-");
+    const before = await readScienceTaskWorkspaceMetadata(workspace);
+    const runner =
+      "runner" in scenario
+        ? scenario.runner
+        : writingHermesRunner(() => scenario.output(checklistKeys));
+
+    await expect(
+      runScienceTaskReviewLoop({
+        workspace_path: workspace,
+        harbor_pr_url: "https://harbor.example/pr/905",
+        hermes_harness: hermesHarness,
+        runner,
+      }),
+    ).rejects.toThrow(scenario.message);
+
+    expect(await readScienceTaskWorkspaceMetadata(workspace)).toEqual(before);
   });
 });

@@ -70,10 +70,6 @@ const parseRoomFlag = (args?: ParsedCliArgs): ChatboxRoom | undefined => {
     return "webapp";
   }
 
-  if (args.flags.has("room")) {
-    throw new Error("`--room` was removed; use `--agent` or `--webapp`");
-  }
-
   return undefined;
 };
 

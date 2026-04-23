@@ -115,11 +115,11 @@ const toNodeHeader = (header: JsonRecord): JsonRecord => ({
 
 const toSnakeHeader = (header: JsonRecord): JsonRecord => ({
   id: header.id,
-  subject_id: header.subjectId ?? header.subject_id,
-  aux_id: header.auxId ?? header.aux_id,
-  payload_hash: header.payloadHash ?? header.payload_hash,
-  node_type: header.nodeType ?? header.node_type,
-  schema_version: header.schemaVersion ?? header.schema_version,
+  subject_id: header.subjectId,
+  aux_id: header.auxId,
+  payload_hash: header.payloadHash,
+  node_type: header.nodeType,
+  schema_version: header.schemaVersion,
   flags: header.flags,
   author: header.author,
 });

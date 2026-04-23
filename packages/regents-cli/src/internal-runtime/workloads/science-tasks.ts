@@ -1,7 +1,11 @@
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { createWriteStream } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
 import type {
+  RegentHarnessConfig,
   ScienceTaskChecklistEntry,
   ScienceTaskChecklistUpdateInput,
   ScienceTaskDetail,
@@ -14,6 +18,10 @@ import type {
 
 const SCIENCE_TASK_METADATA_FILE = "science-task.json";
 const DIST_FOLDER = "dist";
+const HARBOR_REVIEW_LOOP_OUTPUT_FILE = path.join(DIST_FOLDER, "harbor-review-loop.json");
+const HARBOR_REVIEW_LOOP_LOG_FOLDER = path.join(DIST_FOLDER, "harbor-review-loop");
+const HARBOR_REVIEW_LOOP_SCHEMA_VERSION = "techtree.science-task.harbor-review-loop.v1";
+const DEFAULT_REVIEW_LOOP_TIMEOUT_SECONDS = 1800;
 
 const CHECKLIST_LABELS: Record<string, string> = {
   instruction_and_tests_match: "instruction and tests match exactly",
@@ -39,12 +47,30 @@ const DEFAULT_PACKET_FILES: Record<string, string> = {
   "task.toml": `# Harbor task metadata
 name = "replace-me"
 `,
+  "environment/Dockerfile": `FROM python:3.12-slim
+
+WORKDIR /workspace
+COPY . /workspace
+`,
+  "tests/test.sh": `#!/usr/bin/env bash
+set -euo pipefail
+
+python -m pytest tests/test_task.py
+`,
   "tests/test_task.py": `def test_placeholder():
     assert True
 `,
   "solution-notes.md": "# Solution notes\n\nWrite the reference solution outline here.\n",
   "scripts/README.md": "# Helper scripts\n\nList task-local helper scripts here.\n",
-  "task-notes.md": "# Task notes\n\nCapture setup details, caveats, and maintainer notes here.\n",
+  "task-notes.md": `# Task notes
+
+Record what reviewers need to know before rerunning this task.
+
+- Exact local checks:
+- Oracle run:
+- Frontier run:
+- Known review concerns:
+`,
 };
 
 interface ScienceTaskWorkspaceMetadata {
@@ -75,6 +101,50 @@ interface ScienceTaskWorkspaceMetadata {
   last_rerun_at?: string | null;
 }
 
+interface ScienceTaskReviewLoopOutput {
+  schema_version: typeof HARBOR_REVIEW_LOOP_SCHEMA_VERSION;
+  checklist: Record<string, ScienceTaskChecklistEntry>;
+  oracle_run: ScienceTaskRunEvidence;
+  frontier_run: ScienceTaskRunEvidence;
+  failure_analysis: string;
+  review: {
+    harbor_pr_url: string;
+    latest_review_follow_up_note?: string | null;
+    open_reviewer_concerns_count: number;
+    any_concern_unanswered: boolean;
+    latest_rerun_after_latest_fix: boolean;
+    latest_fix_at?: string | null;
+    last_rerun_at?: string | null;
+  };
+}
+
+export interface ScienceTaskReviewLoopInvocation {
+  entrypoint: string;
+  args: string[];
+  cwd: string;
+  prompt: string;
+  output_path: string;
+  log_path: string;
+  timeout_seconds: number;
+}
+
+export interface ScienceTaskReviewLoopRunResult {
+  exitCode: number;
+  timedOut?: boolean;
+}
+
+export type ScienceTaskHermesRunner = (
+  invocation: ScienceTaskReviewLoopInvocation,
+) => Promise<ScienceTaskReviewLoopRunResult>;
+
+export interface ScienceTaskReviewLoopResult {
+  workspace_path: string;
+  node_id: number;
+  harbor_pr_url: string;
+  output_path: string;
+  log_path: string;
+}
+
 const ensureDir = async (targetPath: string): Promise<void> => {
   await fs.mkdir(targetPath, { recursive: true });
 };
@@ -89,6 +159,140 @@ const fileExists = async (targetPath: string): Promise<boolean> => {
 };
 
 const text = (value: unknown, fallback = ""): string => (typeof value === "string" ? value : fallback);
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+const requireRecord = (value: unknown, label: string): Record<string, unknown> => {
+  if (!isRecord(value)) {
+    throw new Error(`invalid ${label}`);
+  }
+
+  return value;
+};
+
+const requireStringField = (record: Record<string, unknown>, field: string): string => {
+  const value = record[field];
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new Error(`invalid ${field}`);
+  }
+
+  return value;
+};
+
+const optionalStringField = (record: Record<string, unknown>, field: string): string | null => {
+  const value = record[field];
+  if (value === undefined || value === null) {
+    return null;
+  }
+
+  if (typeof value !== "string") {
+    throw new Error(`invalid ${field}`);
+  }
+
+  return value;
+};
+
+const optionalTimestampField = (record: Record<string, unknown>, field: string): string | null => {
+  const value = optionalStringField(record, field);
+  if (value === null || value.trim() === "") {
+    return null;
+  }
+
+  if (Number.isNaN(Date.parse(value))) {
+    throw new Error(`invalid ${field}`);
+  }
+
+  return value;
+};
+
+const requireBooleanField = (record: Record<string, unknown>, field: string): boolean => {
+  const value = record[field];
+  if (typeof value !== "boolean") {
+    throw new Error(`invalid ${field}`);
+  }
+
+  return value;
+};
+
+const requireNonNegativeIntegerField = (record: Record<string, unknown>, field: string): number => {
+  const value = record[field];
+  if (!Number.isSafeInteger(value) || Number(value) < 0) {
+    throw new Error(`invalid ${field}`);
+  }
+
+  return Number(value);
+};
+
+const validateChecklistOutput = (value: unknown): Record<string, ScienceTaskChecklistEntry> => {
+  const record = requireRecord(value, "checklist");
+  const knownKeys = Object.keys(CHECKLIST_LABELS);
+  const receivedKeys = Object.keys(record);
+  const unexpectedKey = receivedKeys.find((key) => !knownKeys.includes(key));
+  if (unexpectedKey) {
+    throw new Error(`invalid checklist key: ${unexpectedKey}`);
+  }
+
+  return knownKeys.reduce<Record<string, ScienceTaskChecklistEntry>>((acc, key) => {
+    const entry = requireRecord(record[key], `checklist.${key}`);
+    const status = entry.status;
+    if (status !== "pass" && status !== "fail" && status !== "unknown") {
+      throw new Error(`invalid checklist status for ${key}`);
+    }
+
+    const note = optionalStringField(entry, "note");
+    acc[key] = {
+      status,
+      ...(note ? { note } : {}),
+    };
+    return acc;
+  }, {});
+};
+
+const validateRunEvidenceOutput = (value: unknown, label: string): ScienceTaskRunEvidence => {
+  const record = requireRecord(value, label);
+  const keyLines = record.key_lines;
+  if (
+    keyLines !== undefined &&
+    (!Array.isArray(keyLines) || keyLines.some((line) => typeof line !== "string"))
+  ) {
+    throw new Error(`invalid ${label}.key_lines`);
+  }
+
+  return {
+    command: requireStringField(record, "command"),
+    summary: requireStringField(record, "summary"),
+    ...(Array.isArray(keyLines) ? { key_lines: keyLines } : {}),
+  };
+};
+
+const validateReviewLoopOutput = (value: unknown): ScienceTaskReviewLoopOutput => {
+  const record = requireRecord(value, "review loop output");
+  if (record.schema_version !== HARBOR_REVIEW_LOOP_SCHEMA_VERSION) {
+    throw new Error("invalid review loop schema version");
+  }
+
+  const review = requireRecord(record.review, "review");
+  return {
+    schema_version: HARBOR_REVIEW_LOOP_SCHEMA_VERSION,
+    checklist: validateChecklistOutput(record.checklist),
+    oracle_run: validateRunEvidenceOutput(record.oracle_run, "oracle_run"),
+    frontier_run: validateRunEvidenceOutput(record.frontier_run, "frontier_run"),
+    failure_analysis: requireStringField(record, "failure_analysis"),
+    review: {
+      harbor_pr_url: requireStringField(review, "harbor_pr_url"),
+      latest_review_follow_up_note: optionalStringField(review, "latest_review_follow_up_note"),
+      open_reviewer_concerns_count: requireNonNegativeIntegerField(
+        review,
+        "open_reviewer_concerns_count",
+      ),
+      any_concern_unanswered: requireBooleanField(review, "any_concern_unanswered"),
+      latest_rerun_after_latest_fix: requireBooleanField(review, "latest_rerun_after_latest_fix"),
+      latest_fix_at: optionalTimestampField(review, "latest_fix_at"),
+      last_rerun_at: optionalTimestampField(review, "last_rerun_at"),
+    },
+  };
+};
 
 const normalizeChecklist = (
   value?: Record<string, ScienceTaskChecklistEntry> | null,
@@ -148,6 +352,7 @@ export const initScienceTaskWorkspace = async (
 ): Promise<string[]> => {
   const resolved = path.resolve(workspacePath);
   await ensureDir(resolved);
+  await ensureDir(path.join(resolved, "environment"));
   await ensureDir(path.join(resolved, "tests"));
   await ensureDir(path.join(resolved, "scripts"));
 
@@ -156,6 +361,9 @@ export const initScienceTaskWorkspace = async (
     if (!(await fileExists(targetPath))) {
       await ensureDir(path.dirname(targetPath));
       await fs.writeFile(targetPath, contents, "utf8");
+    }
+    if (relativePath === "tests/test.sh") {
+      await fs.chmod(targetPath, 0o755);
     }
   }
 
@@ -198,6 +406,209 @@ export const writeScienceTaskWorkspaceMetadata = async (
     `${JSON.stringify(metadata, null, 2)}\n`,
     "utf8",
   );
+};
+
+export const scienceTaskReviewLoopOutputPath = (workspacePath: string): string =>
+  path.join(path.resolve(workspacePath), HARBOR_REVIEW_LOOP_OUTPUT_FILE);
+
+const scienceTaskReviewLoopLogPath = (workspacePath: string, timestamp = new Date()): string =>
+  path.join(
+    path.resolve(workspacePath),
+    HARBOR_REVIEW_LOOP_LOG_FOLDER,
+    `${timestamp.toISOString().replace(/[:.]/g, "-")}.log`,
+  );
+
+const buildReviewLoopPrompt = (input: {
+  workspacePath: string;
+  harborPrUrl: string;
+  outputPath: string;
+}): string => `Review this Harbor science task and bring the review record to merge-ready status.
+
+Workspace: ${input.workspacePath}
+Harbor PR: ${input.harborPrUrl}
+
+Use the harbor-task-review-loop skill. Inspect the whole task workspace, including instruction.md, task.toml, environment/Dockerfile, tests, solution notes, helper scripts, and task-local notes. Apply the full Harbor checklist. Rerun required local checks or record exactly why a required check could not be rerun. Capture oracle evidence, frontier evidence, and an honest failure analysis.
+
+Write exactly one JSON file at:
+${input.outputPath}
+
+The JSON file must use this exact shape. Replace every placeholder with the reviewed task's real values:
+{
+  "schema_version": "${HARBOR_REVIEW_LOOP_SCHEMA_VERSION}",
+  "checklist": {
+    ${Object.keys(CHECKLIST_LABELS).map((key) => `"${key}": { "status": "pass|fail|unknown", "note": "optional note" }`).join(",\n    ")}
+  },
+  "oracle_run": { "command": "exact command", "summary": "what happened", "key_lines": ["important line"] },
+  "frontier_run": { "command": "exact command", "summary": "what happened", "key_lines": ["important line"] },
+  "failure_analysis": "why the task remains valid and what the frontier run missed",
+  "review": {
+    "harbor_pr_url": "${input.harborPrUrl}",
+    "latest_review_follow_up_note": "current reviewer-facing status",
+    "open_reviewer_concerns_count": 0,
+    "any_concern_unanswered": false,
+    "latest_rerun_after_latest_fix": true,
+    "latest_fix_at": "ISO timestamp or null",
+    "last_rerun_at": "ISO timestamp or null"
+  }
+}
+
+Do not copy placeholder values. Every checklist status must be exactly "pass", "fail", or "unknown". Do not write a passing status unless there is current evidence for it. Treat unknowns as blockers.`;
+
+const defaultHermesRunner: ScienceTaskHermesRunner = async (invocation) => {
+  await ensureDir(path.dirname(invocation.log_path));
+  const logStream = createWriteStream(invocation.log_path, { flags: "a" });
+  logStream.write(`$ ${[invocation.entrypoint, ...invocation.args].join(" ")}\n\n`);
+
+  const child = spawn(invocation.entrypoint, invocation.args, {
+    cwd: invocation.cwd,
+    env: process.env,
+  });
+
+  child.stdout.pipe(logStream, { end: false });
+  child.stderr.pipe(logStream, { end: false });
+
+  let timedOut = false;
+  const timeout = setTimeout(() => {
+    timedOut = true;
+    child.kill("SIGTERM");
+  }, invocation.timeout_seconds * 1000);
+
+  let exitCode = 1;
+  try {
+    exitCode = await new Promise<number>((resolve, reject) => {
+      child.on("error", reject);
+      child.on("close", (code) => resolve(code ?? 1));
+    });
+  } finally {
+    clearTimeout(timeout);
+    logStream.end();
+    await once(logStream, "finish");
+  }
+
+  return { exitCode, timedOut };
+};
+
+const readReviewLoopOutput = async (outputPath: string): Promise<ScienceTaskReviewLoopOutput> => {
+  let raw: string;
+  try {
+    raw = await fs.readFile(outputPath, "utf8");
+  } catch {
+    throw new Error("Hermes did not write dist/harbor-review-loop.json");
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error("Hermes wrote malformed review-loop JSON");
+  }
+
+  return validateReviewLoopOutput(parsed);
+};
+
+const requireHermesHarness = (harness: RegentHarnessConfig | undefined): RegentHarnessConfig => {
+  if (!harness || !harness.enabled) {
+    throw new Error("Hermes harness is not configured or enabled");
+  }
+
+  if (!harness.entrypoint) {
+    throw new Error("Hermes harness is missing an entrypoint");
+  }
+
+  return harness;
+};
+
+const normalizeReviewLoopTimeout = (value?: number): number => {
+  const timeout = value ?? DEFAULT_REVIEW_LOOP_TIMEOUT_SECONDS;
+  if (!Number.isSafeInteger(timeout) || timeout <= 0) {
+    throw new Error("invalid timeout_seconds");
+  }
+
+  return timeout;
+};
+
+export const runScienceTaskReviewLoop = async (input: {
+  workspace_path: string;
+  harbor_pr_url: string;
+  timeout_seconds?: number;
+  hermes_harness?: RegentHarnessConfig;
+  runner?: ScienceTaskHermesRunner;
+}): Promise<ScienceTaskReviewLoopResult> => {
+  const workspacePath = path.resolve(input.workspace_path);
+  const metadata = await readScienceTaskWorkspaceMetadata(workspacePath);
+  if (!metadata.node_id) {
+    throw new Error("science task workspace is not linked to a Techtree task yet");
+  }
+
+  if (!input.harbor_pr_url || input.harbor_pr_url.trim() === "") {
+    throw new Error("missing Harbor PR URL");
+  }
+
+  const harness = requireHermesHarness(input.hermes_harness);
+  const outputPath = scienceTaskReviewLoopOutputPath(workspacePath);
+  const logPath = scienceTaskReviewLoopLogPath(workspacePath);
+  const timeoutSeconds = normalizeReviewLoopTimeout(input.timeout_seconds);
+  const prompt = buildReviewLoopPrompt({
+    workspacePath,
+    harborPrUrl: input.harbor_pr_url,
+    outputPath,
+  });
+  const invocation: ScienceTaskReviewLoopInvocation = {
+    entrypoint: harness.entrypoint,
+    args: ["chat", "-Q", "-s", "harbor-task-review-loop", "-q", prompt],
+    cwd: workspacePath,
+    prompt,
+    output_path: outputPath,
+    log_path: logPath,
+    timeout_seconds: timeoutSeconds,
+  };
+
+  await ensureDir(path.dirname(outputPath));
+  await ensureDir(path.dirname(logPath));
+
+  let runResult: ScienceTaskReviewLoopRunResult;
+  try {
+    runResult = await (input.runner ?? defaultHermesRunner)(invocation);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(`Hermes review loop could not start; see ${logPath}: ${message}`);
+  }
+
+  if (runResult.timedOut) {
+    throw new Error(`Hermes review loop timed out after ${timeoutSeconds} seconds; see ${logPath}`);
+  }
+
+  if (runResult.exitCode !== 0) {
+    throw new Error(`Hermes review loop failed with exit code ${runResult.exitCode}; see ${logPath}`);
+  }
+
+  const reviewLoopOutput = await readReviewLoopOutput(outputPath);
+  if (reviewLoopOutput.review.harbor_pr_url !== input.harbor_pr_url) {
+    throw new Error("review-loop output Harbor PR URL does not match --pr-url");
+  }
+
+  await writeScienceTaskWorkspaceMetadata(workspacePath, {
+    ...metadata,
+    checklist: reviewLoopOutput.checklist,
+    oracle_run: reviewLoopOutput.oracle_run,
+    frontier_run: reviewLoopOutput.frontier_run,
+    failure_analysis: reviewLoopOutput.failure_analysis,
+    harbor_pr_url: reviewLoopOutput.review.harbor_pr_url,
+    latest_review_follow_up_note: reviewLoopOutput.review.latest_review_follow_up_note ?? null,
+    open_reviewer_concerns_count: reviewLoopOutput.review.open_reviewer_concerns_count,
+    any_concern_unanswered: reviewLoopOutput.review.any_concern_unanswered,
+    latest_rerun_after_latest_fix: reviewLoopOutput.review.latest_rerun_after_latest_fix,
+    latest_fix_at: reviewLoopOutput.review.latest_fix_at ?? null,
+    last_rerun_at: reviewLoopOutput.review.last_rerun_at ?? null,
+  });
+
+  return {
+    workspace_path: workspacePath,
+    node_id: metadata.node_id,
+    harbor_pr_url: reviewLoopOutput.review.harbor_pr_url,
+    output_path: outputPath,
+    log_path: logPath,
+  };
 };
 
 const listWorkspaceFiles = async (workspacePath: string): Promise<string[]> => {

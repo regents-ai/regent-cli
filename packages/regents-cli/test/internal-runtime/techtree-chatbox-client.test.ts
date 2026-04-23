@@ -27,6 +27,7 @@ class StaticWalletSecretSource {
 interface ClientHarness {
   client: TechtreeClient;
   requests: ContractRequestRecord[];
+  failPublicStream: () => void;
   stop: () => Promise<void>;
 }
 
@@ -53,6 +54,7 @@ const readBody = async (req: http.IncomingMessage): Promise<unknown> => {
 
 const createHarness = async (): Promise<ClientHarness> => {
   const requests: ContractRequestRecord[] = [];
+  let shouldFailPublicStream = false;
 
   const server = http.createServer(async (req, res) => {
     const requestUrl = new URL(req.url ?? "/", "http://127.0.0.1");
@@ -215,6 +217,13 @@ const createHarness = async (): Promise<ClientHarness> => {
     }
 
     if (req.method === "GET" && requestUrl.pathname === "/v1/runtime/transport/stream") {
+      if (shouldFailPublicStream) {
+        res.statusCode = 503;
+        res.setHeader("content-type", "application/json");
+        res.end(`${JSON.stringify({ error: { code: "stream_unavailable", message: "stream unavailable" } })}\n`);
+        return;
+      }
+
       res.statusCode = 200;
       res.setHeader("content-type", "application/x-ndjson");
       res.write(
@@ -383,6 +392,9 @@ const createHarness = async (): Promise<ClientHarness> => {
   return {
     client,
     requests,
+    failPublicStream: () => {
+      shouldFailPublicStream = true;
+    },
     stop: async () => {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => {
@@ -538,5 +550,13 @@ describe("Techtree chatbox client routes", () => {
       expect(request.headers["x-agent-registry-address"]).toBe(TEST_REGISTRY);
       expect(request.headers["x-agent-token-id"]).toBe("99");
     }
+  });
+
+  it("reports public stream failures", async () => {
+    harness.failPublicStream();
+
+    await expect(
+      harness.client.streamChatbox("webapp", () => undefined, new AbortController().signal),
+    ).rejects.toThrow("stream unavailable");
   });
 });

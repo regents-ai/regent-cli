@@ -2,7 +2,7 @@ import path from "node:path";
 
 import type { TechtreeNodeId, TechtreeTreeName } from "../internal-types/index.js";
 
-import { getFlag, requireArg, type ParsedCliArgs } from "../parse.js";
+import { getFlag, getFlags, requireArg, type ParsedCliArgs } from "../parse.js";
 
 export const normalizeTree = (value: string): TechtreeTreeName => {
   if (value === "main" || value === "bbh") {
@@ -35,26 +35,7 @@ export const normalizeNodeId = (value: string | undefined, name = "node id"): Te
   return required as TechtreeNodeId;
 };
 
-export const readRepeatedFlag = (args: ParsedCliArgs, name: string): string[] => {
-  const values: string[] = [];
-
-  for (let index = 0; index < args.raw.length; index += 1) {
-    const current = args.raw[index];
-    if (current === `--${name}`) {
-      const next = args.raw[index + 1];
-      if (next && !next.startsWith("--")) {
-        values.push(next);
-      }
-      continue;
-    }
-
-    if (current.startsWith(`--${name}=`)) {
-      values.push(current.slice(name.length + 3));
-    }
-  }
-
-  return values;
-};
+export const readRepeatedFlag = (args: ParsedCliArgs, name: string): string[] => [...getFlags(args, name)];
 
 export const parseCsvFlag = (args: ParsedCliArgs, name: string): string[] => {
   const repeated = readRepeatedFlag(args, name);
