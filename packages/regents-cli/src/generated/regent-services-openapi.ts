@@ -928,8 +928,10 @@ export interface components {
             paused?: boolean;
             total_staked_raw?: string;
             total_staked?: components["schemas"]["DecimalString"];
-            total_recognized_rewards_usdc_raw?: string;
-            total_recognized_rewards_usdc?: components["schemas"]["DecimalString"];
+            total_usdc_received_raw?: string;
+            total_usdc_received?: components["schemas"]["DecimalString"];
+            direct_deposit_usdc_raw?: string;
+            direct_deposit_usdc?: components["schemas"]["DecimalString"];
             treasury_residual_usdc_raw?: string;
             treasury_residual_usdc?: components["schemas"]["DecimalString"];
             wallet_address?: components["schemas"]["Address"];
@@ -939,6 +941,8 @@ export interface components {
             wallet_token_balance?: components["schemas"]["DecimalString"];
             wallet_claimable_usdc_raw?: string;
             wallet_claimable_usdc?: components["schemas"]["DecimalString"];
+            wallet_funded_claimable_regent_raw?: string;
+            wallet_funded_claimable_regent?: components["schemas"]["DecimalString"];
         } & {
             [key: string]: unknown;
         };

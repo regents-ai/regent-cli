@@ -52,6 +52,7 @@ import {
   runAutolaunchRegistryShow,
   runAutolaunchRevenueIngressFactorySetAuthorizedCreator,
   runAutolaunchRevenueShareFactorySetAuthorizedCreator,
+  runAutolaunchSplitterAcceptOwnership,
   runAutolaunchSplitterActivateEligibleRevenueShare,
   runAutolaunchSplitterCancelEligibleRevenueShare,
   runAutolaunchSplitterCancelTreasuryRecipientRotation,
@@ -350,6 +351,10 @@ export const autolaunchRoutes: readonly CliRoute[] = [
   }),
   route("autolaunch splitter show", async ({ parsedArgs }) => {
     await runAutolaunchSplitterShow(parsedArgs);
+    return 0;
+  }),
+  route("autolaunch splitter accept-ownership", async ({ parsedArgs }) => {
+    await runAutolaunchSplitterAcceptOwnership(parsedArgs);
     return 0;
   }),
   route("autolaunch splitter set-paused", async ({ parsedArgs }) => {

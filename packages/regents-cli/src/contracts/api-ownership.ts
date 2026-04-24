@@ -371,6 +371,7 @@ export const autolaunchApiCommandGroups = [
       "autolaunch fee-vault withdraw-treasury",
       "autolaunch fee-vault withdraw-regent",
       "autolaunch splitter show",
+      "autolaunch splitter accept-ownership",
       "autolaunch splitter set-paused",
       "autolaunch splitter set-label",
       "autolaunch splitter propose-eligible-revenue-share",

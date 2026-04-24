@@ -4,6 +4,16 @@ This file lists the full command surface shipped by the standalone Regents CLI i
 
 Source used: the live command dispatcher in `packages/regents-cli/src/index.ts`.
 
+Regents CLI is the agent interface for Techtree. Agents use it to prepare local research folders, run benchmark and review loops, sync evidence to Techtree, and publish verified records through the supported Base contract paths.
+
+## Techtree Research Loop Map
+
+- Define the work: `regents techtree science-tasks ...`, `regents techtree bbh capsules ...`, and `regents techtree bbh draft ...`.
+- Run the work: `regents techtree bbh run solve --solver hermes|openclaw|skydiscover`.
+- Capture the evidence: `regents techtree bbh notebook pair ...`, `regents techtree autoskill notebook pair ...`, and workspace output files.
+- Check the result: `regents techtree bbh validate ...` for Hypotest replay and `regents techtree science-tasks review-loop ...` for Harbor review.
+- Publish what held up: `regents techtree <main|bbh> artifact|run|review publish ...`, `regents techtree bbh submit ...`, and `regents techtree autoskill publish ...`.
+
 ## Closest Matches To The `use-agently` Examples
 
 - Initialize a new wallet:
@@ -42,7 +52,7 @@ Source used: the live command dispatcher in `packages/regents-cli/src/index.ts`.
 - `wallet`: shows wallet status or prepares wallet access.
 - `mcp`: exports the Hermes connector setup.
 - `agent`: manages local agent profiles and harness choices.
-- `techtree`: handles discovery, writing, reviewing, BBH work, watches, inboxes, and identity tasks in Techtree.
+- `techtree`: handles discovery, writing, reviewing, Science Tasks, BBH, Autoskill, watches, inboxes, identity tasks, and contract-backed publication in Techtree.
 - `regent-staking`: shows staking state and sends staking actions.
 - `ens`: prepares the primary-name update flow.
 - `xmtp`: manages XMTP setup, policy, owners, trusted accounts, groups, and health checks.
@@ -137,6 +147,8 @@ Source used: the live command dispatcher in `packages/regents-cli/src/index.ts`.
 
 ### Techtree Autoskill
 
+Autoskill packages skills, evals, notebook sessions, results, reviews, and listings so agents can reuse work that has evidence attached.
+
 - `regents techtree autoskill init skill [path]`
 - `regents techtree autoskill init eval [path]`
 - `regents techtree autoskill notebook pair [path]`
@@ -150,21 +162,21 @@ Source used: the live command dispatcher in `packages/regents-cli/src/index.ts`.
 
 ### Techtree Science Tasks
 
-Science Tasks packages real scientific workflows as Harbor-ready benchmark tasks. The review-loop command runs Hermes, checks the local review file, and then updates Techtree.
+Science Tasks package real scientific workflows as Harbor-ready benchmark tasks. Use `review-loop` for the normal Harbor review path. It runs the review, checks the local review file, and sends the accepted result to Techtree. Use the manual commands when you need to send each review step yourself.
 
 - `regents techtree science-tasks list`
 - `regents techtree science-tasks get <task-id>`
 - `regents techtree science-tasks init --workspace-path <path>`
+- `regents techtree science-tasks review-loop --workspace-path <path> --pr-url <url>`
 - `regents techtree science-tasks checklist --workspace-path <path>`
 - `regents techtree science-tasks evidence --workspace-path <path>`
 - `regents techtree science-tasks export --workspace-path <path>`
 - `regents techtree science-tasks submit --workspace-path <path> --pr-url <url>`
 - `regents techtree science-tasks review-update --workspace-path <path> --pr-url <url>`
-- `regents techtree science-tasks review-loop --workspace-path <path> --pr-url <url>`
 
 ### Tree-Scoped Workspace Commands
 
-These work under `main` and `bbh`, except that `bbh run exec` has its own BBH-specific flow and is listed in the next section.
+These work under `main` and `bbh`, except that `bbh run exec` has its own BBH-specific flow and is listed in the next section. Use these commands when an artifact, run, or review needs to move from a local folder into Techtree publication and verification.
 
 - `regents techtree <main|bbh> artifact init [path]`
 - `regents techtree <main|bbh> artifact compile [path]`
@@ -184,6 +196,8 @@ These work under `main` and `bbh`, except that `bbh run exec` has its own BBH-sp
 - `regents techtree <main|bbh> verify`
 
 ### BBH-Specific Commands
+
+BBH commands cover the benchmark path: prepare the run, pair the notebook, solve with Hermes, OpenClaw, or SkyDiscover, submit the result, and replay-check it with Hypotest.
 
 - `regents techtree bbh run exec [path]`
 - `regents techtree bbh run solve [path]`
@@ -331,6 +345,7 @@ Autolaunch is the largest area. It covers listing, launch preparation, bidding, 
 - `regents autolaunch fee-vault withdraw-treasury`
 - `regents autolaunch fee-vault withdraw-regent`
 - `regents autolaunch splitter show`
+- `regents autolaunch splitter accept-ownership`
 - `regents autolaunch splitter set-paused`
 - `regents autolaunch splitter set-label`
 - `regents autolaunch splitter propose-eligible-revenue-share`

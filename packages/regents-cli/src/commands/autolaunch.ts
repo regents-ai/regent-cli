@@ -26,6 +26,7 @@ export {
   runAutolaunchRegistryShow,
   runAutolaunchRevenueIngressFactorySetAuthorizedCreator,
   runAutolaunchRevenueShareFactorySetAuthorizedCreator,
+  runAutolaunchSplitterAcceptOwnership,
   runAutolaunchSplitterActivateEligibleRevenueShare,
   runAutolaunchSplitterCancelEligibleRevenueShare,
   runAutolaunchSplitterCancelTreasuryRecipientRotation,

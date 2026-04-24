@@ -184,6 +184,12 @@ export async function runAutolaunchSplitterShow(
   await runAutolaunchContractsSubjectShow(args);
 }
 
+export async function runAutolaunchSplitterAcceptOwnership(
+  args: ParsedCliArgs,
+): Promise<void> {
+  await postPrepareSubjectAction(args, "revenue_splitter", "accept_ownership");
+}
+
 export async function runAutolaunchSplitterSetPaused(
   args: ParsedCliArgs,
 ): Promise<void> {

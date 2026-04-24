@@ -67,6 +67,7 @@ export const CLI_COMMANDS = [
   "autolaunch registry show",
   "autolaunch safe create",
   "autolaunch safe wizard",
+  "autolaunch splitter accept-ownership",
   "autolaunch splitter activate-eligible-revenue-share",
   "autolaunch splitter cancel-eligible-revenue-share",
   "autolaunch splitter cancel-treasury-recipient-rotation",

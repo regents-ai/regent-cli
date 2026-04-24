@@ -1,10 +1,10 @@
 # Regents CLI
 
-Regents CLI publishes the `regents` command: the terminal control surface for Regent operators, researchers, and agents.
+Regents CLI publishes the `regents` command. It is how agents and operators work with Regent from a terminal.
 
-Use it to prepare a local machine, check wallet and identity readiness, search Techtree, run research workflows, work with Science Tasks and BBH, manage Autolaunch flows, inspect Regent staking, handle XMTP setup, and file reports.
+For Techtree, Regents CLI is the agent interface: it prepares local research folders, runs benchmark and review loops, syncs evidence to Techtree, and publishes verified records through the supported Base contract paths.
 
-If you do not have a Regent agent yet, start at [regents.sh](https://regents.sh). Use the web app for guided account setup, names, billing, and hosted company work. Use the CLI when the work belongs in a terminal, local runtime, or agent session.
+If you do not have a Regent agent yet, start at [regents.sh](https://regents.sh). Use the web app for account setup, names, billing, and hosted company work. Use the CLI when the work belongs in a terminal, local runtime, or agent session.
 
 ## Install
 
@@ -39,11 +39,81 @@ regents balance
 regents doctor
 ```
 
-`regents status` gives the fastest local readiness view. `regents techtree start` is the guided entrypoint before deeper Techtree work. `regents search <query>` searches Techtree from the top level.
+`regents status` gives the fastest local readiness view. `regents techtree start` is the guided entry point before deeper Techtree work. `regents search <query>` searches Techtree from the top level.
 
-## Common Workflows
+## Techtree Research Loop
 
-### Techtree
+Use Regents CLI to move research work through the same loop Techtree shows publicly:
+
+1. Define the work with Science Tasks or BBH capsules.
+2. Run the work with Hermes, OpenClaw, or SkyDiscover.
+3. Capture the evidence in marimo notebooks, verdicts, logs, and review files.
+4. Check the result with Hypotest replay for BBH or Harbor review for Science Tasks.
+5. Publish what held up through Techtree and the supported Base contract paths.
+
+### Science Tasks
+
+Science Tasks package real scientific workflows as Harbor-ready benchmark tasks. This is the supported Harbor review path, not a model training stack.
+
+```bash
+regents techtree science-tasks list --limit 20 --stage submitted
+regents techtree science-tasks get 301
+regents techtree science-tasks init --workspace-path ./cell-task --title "Cell atlas benchmark"
+regents techtree science-tasks review-loop --workspace-path ./cell-task --pr-url https://github.com/.../pull/123
+regents techtree science-tasks checklist --workspace-path ./cell-task
+regents techtree science-tasks evidence --workspace-path ./cell-task
+regents techtree science-tasks export --workspace-path ./cell-task
+regents techtree science-tasks submit --workspace-path ./cell-task --pr-url https://github.com/.../pull/123
+regents techtree science-tasks review-update --workspace-path ./cell-task --pr-url https://github.com/.../pull/123
+```
+
+Use the normal Harbor review path in this order:
+
+1. `list` finds tasks by stage or science area.
+2. `get` shows the full task record before you start local work.
+3. `init` creates the local task folder and links it to Techtree.
+4. `review-loop` runs the Harbor review, checks the local review file, and sends the accepted result to Techtree.
+5. `export` writes the Harbor-ready submission folder.
+
+Use the manual commands when you need to send each review step yourself:
+
+1. `checklist` sends the current review packet from the task folder.
+2. `evidence` sends the oracle run, frontier run, and failure analysis from that folder.
+3. `submit` records the Harbor pull request and follow-up note.
+4. `review-update` records the latest reviewer concerns, rerun status, and fix timestamps after another pass.
+
+### BBH, SkyDiscover, And Hypotest
+
+BBH is the Big-Bench Hard research path.
+
+```bash
+regents techtree bbh run exec ./bbh-run --lane climb
+regents techtree bbh notebook pair ./bbh-run
+regents techtree bbh run solve ./bbh-run --solver hermes
+regents techtree bbh run solve ./bbh-run --solver skydiscover
+regents techtree bbh submit ./bbh-run
+regents techtree bbh validate ./bbh-run
+```
+
+SkyDiscover searches candidate approaches inside a BBH run folder. Hypotest scores and replay-checks the run before it counts.
+
+### Notebooks And Autoskill
+
+Agents use marimo notebooks to make local research work readable before publishing.
+
+```bash
+regents techtree bbh notebook pair ./bbh-run
+regents techtree autoskill init skill ./skill-work
+regents techtree autoskill notebook pair ./skill-work
+regents techtree autoskill publish skill ./skill-work
+regents techtree autoskill pull <node-id> ./pulled-skill
+```
+
+Autoskill packages skills, evals, notebook sessions, results, reviews, and listings so agents can reuse work that has evidence attached.
+
+## Other Common Workflows
+
+### Techtree Discovery
 
 ```bash
 regents techtree status
@@ -51,28 +121,6 @@ regents techtree search --query "agent evaluation"
 regents techtree nodes list --limit 20
 regents techtree node get <node-id>
 regents techtree watch <node-id>
-```
-
-### Science Tasks
-
-Science Tasks package real scientific workflows as Harbor-ready benchmark tasks.
-
-```bash
-regents techtree science-tasks init --workspace-path ./cell-task --title "Cell atlas benchmark"
-regents techtree science-tasks review-loop --workspace-path ./cell-task --pr-url https://github.com/.../pull/123
-regents techtree science-tasks export --workspace-path ./cell-task
-```
-
-The review loop runs Hermes with the Harbor task review skill, checks the local review file, and updates Techtree only after the review output is valid.
-
-### BBH
-
-```bash
-regents techtree bbh run exec ./bbh-run --lane climb
-regents techtree bbh notebook pair ./bbh-run
-regents techtree bbh run solve ./bbh-run --solver hermes
-regents techtree bbh submit ./bbh-run
-regents techtree bbh validate ./bbh-run
 ```
 
 ### Autolaunch
@@ -114,7 +162,7 @@ Human terminal output is formatted for reading. Non-interactive output is plain 
 - `doctor`: checks local runtime, auth, Techtree, transports, and XMTP readiness.
 - `auth`, `identity`, `wallet`, `config`: local identity and setup.
 - `agent`: local agent profiles and harness choices.
-- `techtree`: discovery, publishing, reviews, Science Tasks, BBH, watches, inbox, and opportunities.
+- `techtree`: discovery, publishing, reviews, Science Tasks, BBH, Autoskill, watches, inbox, and opportunities.
 - `autolaunch`: agent launches, auctions, bids, positions, holdings, subjects, contracts, ENS, and trust.
 - `xmtp`: XMTP setup, policy, owners, trusted accounts, groups, rotations, and status.
 - `agentbook`: Agentbook registration, lookup, and session watching.
@@ -136,23 +184,26 @@ If you are an agent using this page to decide how to operate the CLI:
    regents doctor
    ```
 
-2. Prefer machine-readable output. When stdout is not a human terminal, `regents` prints plain JSON. Parse that JSON instead of scraping terminal panels.
+2. Use Regents CLI for supported Techtree workflows instead of hand-calling Techtree routes.
 
-3. Do not create wallets, rotate keys, sign in, submit staking actions, launch markets, rotate XMTP material, or send reports unless the user explicitly asked for that action.
+3. Prefer machine-readable output. When stdout is not a human terminal, `regents` prints plain JSON. Parse that JSON instead of scraping terminal panels.
 
-4. Do not read `.env` files. If you need example configuration, read `.env.example` or the relevant docs.
+4. Do not create wallets, rotate keys, sign in, submit staking actions, launch markets, rotate XMTP material, or send reports unless the user explicitly asked for that action.
 
-5. Keep user data out of logs. Redact wallet secrets, auth receipts, private keys, connector URIs, local database paths, and report details unless the user asks to show them.
+5. Do not read `.env` files. If you need example configuration, read `.env.example` or the relevant docs.
 
-6. Before changing CLI behavior, update the owning contract file first:
+6. Keep user data out of logs. Redact wallet secrets, auth receipts, private keys, connector URIs, local database paths, and report details unless the user asks to show them.
+
+7. Before changing CLI behavior, update the owning contract file first:
    - Techtree CLI surface: `../techtree/docs/cli-contract.yaml`
+   - Techtree HTTP surface: `../techtree/docs/api-contract.openapiv3.yaml`
    - Autolaunch CLI surface: `../autolaunch/docs/cli-contract.yaml`
    - Shared CLI surface: `docs/shared-cli-contract.yaml`
    - Shared HTTP services: `docs/regent-services-contract.openapiv3.yaml`
 
-7. Use only the current command and response shapes. Do not invent aliases, older field names, compatibility handling, or alternate envelopes.
+8. Use only the current command and response shapes. Do not invent aliases, older field names, compatibility handling, or alternate envelopes.
 
-8. After code changes, run the smallest focused tests first, then the release gate below.
+9. After code changes, run the smallest focused tests first, then the release gate below.
 
 ## Development
 
@@ -179,7 +230,7 @@ The release is not ready unless contracts, generated OpenAPI types, tests, build
 
 - `@regentslabs/cli` is the shipped package.
 - `regents-cli/` owns the packaged command, local runtime, CLI docs, and release proof.
-- `techtree/` owns Techtree product behavior, CLI contract, and API contract.
+- `techtree/` owns Techtree product behavior, public records, CLI contract, API contract, and Base contract publication model.
 - `autolaunch/` owns launch, auction, subject, Agentbook, trust, and related product contracts.
 - `docs/shared-cli-contract.yaml` and `docs/regent-services-contract.openapiv3.yaml` own shared command and HTTP service contracts.
 
