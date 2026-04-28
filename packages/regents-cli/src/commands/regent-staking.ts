@@ -12,7 +12,7 @@ import type {
   JsonRequestBodyFor,
   JsonSuccessResponseFor,
 } from "../contracts/openapi-helpers.js";
-import { requestTypedJson, requirePositional } from "./autolaunch/shared.js";
+import { requestTypedJson, requirePositional } from "./shared-services.js";
 
 type RegentStakingOverviewResponse = JsonSuccessResponseFor<
   RegentServicePaths,

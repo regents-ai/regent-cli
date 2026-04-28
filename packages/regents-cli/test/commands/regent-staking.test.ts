@@ -10,7 +10,7 @@ import { writeFakeCdp } from "../support/fake-cdp.js";
 import { captureOutput, parsePrintedJson } from "../helpers/output.js";
 
 describe("regent-staking CLI command group", () => {
-  const expectedBaseUrl = "http://127.0.0.1:4010";
+  const expectedBaseUrl = "http://127.0.0.1:4000";
   const testWallet = "0x1111111111111111111111111111111111111111";
   const testRegistry = "0x2222222222222222222222222222222222222222";
   const originalEnv = { ...process.env };
@@ -89,6 +89,7 @@ describe("regent-staking CLI command group", () => {
     process.env.CDP_WALLET_SECRET = "test-wallet-secret";
     process.env.REGENT_WALLET_PRIVATE_KEY =
       "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
+    process.env.AUTOLAUNCH_BASE_URL = "http://127.0.0.1:4010";
     fetchMock.mockReset();
   });
 
