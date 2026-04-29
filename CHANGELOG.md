@@ -4,7 +4,7 @@ All notable changes to `@regentslabs/cli` should be recorded here.
 
 ## Unreleased
 
-## 0.3.0 - 2026-04-29
+## 0.4.0 - 2026-04-29
 
 ### Added
 
