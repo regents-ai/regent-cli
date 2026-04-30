@@ -15,6 +15,20 @@ import type {
   AutoskillReviewCreateInput,
   AutoskillSkillPublishInput,
   AutoskillVersionSummary,
+  BenchmarkAttemptCreateInput,
+  BenchmarkAttemptResponse,
+  BenchmarkCapsuleCreateInput,
+  BenchmarkCapsuleListResponse,
+  BenchmarkCapsuleResponse,
+  BenchmarkHarnessCreateInput,
+  BenchmarkHarnessResponse,
+  BenchmarkReliabilityListResponse,
+  BenchmarkScoreboardResponse,
+  BenchmarkValidationCreateInput,
+  BenchmarkValidationResponse,
+  BenchmarkVersionCreateInput,
+  BenchmarkVersionListResponse,
+  BenchmarkVersionResponse,
   BbhAssignmentResponse,
   BbhCapsuleGetResponse,
   BbhCapsuleListResponse,
@@ -80,6 +94,7 @@ import type { SessionStore } from "../store/session-store.js";
 import type { StateStore } from "../store/state-store.js";
 import { AuthResource } from "./client/auth.js";
 import { AutoskillResource } from "./client/autoskill.js";
+import { BenchmarksResource } from "./client/benchmarks.js";
 import { BbhResource } from "./client/bbh.js";
 import { ChatboxResource } from "./client/chatbox.js";
 import { TechtreeRequestClient } from "./client/request.js";
@@ -101,6 +116,7 @@ export class TechtreeClient {
   private readonly request: TechtreeRequestClient;
   private readonly auth: AuthResource;
   private readonly autoskill: AutoskillResource;
+  private readonly benchmarks: BenchmarksResource;
   private readonly bbh: BbhResource;
   private readonly chatbox: ChatboxResource;
   private readonly reviews: ReviewsResource;
@@ -131,6 +147,7 @@ export class TechtreeClient {
     });
     this.auth = new AuthResource(this.baseUrl, this.requestTimeoutMs, this.config);
     this.autoskill = new AutoskillResource(this.request);
+    this.benchmarks = new BenchmarksResource(this.request);
     this.bbh = new BbhResource(this.request);
     this.chatbox = new ChatboxResource(this.request);
     this.reviews = new ReviewsResource(this.request);
@@ -237,6 +254,60 @@ export class TechtreeClient {
 
   search(params: { q: string; limit?: number }): Promise<SearchResponse> {
     return this.tree.search(params);
+  }
+
+  listBenchmarkCapsules(params?: {
+    domain?: string;
+    field?: string;
+    status?: string;
+    difficulty?: string;
+    limit?: number;
+  }): Promise<BenchmarkCapsuleListResponse> {
+    return this.benchmarks.listCapsules(params);
+  }
+
+  getBenchmarkCapsule(capsuleId: string): Promise<BenchmarkCapsuleResponse> {
+    return this.benchmarks.getCapsule(capsuleId);
+  }
+
+  listBenchmarkVersions(capsuleId: string): Promise<BenchmarkVersionListResponse> {
+    return this.benchmarks.listVersions(capsuleId);
+  }
+
+  benchmarkScoreboard(capsuleId: string): Promise<BenchmarkScoreboardResponse> {
+    return this.benchmarks.scoreboard(capsuleId);
+  }
+
+  benchmarkReliability(capsuleId: string): Promise<BenchmarkReliabilityListResponse> {
+    return this.benchmarks.reliability(capsuleId);
+  }
+
+  getBenchmarkHarness(harnessId: string): Promise<BenchmarkHarnessResponse> {
+    return this.benchmarks.getHarness(harnessId);
+  }
+
+  createBenchmarkCapsule(input: BenchmarkCapsuleCreateInput): Promise<BenchmarkCapsuleResponse> {
+    return this.benchmarks.createCapsule(input);
+  }
+
+  createBenchmarkVersion(capsuleId: string, input: BenchmarkVersionCreateInput): Promise<BenchmarkVersionResponse> {
+    return this.benchmarks.createVersion(capsuleId, input);
+  }
+
+  createBenchmarkHarness(input: BenchmarkHarnessCreateInput): Promise<BenchmarkHarnessResponse> {
+    return this.benchmarks.createHarness(input);
+  }
+
+  createBenchmarkAttempt(input: BenchmarkAttemptCreateInput): Promise<BenchmarkAttemptResponse> {
+    return this.benchmarks.createAttempt(input);
+  }
+
+  createBenchmarkValidation(input: BenchmarkValidationCreateInput): Promise<BenchmarkValidationResponse> {
+    return this.benchmarks.createValidation(input);
+  }
+
+  recomputeBenchmarkReliability(capsuleId: string): Promise<BenchmarkReliabilityListResponse> {
+    return this.benchmarks.recomputeReliability(capsuleId);
   }
 
   getLatestSkill(slug: string): Promise<SkillTextResponse> {

@@ -44,6 +44,17 @@ import {
   runTechtreeWatch,
   runTechtreeWatchList,
   runTechtreeWatchTail,
+  runTechtreeBenchmarksCapsuleInit,
+  runTechtreeBenchmarksCapsulePack,
+  runTechtreeBenchmarksCapsuleSubmit,
+  runTechtreeBenchmarksGet,
+  runTechtreeBenchmarksList,
+  runTechtreeBenchmarksReliability,
+  runTechtreeBenchmarksRunMaterialize,
+  runTechtreeBenchmarksRunRepeat,
+  runTechtreeBenchmarksRunSubmit,
+  runTechtreeBenchmarksScoreboard,
+  runTechtreeBenchmarksValidate,
 } from "../commands/techtree.js";
 import {
   runTechtreeIdentitiesList,
@@ -314,6 +325,50 @@ export const techtreeRoutes: readonly CliRoute[] = [
   }),
   route("techtree science-tasks review-loop", async ({ parsedArgs, configPath }) => {
     await runTechtreeScienceTasksReviewLoop(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks list", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksList(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks get <capsule_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksGet(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks scoreboard <capsule_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksScoreboard(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks reliability <capsule_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksReliability(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks capsule init", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksCapsuleInit(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks capsule pack", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksCapsulePack(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks capsule submit", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksCapsuleSubmit(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks run materialize", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksRunMaterialize(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks run submit", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksRunSubmit(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks run repeat", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksRunRepeat(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree benchmarks validate", async ({ parsedArgs, configPath }) => {
+    await runTechtreeBenchmarksValidate(parsedArgs, configPath);
     return 0;
   }),
   route("techtree start", async ({ parsedArgs, configPath }) => {

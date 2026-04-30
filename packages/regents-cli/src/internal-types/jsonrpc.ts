@@ -90,6 +90,13 @@ import type {
   ChatboxListResponse,
   ChatboxPostInput,
   ChatboxPostResponse,
+  BenchmarkAttemptResponse,
+  BenchmarkCapsuleListResponse,
+  BenchmarkCapsuleResponse,
+  BenchmarkReliabilityListResponse,
+  BenchmarkScoreboardResponse,
+  BenchmarkValidationResponse,
+  BenchmarkWorkspaceActionResult,
   WatchRecord,
   WorkPacketResponse,
 } from "./techtree.js";
@@ -195,6 +202,17 @@ export type RegentRpcMethod =
   | "techtree.scienceTasks.submit"
   | "techtree.scienceTasks.reviewUpdate"
   | "techtree.scienceTasks.reviewLoop"
+  | "techtree.benchmarks.capsules.list"
+  | "techtree.benchmarks.capsules.get"
+  | "techtree.benchmarks.scoreboard"
+  | "techtree.benchmarks.reliability"
+  | "techtree.benchmarks.capsule.init"
+  | "techtree.benchmarks.capsule.pack"
+  | "techtree.benchmarks.capsule.submit"
+  | "techtree.benchmarks.run.materialize"
+  | "techtree.benchmarks.run.submit"
+  | "techtree.benchmarks.run.repeat"
+  | "techtree.benchmarks.validate"
   | "techtree.autoskill.initSkill"
   | "techtree.autoskill.initEval"
   | "techtree.autoskill.notebook.pair"
@@ -339,6 +357,38 @@ export interface RegentRpcParamsMap {
     harbor_pr_url: string;
     timeout_seconds?: number;
   };
+  "techtree.benchmarks.capsules.list":
+    | {
+        domain?: string;
+        field?: string;
+        status?: string;
+        difficulty?: string;
+        limit?: number;
+      }
+    | undefined;
+  "techtree.benchmarks.capsules.get": { capsule_id: string };
+  "techtree.benchmarks.scoreboard": { capsule_id: string };
+  "techtree.benchmarks.reliability": { capsule_id: string };
+  "techtree.benchmarks.capsule.init": {
+    workspace_path: string;
+    title?: string;
+    domain?: string;
+    field?: string;
+    ground_truth_policy?: string;
+  };
+  "techtree.benchmarks.capsule.pack": { workspace_path: string };
+  "techtree.benchmarks.capsule.submit": { workspace_path: string };
+  "techtree.benchmarks.run.materialize": {
+    workspace_path: string;
+    capsule_id: string;
+    version_id?: string;
+    runner_kind?: string;
+    model_id?: string;
+    harness_version?: string;
+  };
+  "techtree.benchmarks.run.submit": { workspace_path: string };
+  "techtree.benchmarks.run.repeat": { workspace_path: string; n?: number; submit?: boolean };
+  "techtree.benchmarks.validate": { workspace_path: string };
   "techtree.autoskill.initSkill": { workspace_path: string };
   "techtree.autoskill.initEval": { workspace_path: string };
   "techtree.autoskill.notebook.pair": AutoskillNotebookPairParams;
@@ -497,6 +547,17 @@ export interface RegentRpcResultMap {
     log_path: string;
     workflow_state: string;
   };
+  "techtree.benchmarks.capsules.list": BenchmarkCapsuleListResponse;
+  "techtree.benchmarks.capsules.get": BenchmarkCapsuleResponse;
+  "techtree.benchmarks.scoreboard": BenchmarkScoreboardResponse;
+  "techtree.benchmarks.reliability": BenchmarkReliabilityListResponse;
+  "techtree.benchmarks.capsule.init": BenchmarkWorkspaceActionResult;
+  "techtree.benchmarks.capsule.pack": BenchmarkWorkspaceActionResult;
+  "techtree.benchmarks.capsule.submit": BenchmarkWorkspaceActionResult;
+  "techtree.benchmarks.run.materialize": BenchmarkWorkspaceActionResult;
+  "techtree.benchmarks.run.submit": BenchmarkAttemptResponse;
+  "techtree.benchmarks.run.repeat": BenchmarkWorkspaceActionResult & { attempts?: BenchmarkAttemptResponse[] };
+  "techtree.benchmarks.validate": BenchmarkValidationResponse;
   "techtree.autoskill.initSkill": {
     ok: true;
     entrypoint: "autoskill.init.skill";

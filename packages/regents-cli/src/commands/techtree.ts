@@ -8,6 +8,7 @@ import { printJson } from "../printer.js";
 
 export * from "./techtree-science-tasks.js";
 export * from "./techtree-watch.js";
+export * from "./techtree-benchmarks.js";
 
 const readAtPathValue = (value: string): string => {
   if (!value.startsWith("@")) {

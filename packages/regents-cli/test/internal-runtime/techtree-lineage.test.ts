@@ -67,7 +67,7 @@ const createClient = (baseUrl: string): { client: TechtreeClient; stateStore: St
     nonce: "nonce-test",
     keyId: "key-test",
     receipt: "receipt-test",
-    receiptExpiresAt: "2026-04-30T00:00:00.000Z",
+    receiptExpiresAt: "2099-04-30T00:00:00.000Z",
     audience: "techtree",
     registryAddress: TEST_REGISTRY,
     tokenId: "99",

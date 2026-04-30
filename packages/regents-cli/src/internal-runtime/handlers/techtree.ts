@@ -1,5 +1,6 @@
 export * from "./techtree/nodes-activity.js";
 export * from "./techtree/science-tasks.js";
+export * from "./techtree/benchmarks.js";
 export * from "./techtree/autoskill.js";
 export * from "./techtree/bbh.js";
 export * from "./techtree/reviews-reviewer.js";

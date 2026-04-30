@@ -432,6 +432,323 @@ export interface ScienceTaskReviewUpdateInput extends ScienceTaskBaseInput {
   last_rerun_at?: string | null;
 }
 
+export type BenchmarkDomain =
+  | "bbh"
+  | "bioinformatics"
+  | "computational_biology"
+  | "science_task"
+  | "code"
+  | "math"
+  | "agent_skill"
+  | "other";
+
+export type BenchmarkWorkflowState =
+  | "authoring"
+  | "review_ready"
+  | "in_review"
+  | "approved"
+  | "published"
+  | "rejected"
+  | "retired";
+
+export type BenchmarkVisibility = "draft" | "private_review" | "public" | "paid_access";
+export type BenchmarkGroundTruthPolicy =
+  | "public"
+  | "hidden_server"
+  | "reviewer_only"
+  | "deterministic_oracle"
+  | "external_oracle"
+  | "metadata_scrambled"
+  | "synthetic";
+export type BenchmarkVersionStatus = "draft" | "review_ready" | "approved" | "published" | "superseded" | "retired";
+export type BenchmarkRunnerKind =
+  | "hermes"
+  | "openclaw"
+  | "regents"
+  | "codex"
+  | "claude"
+  | "skydiscover"
+  | "gemini"
+  | "opencode"
+  | "manual_human"
+  | "custom_local";
+export type BenchmarkAttemptStatus =
+  | "created"
+  | "running"
+  | "submitted"
+  | "scored"
+  | "validation_pending"
+  | "validated"
+  | "rejected"
+  | "failed";
+export type BenchmarkScoreStatus = "unscored" | "scored" | "rejected";
+export type BenchmarkValidationRole = "official" | "community" | "reviewer" | "author" | "oracle";
+export type BenchmarkValidationMethod = "replay" | "manual" | "replication" | "oracle" | "hidden_truth_check";
+export type BenchmarkValidationResult = "confirmed" | "rejected" | "mixed" | "needs_revision" | "inconclusive";
+
+export interface BenchmarkReliabilitySummary {
+  summary_id: string;
+  capsule_id: string;
+  version_id: string;
+  harness_id: string;
+  repeat_group_id: string;
+  attempt_count: number;
+  solve_count: number;
+  solve_rate: number;
+  reliable: boolean;
+  brittle: boolean;
+  answer_variance: Record<string, unknown>;
+  median_runtime_seconds: number | null;
+  p90_runtime_seconds: number | null;
+  median_cost_usd_micros: number | null;
+  validation_confirmed_count: number;
+  last_attempt_at: string | null;
+}
+
+export interface BenchmarkCapsule {
+  capsule_id: string;
+  source_node_id?: number | null;
+  owner_wallet_address?: string | null;
+  domain: BenchmarkDomain;
+  field?: string | null;
+  family_ref?: string | null;
+  provider?: string | null;
+  provider_ref?: string | null;
+  title: string;
+  summary_md?: string | null;
+  question_md: string;
+  difficulty_label?: string | null;
+  human_baseline_status?: string | null;
+  ground_truth_policy: BenchmarkGroundTruthPolicy;
+  answer_format: Record<string, unknown>;
+  allowed_tools_policy: Record<string, unknown>;
+  external_resource_policy: Record<string, unknown>;
+  scoring_policy: Record<string, unknown>;
+  anti_cheat_policy: Record<string, unknown>;
+  workflow_state: BenchmarkWorkflowState;
+  visibility: BenchmarkVisibility;
+  current_version_id?: string | null;
+  reliability?: BenchmarkReliabilitySummary | null;
+}
+
+export interface BenchmarkCapsuleVersion {
+  version_id: string;
+  capsule_id: string;
+  version_label: string;
+  version_status: BenchmarkVersionStatus;
+  manifest_cid?: string | null;
+  manifest_sha256?: string | null;
+  manifest_uri?: string | null;
+  input_bundle_cid?: string | null;
+  input_bundle_sha256?: string | null;
+  validation_notebook_cid?: string | null;
+  validation_notebook_sha256?: string | null;
+  redacted_validation_notebook_cid?: string | null;
+  ground_truth_manifest_hash?: string | null;
+  ground_truth_storage_policy: Record<string, unknown>;
+  environment_lock_ref?: Record<string, unknown>;
+  data_manifest: Record<string, unknown>;
+  capsule_source: Record<string, unknown>;
+}
+
+export interface BenchmarkHarness {
+  harness_id: string;
+  name: string;
+  description_md?: string | null;
+  domain?: BenchmarkDomain | null;
+  runner_kind: BenchmarkRunnerKind;
+  model_id?: string | null;
+  agent_runtime?: string | null;
+  harness_version: string;
+  prompt_pack_ref?: Record<string, unknown>;
+  skill_pack_refs?: Record<string, unknown>[];
+  tool_profile: Record<string, unknown>;
+  workspace_policy: Record<string, unknown>;
+  normalized_bundle_hash: string;
+  source: Record<string, unknown>;
+}
+
+export interface BenchmarkAttempt {
+  attempt_id: string;
+  capsule_id: string;
+  version_id: string;
+  harness_id: string;
+  solver_wallet_address?: string | null;
+  repeat_group_id: string;
+  attempt_ordinal: number;
+  status: BenchmarkAttemptStatus;
+  score_status: BenchmarkScoreStatus;
+  raw_score?: number | null;
+  normalized_score?: number | null;
+  solved?: boolean | null;
+  answer_text?: string | null;
+  answer_json?: Record<string, unknown> | null;
+  answer_hash?: string | null;
+  verdict_json: Record<string, unknown>;
+  artifact_manifest: Record<string, unknown>;
+  runtime_seconds?: number | null;
+  cost_usd_micros?: number | null;
+  run_source: Record<string, unknown>;
+  workspace_source: Record<string, unknown>;
+}
+
+export interface BenchmarkValidation {
+  validation_id: string;
+  attempt_id: string;
+  capsule_id: string;
+  validator_wallet_address?: string | null;
+  role: BenchmarkValidationRole;
+  method: BenchmarkValidationMethod;
+  result: BenchmarkValidationResult;
+  reproduced_raw_score?: number | null;
+  reproduced_normalized_score?: number | null;
+  tolerance_raw_abs?: number | null;
+  summary_md: string;
+  validation_notebook_cid?: string | null;
+  verdict_json: Record<string, unknown>;
+  review_source: Record<string, unknown>;
+}
+
+export interface BenchmarkCapsuleCreateInput {
+  capsule_id?: string;
+  domain: BenchmarkDomain;
+  field?: string | null;
+  title: string;
+  summary_md?: string | null;
+  question_md: string;
+  difficulty_label?: string | null;
+  human_baseline_status?: string;
+  ground_truth_policy: BenchmarkGroundTruthPolicy;
+  answer_format?: Record<string, unknown>;
+  allowed_tools_policy?: Record<string, unknown>;
+  external_resource_policy?: Record<string, unknown>;
+  scoring_policy?: Record<string, unknown>;
+  anti_cheat_policy?: Record<string, unknown>;
+  visibility?: BenchmarkVisibility;
+}
+
+export interface BenchmarkVersionCreateInput {
+  version_id?: string;
+  version_label: string;
+  version_status?: BenchmarkVersionStatus;
+  manifest_cid?: string | null;
+  manifest_sha256?: string | null;
+  manifest_uri?: string | null;
+  input_bundle_cid?: string | null;
+  input_bundle_sha256?: string | null;
+  validation_notebook_cid?: string | null;
+  redacted_validation_notebook_cid?: string | null;
+  ground_truth_manifest_hash?: string | null;
+  ground_truth_storage_policy?: Record<string, unknown>;
+  data_manifest?: Record<string, unknown>;
+  capsule_source?: Record<string, unknown>;
+}
+
+export interface BenchmarkHarnessCreateInput {
+  harness_id?: string;
+  name: string;
+  description_md?: string | null;
+  domain?: BenchmarkDomain | null;
+  runner_kind: BenchmarkRunnerKind;
+  model_id?: string | null;
+  agent_runtime?: string | null;
+  harness_version: string;
+  tool_profile?: Record<string, unknown>;
+  workspace_policy?: Record<string, unknown>;
+  source?: Record<string, unknown>;
+  normalized_bundle_hash: string;
+}
+
+export interface BenchmarkAttemptCreateInput {
+  attempt_id?: string;
+  capsule_id: string;
+  version_id: string;
+  harness_id: string;
+  repeat_group_id?: string | null;
+  attempt_ordinal?: number;
+  status?: BenchmarkAttemptStatus;
+  score_status?: BenchmarkScoreStatus;
+  raw_score?: number | null;
+  normalized_score?: number | null;
+  solved?: boolean | null;
+  answer_text?: string | null;
+  answer_json?: Record<string, unknown>;
+  answer_hash?: string | null;
+  verdict_json?: Record<string, unknown>;
+  artifact_manifest?: Record<string, unknown>;
+  runtime_seconds?: number | null;
+  cost_usd_micros?: number | null;
+  run_source?: Record<string, unknown>;
+  workspace_source?: Record<string, unknown>;
+}
+
+export interface BenchmarkValidationCreateInput {
+  validation_id?: string;
+  attempt_id: string;
+  role: BenchmarkValidationRole;
+  method: BenchmarkValidationMethod;
+  result: BenchmarkValidationResult;
+  reproduced_raw_score?: number | null;
+  reproduced_normalized_score?: number | null;
+  tolerance_raw_abs?: number | null;
+  summary_md: string;
+  validation_notebook_cid?: string | null;
+  verdict_json?: Record<string, unknown>;
+  review_source?: Record<string, unknown>;
+}
+
+export interface BenchmarkCapsuleListResponse {
+  data: BenchmarkCapsule[];
+}
+
+export interface BenchmarkCapsuleResponse {
+  data: BenchmarkCapsule;
+}
+
+export interface BenchmarkVersionListResponse {
+  data: BenchmarkCapsuleVersion[];
+}
+
+export interface BenchmarkVersionResponse {
+  data: BenchmarkCapsuleVersion;
+}
+
+export interface BenchmarkHarnessResponse {
+  data: BenchmarkHarness;
+}
+
+export interface BenchmarkAttemptResponse {
+  data: BenchmarkAttempt;
+}
+
+export interface BenchmarkValidationResponse {
+  data: BenchmarkValidation;
+}
+
+export interface BenchmarkReliabilityListResponse {
+  data: BenchmarkReliabilitySummary[];
+}
+
+export interface BenchmarkScoreboardResponse {
+  data: {
+    capsule_id: string;
+    entries: BenchmarkReliabilitySummary[];
+  };
+}
+
+export interface BenchmarkWorkspaceActionResult {
+  ok: true;
+  entrypoint: string;
+  workspace_path: string;
+  files: string[];
+  capsule_id?: string;
+  version_id?: string;
+  attempt_id?: string;
+  validation_id?: string;
+  repeat_group_id?: string;
+  manifest_sha256?: string;
+}
+
 export interface NodeTagEdge {
   id: number;
   src_node_id: number;

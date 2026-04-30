@@ -1272,6 +1272,294 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/benchmarks/capsules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listBenchmarkCapsules"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/capsules/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkCapsule"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/capsules/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listBenchmarkCapsuleVersions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/capsules/{id}/scoreboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkCapsuleScoreboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/capsules/{id}/reliability": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkCapsuleReliability"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/attempts/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkAttempt"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/attempts/{id}/validations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listBenchmarkAttemptValidations"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/benchmarks/harnesses/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkHarness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/capsules": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkCapsule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/capsules/{id}/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkCapsuleVersion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/capsules/{id}/review-ready": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["markBenchmarkCapsuleReviewReady"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/capsules/{id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["publishBenchmarkCapsule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/harnesses": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkHarness"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/attempts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkAttempt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/attempts/repeat-group": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkRepeatGroup"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/validations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkValidation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/imports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkImport"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/benchmarks/capsules/{id}/reliability/recompute": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["recomputeBenchmarkReliability"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/bbh/leaderboard": {
         parameters: {
             query?: never;
@@ -2181,6 +2469,414 @@ export interface components {
                 packet_hash: string;
                 export_target_path: string;
             };
+        };
+        /** @enum {string} */
+        BenchmarkDomain: "bbh" | "bioinformatics" | "computational_biology" | "science_task" | "code" | "math" | "agent_skill" | "other";
+        /** @enum {string} */
+        BenchmarkHumanBaselineStatus: "unknown" | "human_solvable" | "human_difficult" | "expert_only" | "unsolved" | "not_applicable";
+        /** @enum {string} */
+        BenchmarkGroundTruthPolicy: "public" | "hidden_server" | "reviewer_only" | "deterministic_oracle" | "external_oracle" | "metadata_scrambled" | "synthetic";
+        /** @enum {string} */
+        BenchmarkWorkflowState: "authoring" | "review_ready" | "in_review" | "approved" | "published" | "rejected" | "retired";
+        /** @enum {string} */
+        BenchmarkVisibility: "draft" | "private_review" | "public" | "paid_access";
+        /** @enum {string} */
+        BenchmarkPublishVisibility: "public" | "paid_access";
+        /** @enum {string} */
+        BenchmarkVersionStatus: "draft" | "review_ready" | "approved" | "published" | "superseded" | "retired";
+        /** @enum {string} */
+        BenchmarkRunnerKind: "hermes" | "openclaw" | "regents" | "codex" | "claude" | "skydiscover" | "gemini" | "opencode" | "manual_human" | "custom_local";
+        /** @enum {string} */
+        BenchmarkAttemptStatus: "created" | "running" | "submitted" | "scored" | "validation_pending" | "validated" | "rejected" | "failed";
+        /** @enum {string} */
+        BenchmarkScoreStatus: "unscored" | "scored" | "rejected";
+        /** @enum {string} */
+        BenchmarkValidationRole: "official" | "community" | "reviewer" | "author" | "oracle";
+        /** @enum {string} */
+        BenchmarkValidationMethod: "replay" | "manual" | "replication" | "oracle" | "hidden_truth_check";
+        /** @enum {string} */
+        BenchmarkValidationResult: "confirmed" | "rejected" | "mixed" | "needs_revision" | "inconclusive";
+        /** @enum {string} */
+        BenchmarkArtifactVisibility: "public" | "paid" | "reviewer_only" | "private";
+        /** @enum {string} */
+        BenchmarkArtifactKind: "input_bundle" | "data_manifest" | "validation_notebook" | "redacted_validation_notebook" | "ground_truth_manifest" | "run_bundle" | "solver_notebook" | "tool_calls_log" | "run_log" | "report" | "review_packet" | "skill_bundle" | "harness_bundle";
+        BenchmarkCapsule: {
+            capsule_id: string;
+            source_node_id?: number | null;
+            owner_wallet_address?: components["schemas"]["Address"];
+            domain: components["schemas"]["BenchmarkDomain"];
+            field?: string | null;
+            family_ref?: string | null;
+            provider?: string | null;
+            provider_ref?: string | null;
+            title: string;
+            summary_md?: string | null;
+            question_md: string;
+            difficulty_label?: string | null;
+            human_baseline_status?: components["schemas"]["BenchmarkHumanBaselineStatus"];
+            ground_truth_policy: components["schemas"]["BenchmarkGroundTruthPolicy"];
+            answer_format?: components["schemas"]["LooseObject"];
+            allowed_tools_policy?: components["schemas"]["LooseObject"];
+            external_resource_policy?: components["schemas"]["LooseObject"];
+            scoring_policy?: components["schemas"]["LooseObject"];
+            anti_cheat_policy?: components["schemas"]["LooseObject"];
+            workflow_state: components["schemas"]["BenchmarkWorkflowState"];
+            visibility: components["schemas"]["BenchmarkVisibility"];
+            current_version_id?: string | null;
+            /** Format: date-time */
+            published_at?: string | null;
+            reliability?: components["schemas"]["BenchmarkReliabilitySummary"] | null;
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkCapsuleVersion: {
+            version_id: string;
+            capsule_id: string;
+            version_label: string;
+            version_status: components["schemas"]["BenchmarkVersionStatus"];
+            manifest_cid?: string | null;
+            manifest_sha256?: string | null;
+            manifest_uri?: string | null;
+            input_bundle_cid?: string | null;
+            input_bundle_sha256?: string | null;
+            validation_notebook_cid?: string | null;
+            redacted_validation_notebook_cid?: string | null;
+            ground_truth_manifest_hash?: string | null;
+            ground_truth_storage_policy?: components["schemas"]["LooseObject"];
+            data_manifest?: components["schemas"]["LooseObject"];
+            capsule_source?: components["schemas"]["LooseObject"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkHarness: {
+            harness_id: string;
+            name: string;
+            description_md?: string | null;
+            domain?: components["schemas"]["BenchmarkDomain"];
+            runner_kind: components["schemas"]["BenchmarkRunnerKind"];
+            model_id?: string | null;
+            agent_runtime?: string | null;
+            harness_version: string;
+            tool_profile?: components["schemas"]["LooseObject"];
+            workspace_policy?: components["schemas"]["LooseObject"];
+            normalized_bundle_hash: string;
+            source?: components["schemas"]["LooseObject"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkAttempt: {
+            attempt_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            solver_wallet_address?: components["schemas"]["Address"];
+            repeat_group_id?: string | null;
+            attempt_ordinal?: number;
+            status: components["schemas"]["BenchmarkAttemptStatus"];
+            score_status: components["schemas"]["BenchmarkScoreStatus"];
+            raw_score?: number | null;
+            normalized_score?: number | null;
+            solved?: boolean | null;
+            answer_text?: string | null;
+            answer_json?: components["schemas"]["LooseObject"] | null;
+            answer_hash?: string | null;
+            verdict_json?: components["schemas"]["LooseObject"];
+            artifact_manifest?: components["schemas"]["LooseObject"];
+            runtime_seconds?: number | null;
+            cost_usd_micros?: number | null;
+            run_source?: components["schemas"]["LooseObject"];
+            workspace_source?: components["schemas"]["LooseObject"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkValidation: {
+            validation_id: string;
+            attempt_id: string;
+            capsule_id: string;
+            validator_wallet_address?: components["schemas"]["Address"];
+            role: components["schemas"]["BenchmarkValidationRole"];
+            method: components["schemas"]["BenchmarkValidationMethod"];
+            result: components["schemas"]["BenchmarkValidationResult"];
+            reproduced_raw_score?: number | null;
+            reproduced_normalized_score?: number | null;
+            tolerance_raw_abs?: number | null;
+            summary_md: string;
+            verdict_json?: components["schemas"]["LooseObject"];
+            review_source?: components["schemas"]["LooseObject"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkReliabilitySummary: {
+            summary_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            repeat_group_id?: string | null;
+            attempt_count: number;
+            solve_count: number;
+            solve_rate: number;
+            reliable: boolean;
+            brittle: boolean;
+            answer_variance?: components["schemas"]["LooseObject"];
+            median_runtime_seconds?: number | null;
+            p90_runtime_seconds?: number | null;
+            median_cost_usd_micros?: number | null;
+            validation_confirmed_count?: number;
+            /** Format: date-time */
+            last_attempt_at?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkArtifact: {
+            artifact_id: string;
+            capsule_id?: string | null;
+            version_id?: string | null;
+            attempt_id?: string | null;
+            validation_id?: string | null;
+            kind: components["schemas"]["BenchmarkArtifactKind"];
+            name?: string | null;
+            cid?: string | null;
+            uri?: string | null;
+            sha256?: string | null;
+            byte_size?: number | null;
+            content_type?: string | null;
+            storage_provider: string;
+            visibility: components["schemas"]["BenchmarkArtifactVisibility"];
+            encryption_meta?: components["schemas"]["LooseObject"];
+            license?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkCapsuleCreateRequest: {
+            capsule_id?: string;
+            domain: components["schemas"]["BenchmarkDomain"];
+            field?: string | null;
+            title: string;
+            summary_md?: string | null;
+            question_md: string;
+            difficulty_label?: string | null;
+            human_baseline_status?: components["schemas"]["BenchmarkHumanBaselineStatus"];
+            ground_truth_policy: components["schemas"]["BenchmarkGroundTruthPolicy"];
+            answer_format?: components["schemas"]["LooseObject"];
+            allowed_tools_policy?: components["schemas"]["LooseObject"];
+            external_resource_policy?: components["schemas"]["LooseObject"];
+            scoring_policy?: components["schemas"]["LooseObject"];
+            anti_cheat_policy?: components["schemas"]["LooseObject"];
+            visibility?: components["schemas"]["BenchmarkVisibility"];
+        };
+        BenchmarkVersionCreateRequest: {
+            version_id?: string;
+            version_label: string;
+            version_status?: components["schemas"]["BenchmarkVersionStatus"];
+            manifest_cid?: string | null;
+            manifest_sha256?: string | null;
+            manifest_uri?: string | null;
+            input_bundle_cid?: string | null;
+            input_bundle_sha256?: string | null;
+            validation_notebook_cid?: string | null;
+            redacted_validation_notebook_cid?: string | null;
+            ground_truth_manifest_hash?: string | null;
+            ground_truth_storage_policy?: components["schemas"]["LooseObject"];
+            data_manifest?: components["schemas"]["LooseObject"];
+            capsule_source?: components["schemas"]["LooseObject"];
+        };
+        BenchmarkReviewReadyRequest: {
+            version_id: string;
+        };
+        BenchmarkPaidPayloadCreateRequest: {
+            encrypted_payload_uri: string;
+            encrypted_payload_cid?: string | null;
+            payload_hash: string;
+            encryption_meta?: components["schemas"]["LooseObject"];
+            access_policy?: components["schemas"]["LooseObject"];
+            seller_payout_address?: components["schemas"]["Address"];
+        };
+        BenchmarkCapsulePublishRequest: {
+            version_id: string;
+            seed: string;
+            parent_id: number;
+            notebook_source: string;
+            title?: string | null;
+            summary?: string | null;
+            visibility?: components["schemas"]["BenchmarkPublishVisibility"];
+            idempotency_key?: string | null;
+            paid_payload?: components["schemas"]["BenchmarkPaidPayloadCreateRequest"] | null;
+        };
+        BenchmarkHarnessCreateRequest: {
+            harness_id?: string;
+            name: string;
+            description_md?: string | null;
+            domain?: components["schemas"]["BenchmarkDomain"];
+            runner_kind: components["schemas"]["BenchmarkRunnerKind"];
+            model_id?: string | null;
+            agent_runtime?: string | null;
+            harness_version: string;
+            tool_profile?: components["schemas"]["LooseObject"];
+            workspace_policy?: components["schemas"]["LooseObject"];
+            source?: components["schemas"]["LooseObject"];
+            normalized_bundle_hash: string;
+        };
+        BenchmarkAttemptCreateRequest: {
+            attempt_id?: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            repeat_group_id?: string | null;
+            attempt_ordinal?: number;
+            status?: components["schemas"]["BenchmarkAttemptStatus"];
+            score_status?: components["schemas"]["BenchmarkScoreStatus"];
+            raw_score?: number | null;
+            normalized_score?: number | null;
+            solved?: boolean | null;
+            answer_text?: string | null;
+            answer_json?: components["schemas"]["LooseObject"];
+            answer_hash?: string | null;
+            verdict_json?: components["schemas"]["LooseObject"];
+            artifact_manifest?: components["schemas"]["LooseObject"];
+            runtime_seconds?: number | null;
+            cost_usd_micros?: number | null;
+            run_source?: components["schemas"]["LooseObject"];
+            workspace_source?: components["schemas"]["LooseObject"];
+        };
+        BenchmarkRepeatAttemptInput: {
+            attempt_id?: string;
+            attempt_ordinal?: number;
+            status?: components["schemas"]["BenchmarkAttemptStatus"];
+            score_status?: components["schemas"]["BenchmarkScoreStatus"];
+            raw_score?: number | null;
+            normalized_score?: number | null;
+            solved?: boolean | null;
+            answer_text?: string | null;
+            answer_json?: components["schemas"]["LooseObject"];
+            answer_hash?: string | null;
+            verdict_json?: components["schemas"]["LooseObject"];
+            artifact_manifest?: components["schemas"]["LooseObject"];
+            runtime_seconds?: number | null;
+            cost_usd_micros?: number | null;
+            run_source?: components["schemas"]["LooseObject"];
+            workspace_source?: components["schemas"]["LooseObject"];
+        };
+        BenchmarkRepeatGroupCreateRequest: {
+            version_id: string;
+            harness_id: string;
+            repeat_group_id?: string | null;
+            attempts: components["schemas"]["BenchmarkRepeatAttemptInput"][];
+        };
+        BenchmarkValidationCreateRequest: {
+            validation_id?: string;
+            attempt_id: string;
+            role: components["schemas"]["BenchmarkValidationRole"];
+            method: components["schemas"]["BenchmarkValidationMethod"];
+            result: components["schemas"]["BenchmarkValidationResult"];
+            reproduced_raw_score?: number | null;
+            reproduced_normalized_score?: number | null;
+            tolerance_raw_abs?: number | null;
+            summary_md: string;
+            validation_notebook_cid?: string | null;
+            verdict_json?: components["schemas"]["LooseObject"];
+            review_source?: components["schemas"]["LooseObject"];
+        };
+        BenchmarkImportRequest: {
+            /** @enum {string} */
+            domain: "bbh" | "science_task";
+            /** @default false */
+            dry_run: boolean;
+        };
+        BenchmarkCapsuleListResponse: {
+            data: components["schemas"]["BenchmarkCapsule"][];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkCapsuleResponse: {
+            data: components["schemas"]["BenchmarkCapsule"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkVersionResponse: {
+            data: components["schemas"]["BenchmarkCapsuleVersion"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkPublicationNode: {
+            node_id: number;
+            manifest_cid?: string | null;
+            status: string;
+            publish_status: string;
+            anchor_status: string;
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkCapsulePublishResponse: {
+            data: {
+                capsule: components["schemas"]["BenchmarkCapsule"];
+                version: components["schemas"]["BenchmarkCapsuleVersion"];
+                publication_node: components["schemas"]["BenchmarkPublicationNode"];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkVersionListResponse: {
+            data: components["schemas"]["BenchmarkCapsuleVersion"][];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkHarnessResponse: {
+            data: components["schemas"]["BenchmarkHarness"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkAttemptResponse: {
+            data: components["schemas"]["BenchmarkAttempt"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkRepeatGroupResponse: {
+            data: {
+                repeat_group_id: string;
+                attempts: components["schemas"]["BenchmarkAttempt"][];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkValidationResponse: {
+            data: components["schemas"]["BenchmarkValidation"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkValidationListResponse: {
+            data: components["schemas"]["BenchmarkValidation"][];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkReliabilityListResponse: {
+            data: components["schemas"]["BenchmarkReliabilitySummary"][];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkImportResponse: {
+            data: {
+                domain: string;
+                dry_run: boolean;
+                counts: components["schemas"]["LooseObject"];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkScoreboardResponse: {
+            data: {
+                capsule_id: string;
+                entries: components["schemas"]["BenchmarkReliabilitySummary"][];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
         };
         ChatboxMessage: {
             id?: number;
@@ -4773,6 +5469,466 @@ export interface operations {
                 };
                 content: {
                     "application/x-ndjson": string;
+                };
+            };
+        };
+    };
+    listBenchmarkCapsules: {
+        parameters: {
+            query?: {
+                domain?: components["schemas"]["BenchmarkDomain"];
+                field?: string;
+                status?: components["schemas"]["BenchmarkWorkflowState"];
+                difficulty?: string;
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public benchmark capsules */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkCapsuleListResponse"];
+                };
+            };
+        };
+    };
+    getBenchmarkCapsule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public benchmark capsule */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkCapsuleResponse"];
+                };
+            };
+            /** @description Benchmark capsule not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    listBenchmarkCapsuleVersions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Capsule versions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkVersionListResponse"];
+                };
+            };
+        };
+    };
+    getBenchmarkCapsuleScoreboard: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Capsule scoreboard */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkScoreboardResponse"];
+                };
+            };
+        };
+    };
+    getBenchmarkCapsuleReliability: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Capsule reliability summaries */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkReliabilityListResponse"];
+                };
+            };
+        };
+    };
+    getBenchmarkAttempt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Benchmark attempt */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkAttemptResponse"];
+                };
+            };
+            /** @description Benchmark attempt not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    listBenchmarkAttemptValidations: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Benchmark attempt validations */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkValidationListResponse"];
+                };
+            };
+        };
+    };
+    getBenchmarkHarness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Benchmark harness */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkHarnessResponse"];
+                };
+            };
+            /** @description Benchmark harness not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    createBenchmarkCapsule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkCapsuleCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark capsule created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkCapsuleResponse"];
+                };
+            };
+            /** @description Benchmark capsule invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    createBenchmarkCapsuleVersion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkVersionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark capsule version created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkVersionResponse"];
+                };
+            };
+        };
+    };
+    markBenchmarkCapsuleReviewReady: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkReviewReadyRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark capsule marked ready for review */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkCapsuleResponse"];
+                };
+            };
+        };
+    };
+    publishBenchmarkCapsule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkCapsulePublishRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark capsule publication started */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkCapsulePublishResponse"];
+                };
+            };
+        };
+    };
+    createBenchmarkHarness: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkHarnessCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark harness created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkHarnessResponse"];
+                };
+            };
+        };
+    };
+    createBenchmarkAttempt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkAttemptCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark attempt created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkAttemptResponse"];
+                };
+            };
+        };
+    };
+    createBenchmarkRepeatGroup: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkRepeatGroupCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark repeat group created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkRepeatGroupResponse"];
+                };
+            };
+        };
+    };
+    createBenchmarkValidation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkValidationCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark validation created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkValidationResponse"];
+                };
+            };
+        };
+    };
+    createBenchmarkImport: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkImportRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark import completed */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkImportResponse"];
+                };
+            };
+        };
+    };
+    recomputeBenchmarkReliability: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Benchmark reliability recomputed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkReliabilityListResponse"];
                 };
             };
         };

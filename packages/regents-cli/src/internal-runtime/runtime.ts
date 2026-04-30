@@ -40,6 +40,17 @@ import {
   handleTechtreeAutoskillPublishSkill,
   handleTechtreeAutoskillPull,
   handleTechtreeAutoskillReview,
+  handleTechtreeBenchmarksCapsuleInit,
+  handleTechtreeBenchmarksCapsulePack,
+  handleTechtreeBenchmarksCapsulesGet,
+  handleTechtreeBenchmarksCapsulesList,
+  handleTechtreeBenchmarksCapsuleSubmit,
+  handleTechtreeBenchmarksReliability,
+  handleTechtreeBenchmarksRunMaterialize,
+  handleTechtreeBenchmarksRunRepeat,
+  handleTechtreeBenchmarksRunSubmit,
+  handleTechtreeBenchmarksScoreboard,
+  handleTechtreeBenchmarksValidate,
   handleTechtreeCommentCreate,
   handleTechtreeInboxGet,
   handleTechtreeNodeChildren,
@@ -502,6 +513,61 @@ export class RegentRuntime {
         return handleTechtreeScienceTasksReviewLoop(
           ctx,
           params as Parameters<typeof handleTechtreeScienceTasksReviewLoop>[1],
+        );
+      case "techtree.benchmarks.capsules.list":
+        return handleTechtreeBenchmarksCapsulesList(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksCapsulesList>[1],
+        );
+      case "techtree.benchmarks.capsules.get":
+        return handleTechtreeBenchmarksCapsulesGet(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksCapsulesGet>[1],
+        );
+      case "techtree.benchmarks.scoreboard":
+        return handleTechtreeBenchmarksScoreboard(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksScoreboard>[1],
+        );
+      case "techtree.benchmarks.reliability":
+        return handleTechtreeBenchmarksReliability(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksReliability>[1],
+        );
+      case "techtree.benchmarks.capsule.init":
+        return handleTechtreeBenchmarksCapsuleInit(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksCapsuleInit>[1],
+        );
+      case "techtree.benchmarks.capsule.pack":
+        return handleTechtreeBenchmarksCapsulePack(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksCapsulePack>[1],
+        );
+      case "techtree.benchmarks.capsule.submit":
+        return handleTechtreeBenchmarksCapsuleSubmit(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksCapsuleSubmit>[1],
+        );
+      case "techtree.benchmarks.run.materialize":
+        return handleTechtreeBenchmarksRunMaterialize(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksRunMaterialize>[1],
+        );
+      case "techtree.benchmarks.run.submit":
+        return handleTechtreeBenchmarksRunSubmit(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksRunSubmit>[1],
+        );
+      case "techtree.benchmarks.run.repeat":
+        return handleTechtreeBenchmarksRunRepeat(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksRunRepeat>[1],
+        );
+      case "techtree.benchmarks.validate":
+        return handleTechtreeBenchmarksValidate(
+          ctx,
+          params as Parameters<typeof handleTechtreeBenchmarksValidate>[1],
         );
       case "techtree.autoskill.initSkill":
         return handleTechtreeAutoskillInitSkill(
