@@ -1,5 +1,8 @@
 import { CLI_COMMANDS } from "./command-registry.js";
-import { CLI_COMMANDS_BY_TOP_LEVEL_GROUP } from "./generated/cli-command-metadata.js";
+import {
+  CLI_COMMANDS_BY_TOP_LEVEL_GROUP,
+  CLI_COMMAND_DETAILS_BY_COMMAND,
+} from "./generated/cli-command-metadata.js";
 import { CLI_PALETTE, printText, renderPanel, tone } from "./printer.js";
 
 interface HelpEntry {
@@ -19,6 +22,37 @@ interface HelpGroup {
   readonly commands: readonly string[];
   readonly nextStep: string;
 }
+
+interface CommandFieldMetadata {
+  readonly name?: string;
+  readonly type?: string;
+  readonly required?: boolean;
+  readonly description?: string;
+}
+
+interface CommandAgentMetadata {
+  readonly json_support?: string;
+  readonly mutation_class?: string;
+  readonly async_behavior?: string;
+}
+
+interface CommandDetailMetadata {
+  readonly command: string;
+  readonly auth_mode?: string;
+  readonly auth_audience?: string;
+  readonly output_envelope?: string;
+  readonly args?: unknown;
+  readonly flags?: unknown;
+  readonly examples?: readonly string[];
+  readonly agent_metadata?: CommandAgentMetadata;
+  readonly summary?: string;
+  readonly usage?: string;
+  readonly next_step?: string;
+}
+
+const commandDetailsByCommand = CLI_COMMAND_DETAILS_BY_COMMAND as unknown as Readonly<
+  Record<string, CommandDetailMetadata>
+>;
 
 const globalNextStep =
   "For Autolaunch, run `regents auth login --audience autolaunch`, then `regents identity ensure`.";
@@ -82,11 +116,11 @@ const commandHelp: Record<string, HelpEntry> = {
     output: "Shows the created launch job and next action.",
     nextStep: "Use `regents autolaunch jobs watch <job-id>`.",
   },
-  "regent-staking show": {
+  "regent-staking get": {
     summary: "Show Regent staking totals for the saved Agent account.",
-    usage: "regents regent-staking show",
+    usage: "regents regent-staking get",
     flags: ["--config <path>"],
-    examples: ["regents regent-staking show"],
+    examples: ["regents regent-staking get"],
     auth: "Needs `regents auth login --audience regent-services` and `regents identity ensure`.",
     output: "Shows staking balances and claimable amounts.",
     nextStep: "Use the stake, unstake, or claim command that matches the account state.",
@@ -242,11 +276,11 @@ const commandHelp: Record<string, HelpEntry> = {
     output: "Shows the runtime id, status, runner, surface, and billing mode.",
     nextStep: "Run `regents runtime health <runtime-id> --company-id <id>`.",
   },
-  "runtime show": {
+  "runtime get": {
     summary: "Show one runtime for a Regent company.",
-    usage: "regents runtime show <runtime-id> --company-id <id>",
+    usage: "regents runtime get <runtime-id> --company-id <id>",
     flags: ["--company-id <id>", "--origin <url>", "--session-file <path>"],
-    examples: ["regents runtime show runtime_123 --company-id company_123"],
+    examples: ["regents runtime get runtime_123 --company-id company_123"],
     auth: "Use `regents platform auth login` with a Platform identity token.",
     output: "Shows the runtime id, status, runner, surface, and billing mode.",
     nextStep: "Run `regents runtime health <runtime-id> --company-id <id>`.",
@@ -382,7 +416,7 @@ const groupHelp: Record<string, HelpGroup> = {
     auth: "Needs `regents auth login --audience regent-services` and `regents identity ensure`.",
     output: "Shows balances, prepared actions, and claim results.",
     commands: CLI_COMMANDS_BY_TOP_LEVEL_GROUP["regent-staking"],
-    nextStep: "Start with `regents regent-staking show`.",
+    nextStep: "Start with `regents regent-staking get`.",
   },
   platform: {
     summary: "Use the Regent website account from the terminal.",
@@ -403,7 +437,7 @@ const groupHelp: Record<string, HelpGroup> = {
     auth: "Use `regents platform auth login` with a Platform identity token.",
     output: "Shows runtime status, services, health, checkpoints, and restore results. `--json` prints raw JSON.",
     commands: CLI_COMMANDS_BY_TOP_LEVEL_GROUP.runtime,
-    nextStep: "Start with `regents runtime show <runtime-id> --company-id <id>` or create a runtime from the company setup.",
+    nextStep: "Start with `regents runtime get <runtime-id> --company-id <id>` or create a runtime from the company setup.",
   },
   agent: {
     summary: "Manage local Agent setup and Regent company workers.",
@@ -537,17 +571,109 @@ const commandForInput = (positionals: readonly string[]): string | null => {
   }).command;
 };
 
+const isCommandFieldMetadata = (value: unknown): value is CommandFieldMetadata =>
+  Boolean(value) && typeof value === "object" && typeof (value as CommandFieldMetadata).name === "string";
+
+const fieldTypeSuffix = (field: CommandFieldMetadata): string => {
+  if (!field.type || field.type === "boolean") {
+    return "";
+  }
+
+  if (field.name?.includes("<")) {
+    return "";
+  }
+
+  return ` <${field.type}>`;
+};
+
+const formatFieldMetadata = (field: CommandFieldMetadata): string => {
+  const name = field.name ?? "";
+  const required = field.required ? " required" : "";
+  const description = field.description ? ` - ${field.description}` : "";
+  return `${name}${fieldTypeSuffix(field)}${required}${description}`;
+};
+
+const generatedFields = (value: unknown): string[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .filter(isCommandFieldMetadata)
+    .map(formatFieldMetadata)
+    .filter((line) => line.length > 0);
+};
+
+const generatedAuthText = (detail: CommandDetailMetadata, group: HelpGroup | null): string => {
+  if (detail.auth_mode === "none") {
+    return "No saved sign-in is needed.";
+  }
+
+  if (detail.auth_audience) {
+    return `Needs \`regents auth login --audience ${detail.auth_audience}\` and \`regents identity ensure\`.`;
+  }
+
+  return group?.auth ?? "Check the command group help for sign-in needs.";
+};
+
+const generatedOutputText = (detail: CommandDetailMetadata): string => {
+  if (detail.output_envelope === "passthrough") {
+    return "Shows the launched tool output directly.";
+  }
+
+  if (detail.agent_metadata?.json_support === "supported") {
+    return "Human output is concise. `--json` prints raw JSON.";
+  }
+
+  if (detail.agent_metadata?.json_support === "not_supported") {
+    return "Shows human terminal output.";
+  }
+
+  return "Prints command results. `--json` keeps output script-safe where supported.";
+};
+
+const generatedUsage = (command: string, detail: CommandDetailMetadata | undefined): string =>
+  detail?.usage ?? `regents ${command}`;
+
+const exampleParts = (example: string): readonly string[] => {
+  const trimmed = example.trim();
+  const withoutBinary = trimmed.startsWith("regents ") ? trimmed.slice("regents ".length) : trimmed;
+  return withoutBinary.split(/\s+/).filter((part) => part.length > 0);
+};
+
+const exampleMatchesCommand = (command: string, example: string): boolean => {
+  const commandParts = command.split(" ");
+  const parts = exampleParts(example);
+  if (parts.length < commandParts.length) {
+    return false;
+  }
+
+  return commandParts.every((part, index) => isPlaceholderPart(part) || parts[index] === part);
+};
+
+const generatedExamples = (command: string, detail: CommandDetailMetadata | undefined): readonly string[] => {
+  const matchingExample = detail?.examples?.find((example) => exampleMatchesCommand(command, example));
+  return [matchingExample ?? generatedUsage(command, detail)];
+};
+
 const summarizeCommand = (command: string): HelpEntry => {
   const group = helpGroupForCommand(command);
+  const detail = commandDetailsByCommand[command];
+  const flags = [
+    ...generatedFields(detail?.args),
+    ...generatedFields(detail?.flags),
+    "--config <path>",
+    "--json where supported",
+  ];
 
   return {
-    summary: `Run ${command}.`,
-    usage: `regents ${command}`,
-    flags: ["--config <path>", "--json where supported"],
-    examples: [`regents ${command}`],
-    auth: group?.auth ?? "Check the command group help for sign-in needs.",
-    output: "Prints command results. `--json` keeps output script-safe where supported.",
-    nextStep: group?.nextStep ?? globalNextStep,
+    summary: detail?.summary ?? `Run ${command}.`,
+    usage: generatedUsage(command, detail),
+    flags: Array.from(new Set(flags)),
+    examples: generatedExamples(command, detail),
+    auth: detail ? generatedAuthText(detail, group) : group?.auth ?? "Check the command group help for sign-in needs.",
+    output: detail ? generatedOutputText(detail) : "Prints command results. `--json` keeps output script-safe where supported.",
+    nextStep: detail?.next_step ?? group?.nextStep ?? globalNextStep,
   };
 };
 
@@ -597,7 +723,7 @@ export function renderScopedHelp(positionals: readonly string[], configPath: str
     return renderEntry("◆ REGENT CLI HELP", {
       summary: "Work with Regent from the terminal.",
       usage: "regents <command> [flags]",
-      flags: ["--config <path>", "--help", "--json where supported"],
+      flags: ["--config <path>", "--help", "--json where supported", "--no-input"],
       examples: [
         "regents auth login --audience autolaunch",
         "regents identity ensure",
@@ -625,6 +751,24 @@ export function renderScopedHelp(positionals: readonly string[], configPath: str
     `No shipped command matches: regents ${positionals.join(" ")}`,
     "Check the spelling or run `regents --help`.",
   ]);
+}
+
+export function usageHintForPositionals(positionals: readonly string[]): {
+  readonly command: string;
+  readonly usage: string;
+  readonly example?: string;
+} | undefined {
+  const command = commandForInput(positionals);
+  if (!command) {
+    return undefined;
+  }
+
+  const entry = commandHelp[command] ?? summarizeCommand(command);
+  return {
+    command: `regents ${command}`,
+    usage: entry.usage,
+    example: entry.examples?.[0],
+  };
 }
 
 export function printScopedHelp(positionals: readonly string[], configPath: string): void {

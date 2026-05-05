@@ -193,7 +193,7 @@ describe("regent-staking CLI command group", () => {
     );
 
     const output = await captureOutput(() =>
-      runCliEntrypoint(["regent-staking", "show", "--config", configPath]),
+      runCliEntrypoint(["regent-staking", "get", "--config", configPath]),
     );
 
     expect(output.result).toBe(0);
@@ -253,7 +253,7 @@ describe("regent-staking CLI command group", () => {
     });
   });
 
-  it("builds the direct stake request with a confirmed receiver", async () => {
+  it("builds the direct stake request with a receiver without prompting", async () => {
     writeAgentAuthState();
     const receiver = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
     fetchMock.mockResolvedValue(
@@ -281,9 +281,7 @@ describe("regent-staking CLI command group", () => {
       amount: "1.5",
       receiver,
     });
-    expect(questionMock).toHaveBeenCalledWith(
-      `If you confirm this command it will stake 1.5 of $REGENT for the address ${receiver}. Only that address will be able to withdraw the stake, do you confirm? y / n `,
-    );
+    expect(questionMock).not.toHaveBeenCalled();
   });
 
   it("rejects malformed receiver addresses before preparing stake", async () => {

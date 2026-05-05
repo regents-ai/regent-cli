@@ -111,9 +111,12 @@ describe("techtree start wizard", () => {
     startWizardDeps.bbhProbe = vi.fn().mockResolvedValue({ ok: true });
     startWizardDeps.spawnDetachedRuntime = vi.fn().mockResolvedValue(undefined);
     startWizardDeps.wait = vi.fn().mockResolvedValue(undefined);
-    startWizardDeps.isHumanTerminal = vi.fn().mockReturnValue(false);
-    startWizardDeps.promptConfirm = vi.fn().mockResolvedValue(true);
-    startWizardDeps.promptChoice = vi.fn().mockResolvedValue(0);
+    startWizardDeps.promptBoundary = vi.fn().mockReturnValue({
+      inputAllowed: false,
+      text: vi.fn(),
+      choice: vi.fn().mockResolvedValue(0),
+      confirm: vi.fn().mockResolvedValue(true),
+    });
     startWizardDeps.renderDoctorReport = vi.fn().mockReturnValue("doctor surface");
   });
 
@@ -194,6 +197,27 @@ describe("techtree start wizard", () => {
       },
       configPath,
     );
+  });
+
+  it("does not prompt for minting when input is disabled", async () => {
+    process.env.BASE_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+    startWizardDeps.callJsonRpc = vi
+      .fn()
+      .mockRejectedValueOnce(new Error("socket missing"))
+      .mockResolvedValueOnce({ ok: true });
+
+    const output = await captureOutput(() =>
+      runTechtreeStart(parseCliArgs(["techtree", "start", "--no-input"]), configPath),
+    );
+
+    expect(output.result).toEqual(
+      expect.objectContaining({
+        ready: false,
+        selectedIdentity: null,
+      }),
+    );
+    expect(output.stdout).toContain("Rerun with `--mint`");
+    expect(startWizardDeps.mintIdentity).not.toHaveBeenCalled();
   });
 
   it("reuses an already authenticated identity without logging in again", async () => {

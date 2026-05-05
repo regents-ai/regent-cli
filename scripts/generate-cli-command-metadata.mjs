@@ -31,10 +31,71 @@ const platformPublicCommand = (command) =>
 const parseYaml = (file) => YAML.parse(fs.readFileSync(file, "utf8"));
 const normalizeCommandName = (command) => command.replace(/^regents?\s+/u, "");
 const topLevelGroup = (command) => command.split(" ")[0];
+const commandKey = (command) => command.replace(/^regents?\s+/u, "").replace(/[<>\s-]+/gu, "_");
+const compactObject = (value) => {
+  if (!value || typeof value !== "object") {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(compactObject);
+  }
+
+  return Object.fromEntries(
+    Object.entries(value)
+      .filter(([, entryValue]) => entryValue !== undefined)
+      .map(([key, entryValue]) => [key, compactObject(entryValue)]),
+  );
+};
+
+const metadataWithoutExamples = (metadata) => {
+  if (!metadata || typeof metadata !== "object") {
+    return undefined;
+  }
+
+  const { examples: _examples, ...rest } = metadata;
+  return compactObject(rest);
+};
+
+const commandSpecificMapValue = (map, normalizedCommand) => {
+  if (!map || typeof map !== "object") {
+    return undefined;
+  }
+
+  return (
+    map[normalizedCommand] ??
+    map[`regents ${normalizedCommand}`] ??
+    map[commandKey(normalizedCommand)] ??
+    map[normalizedCommand.split(" ").at(-1)]
+  );
+};
+
+const readGroupArgs = (group, normalizedCommand) =>
+  commandSpecificMapValue(group.command_args, normalizedCommand) ??
+  commandSpecificMapValue(group.args, normalizedCommand);
+
+const readGroupFlags = (group, normalizedCommand) =>
+  commandSpecificMapValue(group.command_flags, normalizedCommand) ??
+  commandSpecificMapValue(group.flags, normalizedCommand);
+
+const readAgentMetadata = (agentMetadata, normalizedCommand) => {
+  if (!agentMetadata || typeof agentMetadata !== "object") {
+    return undefined;
+  }
+
+  const commandOverrides = commandSpecificMapValue(agentMetadata.commands, normalizedCommand);
+  if (!commandOverrides) {
+    return compactObject(agentMetadata);
+  }
+
+  const { commands: _commands, ...defaults } = agentMetadata;
+  return compactObject({ ...defaults, ...commandOverrides });
+};
 
 const readContractGroups = (owner, contract) => {
   if (Array.isArray(contract.commands)) {
     const byGroup = new Map();
+    const ownerAgentDefaults = contract["x-regent-agent-defaults"];
 
     for (const command of contract.commands) {
       if (!command || typeof command !== "object" || typeof command.name !== "string") {
@@ -48,18 +109,59 @@ const readContractGroups = (owner, contract) => {
       }
 
       const groupName = topLevelGroup(normalizedCommand);
-      const commands = byGroup.get(groupName) ?? [];
-      commands.push(normalizedCommand);
-      byGroup.set(groupName, commands);
+      const group = byGroup.get(groupName) ?? { owner, name: groupName, commands: [], commandDetails: [] };
+      group.commands.push(normalizedCommand);
+      group.commandDetails.push(
+        compactObject({
+          command: normalizedCommand,
+          owner,
+          group: groupName,
+          interface: command.transport?.kind,
+          auth_mode: command.auth?.mode,
+          auth_audience: command.auth?.audience,
+          output_envelope: command.output?.format,
+          operation_ids: command.transport?.operationIds,
+          args: command.args,
+          flags: command.flags,
+          examples: command.examples ?? command.agent_metadata?.examples ?? ownerAgentDefaults?.examples,
+          agent_metadata: metadataWithoutExamples(command.agent_metadata ?? ownerAgentDefaults),
+          summary: command.summary,
+          usage: command.usage,
+          next_step: command.next_step,
+        }),
+      );
+      byGroup.set(groupName, group);
     }
 
-    return Array.from(byGroup, ([name, commands]) => ({ owner, name, commands }));
+    return Array.from(byGroup.values());
   }
 
   return (contract.command_groups ?? []).map((group) => ({
     owner,
     name: typeof group.name === "string" ? group.name : owner,
     commands: (group.commands ?? []).map(normalizeCommandName),
+    commandDetails: (group.commands ?? []).map((command) => {
+      const normalizedCommand = normalizeCommandName(command);
+      const agentMetadata = readAgentMetadata(group.agent_metadata, normalizedCommand);
+      const help = group.help ?? {};
+
+      return compactObject({
+        command: normalizedCommand,
+        owner,
+        group: typeof group.name === "string" ? group.name : owner,
+        interface: group.interface,
+        auth_mode: group.auth_mode,
+        auth_audience: group.auth_audience,
+        output_envelope: group.output_envelope,
+        args: readGroupArgs(group, normalizedCommand),
+        flags: readGroupFlags(group, normalizedCommand),
+        examples: agentMetadata?.examples ?? group.examples,
+        agent_metadata: metadataWithoutExamples(agentMetadata),
+        summary: help.summary ?? group.summary,
+        usage: help.usage ?? group.usage,
+        next_step: help.next_step ?? group.next_step,
+      });
+    }),
   }));
 };
 
@@ -75,8 +177,14 @@ export const buildCliCommandMetadata = () => {
       commands.filter((command) => command === groupName || command.startsWith(`${groupName} `)),
     ]),
   );
+  const commandDetails = groups.flatMap((group) => group.commandDetails ?? []).sort((left, right) =>
+    left.command.localeCompare(right.command),
+  );
+  const commandDetailsByCommand = Object.fromEntries(
+    commandDetails.map((detail) => [detail.command, detail]),
+  );
 
-  return { commands, commandsByTopLevelGroup };
+  return { commands, commandsByTopLevelGroup, commandDetails, commandDetailsByCommand };
 };
 
 const generatedHeader = [
@@ -93,6 +201,12 @@ export const renderCliCommandMetadata = () => {
     "",
     `export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = ${JSON.stringify(
       metadata.commandsByTopLevelGroup,
+      null,
+      2,
+    )} as const;`,
+    "",
+    `export const CLI_COMMAND_DETAILS_BY_COMMAND = ${JSON.stringify(
+      metadata.commandDetailsByCommand,
       null,
       2,
     )} as const;`,
@@ -122,7 +236,12 @@ export const renderCliCommandList = () => {
     ...Object.entries(metadata.commandsByTopLevelGroup).flatMap(([groupName, commands]) => [
       `### ${titleCaseGroup(groupName)}`,
       "",
-      ...commands.map((command) => `- \`regents ${command}\``),
+      ...commands.map((command) => {
+        const detail = metadata.commandDetailsByCommand[command];
+        return detail?.summary
+          ? `- \`regents ${command}\` - ${detail.summary}`
+          : `- \`regents ${command}\``;
+      }),
       "",
     ]),
   ].join("\n");

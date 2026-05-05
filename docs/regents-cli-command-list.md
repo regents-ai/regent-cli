@@ -10,21 +10,25 @@ Total commands: 300.
 
 ### Agent
 
-- `regents agent connect hermes`
-- `regents agent connect openclaw`
-- `regents agent execution-pool`
+- `regents agent connect hermes` - Connect a Hermes worker to one Regent company.
+- `regents agent connect openclaw` - Connect a local OpenClaw worker to one Regent company.
+- `regents agent execution-pool` - List the workers available to one manager.
 - `regents agent harness list`
 - `regents agent init`
-- `regents agent link`
+- `regents agent link` - Link one manager to one worker for a Regent company.
+- `regents agent profile get`
 - `regents agent profile list`
-- `regents agent profile show`
 - `regents agent status`
+
+### Agent Context
+
+- `regents agent-context`
 
 ### Agentbook
 
-- `regents agentbook lookup`
-- `regents agentbook register`
-- `regents agentbook sessions watch`
+- `regents agentbook lookup` - Show the saved human-backed trust summary for the current Regent agent identity.
+- `regents agentbook register` - Start a hosted human-backed trust flow for the saved Regent agent identity.
+- `regents agentbook sessions watch` - Poll one hosted human-backed trust session for the saved Regent agent identity.
 
 ### Auth
 
@@ -34,9 +38,9 @@ Total commands: 300.
 
 ### Autolaunch
 
-- `regents autolaunch agent <id>`
-- `regents autolaunch agent readiness <id>`
-- `regents autolaunch agents list`
+- `regents autolaunch agent <id>` - List and inspect launchable Agent account projects.
+- `regents autolaunch agent readiness <id>` - List and inspect launchable Agent account projects.
+- `regents autolaunch agents list` - List and inspect launchable Agent account projects.
 - `regents autolaunch auction <id>`
 - `regents autolaunch auction-returns list`
 - `regents autolaunch auctions list`
@@ -53,8 +57,8 @@ Total commands: 300.
 - `regents autolaunch ens prepare-erc8004`
 - `regents autolaunch factory revenue-ingress set-authorized-creator`
 - `regents autolaunch factory revenue-share set-authorized-creator`
-- `regents autolaunch fee-registry show`
-- `regents autolaunch fee-vault show`
+- `regents autolaunch fee-registry get`
+- `regents autolaunch fee-vault get`
 - `regents autolaunch fee-vault withdraw-regent`
 - `regents autolaunch holdings claim-and-stake-emissions`
 - `regents autolaunch holdings claim-emissions`
@@ -68,20 +72,20 @@ Total commands: 300.
 - `regents autolaunch ingress rescue`
 - `regents autolaunch ingress set-default`
 - `regents autolaunch ingress set-label`
-- `regents autolaunch jobs watch`
-- `regents autolaunch launch create`
-- `regents autolaunch launch finalize`
-- `regents autolaunch launch monitor`
-- `regents autolaunch launch preview`
-- `regents autolaunch launch run`
-- `regents autolaunch prelaunch publish`
-- `regents autolaunch prelaunch show`
-- `regents autolaunch prelaunch validate`
-- `regents autolaunch prelaunch wizard`
+- `regents autolaunch jobs watch` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch launch create` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch launch finalize` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch launch monitor` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch launch preview` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch launch run` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch prelaunch get` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch prelaunch publish` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch prelaunch validate` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch prelaunch wizard` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch registry get`
 - `regents autolaunch registry link-identity`
 - `regents autolaunch registry rotate-safe`
 - `regents autolaunch registry set-subject-manager`
-- `regents autolaunch registry show`
 - `regents autolaunch safe create`
 - `regents autolaunch safe wizard`
 - `regents autolaunch splitter accept-ownership`
@@ -89,6 +93,7 @@ Total commands: 300.
 - `regents autolaunch splitter cancel-eligible-revenue-share`
 - `regents autolaunch splitter cancel-treasury-recipient-rotation`
 - `regents autolaunch splitter execute-treasury-recipient-rotation`
+- `regents autolaunch splitter get`
 - `regents autolaunch splitter propose-eligible-revenue-share`
 - `regents autolaunch splitter propose-treasury-recipient-rotation`
 - `regents autolaunch splitter pull-treasury-share`
@@ -96,7 +101,6 @@ Total commands: 300.
 - `regents autolaunch splitter set-label`
 - `regents autolaunch splitter set-paused`
 - `regents autolaunch splitter set-protocol-recipient`
-- `regents autolaunch splitter show`
 - `regents autolaunch splitter sweep-protocol-reserve`
 - `regents autolaunch splitter sweep-treasury-reserved`
 - `regents autolaunch splitter sweep-treasury-residual`
@@ -106,16 +110,16 @@ Total commands: 300.
 - `regents autolaunch subjects claim-and-stake-emissions`
 - `regents autolaunch subjects claim-emissions`
 - `regents autolaunch subjects claim-usdc`
+- `regents autolaunch subjects get`
 - `regents autolaunch subjects ingress`
-- `regents autolaunch subjects show`
 - `regents autolaunch subjects stake`
 - `regents autolaunch subjects sweep-ingress`
 - `regents autolaunch subjects unstake`
-- `regents autolaunch vesting cancel-beneficiary-rotation`
-- `regents autolaunch vesting execute-beneficiary-rotation`
-- `regents autolaunch vesting propose-beneficiary-rotation`
-- `regents autolaunch vesting release`
-- `regents autolaunch vesting status`
+- `regents autolaunch vesting cancel-beneficiary-rotation` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch vesting execute-beneficiary-rotation` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch vesting propose-beneficiary-rotation` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch vesting release` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch vesting status` - Prepare, validate, publish, and launch an Agent account project.
 
 ### Balance
 
@@ -123,7 +127,7 @@ Total commands: 300.
 
 ### Bug
 
-- `regents bug`
+- `regents bug` - Send a signed bug report to Platform.
 
 ### Chatbox
 
@@ -133,7 +137,7 @@ Total commands: 300.
 
 ### Config
 
-- `regents config read`
+- `regents config get`
 - `regents config write`
 
 ### Create
@@ -180,30 +184,30 @@ Total commands: 300.
 
 ### Platform
 
-- `regents platform auth login`
-- `regents platform auth logout`
-- `regents platform auth status`
-- `regents platform billing account`
-- `regents platform billing setup`
-- `regents platform billing topup`
-- `regents platform billing usage`
-- `regents platform company create`
-- `regents platform company runtime`
-- `regents platform formation doctor`
-- `regents platform formation status`
-- `regents platform projection`
-- `regents platform sprite pause`
-- `regents platform sprite resume`
+- `regents platform auth login` - Sign in to the Regent website from the terminal and save the session for later platform commands.
+- `regents platform auth logout` - Delete the saved platform session and sign out from platform commands.
+- `regents platform auth status` - Show who is signed in through the saved platform session.
+- `regents platform billing account` - Show the billing account tied to the saved platform session.
+- `regents platform billing setup` - Open billing setup for the saved platform account.
+- `regents platform billing topup` - Open runtime credit checkout for the saved platform account.
+- `regents platform billing usage` - Show shared runtime credit and company usage from the saved platform session.
+- `regents platform company create` - Launch a company for one claimed name from the saved platform account.
+- `regents platform company runtime` - Show runtime state for one owned company from the saved platform session.
+- `regents platform formation doctor` - Explain why company opening is blocked or what is ready next.
+- `regents platform formation status` - Show launch readiness from the saved session, including claimed names, billing, and owned companies.
+- `regents platform projection` - Show the canonical Platform projection for product and mobile clients.
+- `regents platform sprite pause` - Pause one owned company runtime from the saved platform session.
+- `regents platform sprite resume` - Resume one owned company runtime from the saved platform session.
 
 ### Regent Staking
 
-- `regents regent-staking account`
-- `regents regent-staking claim-and-restake-regent`
-- `regents regent-staking claim-regent`
-- `regents regent-staking claim-usdc`
-- `regents regent-staking show`
-- `regents regent-staking stake`
-- `regents regent-staking unstake`
+- `regents regent-staking account` - Show Regent staking state for one wallet.
+- `regents regent-staking claim-and-restake-regent` - Prepare a wallet action to claim and restake REGENT rewards.
+- `regents regent-staking claim-regent` - Prepare a wallet action to claim REGENT rewards.
+- `regents regent-staking claim-usdc` - Prepare a wallet action to claim staking USDC.
+- `regents regent-staking get` - Show Regent staking state for the saved Agent account.
+- `regents regent-staking stake` - Prepare a wallet action to stake REGENT.
+- `regents regent-staking unstake` - Prepare a wallet action to unstake REGENT.
 
 ### Run
 
@@ -211,14 +215,14 @@ Total commands: 300.
 
 ### Runtime
 
-- `regents runtime checkpoint`
-- `regents runtime create`
-- `regents runtime health`
-- `regents runtime pause`
-- `regents runtime restore`
-- `regents runtime resume`
-- `regents runtime services`
-- `regents runtime show`
+- `regents runtime checkpoint` - Save a checkpoint for one runtime.
+- `regents runtime create` - Create a runtime for one Regent company.
+- `regents runtime get` - Show one runtime for a Regent company.
+- `regents runtime health` - Show health for one runtime.
+- `regents runtime pause` - Pause one runtime for a Regent company.
+- `regents runtime restore` - Restore one runtime from a checkpoint.
+- `regents runtime resume` - Resume one runtime for a Regent company.
+- `regents runtime services` - List services for one runtime.
 
 ### Search
 
@@ -226,7 +230,7 @@ Total commands: 300.
 
 ### Security Report
 
-- `regents security-report`
+- `regents security-report` - Send a signed security report to Platform.
 
 ### Status
 
@@ -350,12 +354,12 @@ Total commands: 300.
 
 ### Work
 
-- `regents work create`
-- `regents work list`
-- `regents work local-loop`
-- `regents work run`
-- `regents work show`
-- `regents work watch`
+- `regents work create` - Create work for one Regent company.
+- `regents work get` - Show one work item for a Regent company.
+- `regents work list` - List work for one Regent company.
+- `regents work local-loop` - Let one local worker check for assigned Regent work.
+- `regents work run` - Start a run for one work item.
+- `regents work watch` - Watch events for one work run.
 
 ### Xmtp
 
@@ -373,14 +377,13 @@ Total commands: 300.
 - `regents xmtp group remove-super-admin`
 - `regents xmtp group super-admins`
 - `regents xmtp group update-permission`
-- `regents xmtp info`
 - `regents xmtp init`
 - `regents xmtp owner add`
 - `regents xmtp owner list`
 - `regents xmtp owner remove`
 - `regents xmtp policy edit`
+- `regents xmtp policy get`
 - `regents xmtp policy init`
-- `regents xmtp policy show`
 - `regents xmtp policy validate`
 - `regents xmtp resolve`
 - `regents xmtp revoke-other-installations`

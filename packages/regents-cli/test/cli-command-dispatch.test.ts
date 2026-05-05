@@ -189,8 +189,8 @@ const commandCases: CommandCase[] = [
     },
   },
   {
-    name: "agent profile show",
-    args: ["agent", "profile", "show", "--profile", "public"],
+    name: "agent profile get",
+    args: ["agent", "profile", "get", "--profile", "public"],
     expected: {
       data: expect.objectContaining({
         name: "public",
@@ -1746,7 +1746,14 @@ describe("CLI command dispatch", () => {
 
     expect(output.result).toBe(1);
     expect(output.stdout).toBe("");
-    expect(JSON.parse(output.stderr)).toEqual({ error: { message: "invalid node id" } });
+    expect(JSON.parse(output.stderr)).toEqual({
+      error: expect.objectContaining({
+        code: "invalid_flag_value",
+        command: "regents techtree node get <id>",
+        usage: "regents techtree node get <id>",
+        message: "invalid node id",
+      }),
+    });
   });
 
   it("returns JSON errors for invalid Techtree node ids in fetch", async () => {
@@ -1769,9 +1776,13 @@ describe("CLI command dispatch", () => {
 
     expect(output.result).toBe(1);
     expect(JSON.parse(output.stderr)).toEqual({
-      error: {
-        message: "missing required argument: --query",
-      },
+      error: expect.objectContaining({
+        code: "missing_required_argument",
+        command: "regents techtree search",
+        usage: "regents techtree search",
+        missing: ["--query"],
+        message: "--query is required.",
+      }),
     });
   });
 
@@ -1841,9 +1852,13 @@ describe("CLI command dispatch", () => {
 
     expect(output.result).toBe(1);
     expect(JSON.parse(output.stderr)).toEqual({
-      error: {
-        message: "missing required argument: artifact id",
-      },
+      error: expect.objectContaining({
+        code: "missing_required_argument",
+        command: "regents techtree main run init",
+        usage: "regents techtree main run init",
+        missing: ["--artifact or --artifact-id"],
+        message: "--artifact or --artifact-id is required.",
+      }),
     });
   });
   it("rejects invalid BBH lanes before the daemon call", async () => {

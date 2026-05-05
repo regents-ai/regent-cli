@@ -170,7 +170,7 @@ describe("CLI config and create flows", () => {
     );
 
     const output = await captureOutput(async () =>
-      harness.runCliEntrypoint(["config", "read", "--config", harness.configPath]),
+      harness.runCliEntrypoint(["config", "get", "--config", harness.configPath]),
     );
 
     expect(output.result).toBe(0);

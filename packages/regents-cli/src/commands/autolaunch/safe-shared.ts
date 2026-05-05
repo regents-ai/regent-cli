@@ -1,5 +1,3 @@
-import readline from "node:readline/promises";
-
 import { loadConfig } from "../../internal-runtime/config.js";
 import {
   FileWalletSecretSource,
@@ -7,7 +5,7 @@ import {
 } from "../../internal-runtime/agent/key-store.js";
 import { deriveWalletAddress } from "../../internal-runtime/agent/wallet.js";
 import { getBooleanFlag, getFlag, type ParsedCliArgs } from "../../parse.js";
-import { isHumanTerminal } from "../../printer.js";
+import { createPromptBoundary } from "../../terminal/prompts.js";
 
 export const WEBSITE_WALLET_ENV = "AUTOLAUNCH_WALLET_ADDRESS";
 
@@ -38,51 +36,6 @@ export const requireAddress = (value: string, label: string): string => {
   }
 
   return normalizeAddress(value);
-};
-
-export const prompt = async (label: string, allowEmpty = false): Promise<string> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  try {
-    while (true) {
-      const answer = (await rl.question(`${label}: `)).trim();
-      if (allowEmpty || answer !== "") {
-        return answer;
-      }
-    }
-  } finally {
-    rl.close();
-  }
-};
-
-export const promptChoice = async (
-  label: string,
-  options: readonly string[],
-): Promise<number> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  try {
-    while (true) {
-      const rendered = options
-        .map((option, index) => `${index + 1}. ${option}`)
-        .join("\n");
-      const answer = (
-        await rl.question(`${label}\n${rendered}\nChoose [1-${options.length}]: `)
-      ).trim();
-      const parsed = Number.parseInt(answer, 10);
-      if (Number.isSafeInteger(parsed) && parsed >= 1 && parsed <= options.length) {
-        return parsed - 1;
-      }
-    }
-  } finally {
-    rl.close();
-  }
 };
 
 export const configuredPrivateKey = async (
@@ -132,23 +85,32 @@ export const resolveWebsiteSigner = async (
     return { address: null, source: "missing" };
   }
 
-  if (!isHumanTerminal()) {
-    return { address: null, source: "missing" };
+  const prompts = createPromptBoundary(args);
+  if (!prompts.inputAllowed) {
+    throw new Error(
+      "Website wallet is required. Pass --website-wallet-address <wallet> or --wait-for-website-wallet.",
+    );
   }
 
-  const choice = await promptChoice(
+  const choice = await prompts.choice(
     "The website wallet is not ready yet.",
     [
       "Wait until the website login creates it",
       "Enter the website wallet address now",
     ],
+    {
+      unavailableMessage:
+        "Website wallet is required. Pass --website-wallet-address <wallet> or --wait-for-website-wallet.",
+    },
   );
 
   if (choice === 0) {
     return { address: null, source: "missing" };
   }
 
-  const entered = await prompt("Website wallet address");
+  const entered = await prompts.text("Website wallet address", {
+    unavailableMessage: "Website wallet is required. Pass --website-wallet-address <wallet>.",
+  });
   return {
     address: requireAddress(entered, "Website wallet"),
     source: "prompt",
@@ -166,13 +128,16 @@ export const resolveBackupSigner = async (
     };
   }
 
-  if (!isHumanTerminal()) {
+  const prompts = createPromptBoundary(args);
+  if (!prompts.inputAllowed) {
     throw new Error(
       "Backup signer is required. Pass --backup-signer-address <wallet>.",
     );
   }
 
-  const entered = await prompt("Backup signer address");
+  const entered = await prompts.text("Backup signer address", {
+    unavailableMessage: "Backup signer is required. Pass --backup-signer-address <wallet>.",
+  });
   return {
     address: requireAddress(entered, "Backup signer"),
     source: "prompt",
@@ -187,13 +152,17 @@ export const resolveSafeAddress = async (
     return requireAddress(explicit, "Agent Safe");
   }
 
-  if (!isHumanTerminal()) {
+  const prompts = createPromptBoundary(args);
+  if (!prompts.inputAllowed) {
     return null;
   }
 
-  const entered = await prompt(
+  const entered = await prompts.text(
     "Agent Safe address (leave blank if you still need to create it)",
-    true,
+    {
+      allowEmpty: true,
+      unavailableMessage: "Agent Safe is required. Pass --agent-safe-address <safe>.",
+    },
   );
   if (!entered) {
     return null;

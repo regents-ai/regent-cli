@@ -8,9 +8,10 @@ export const CLI_COMMANDS = [
   "agent harness list",
   "agent init",
   "agent link",
+  "agent profile get",
   "agent profile list",
-  "agent profile show",
   "agent status",
+  "agent-context",
   "agentbook lookup",
   "agentbook register",
   "agentbook sessions watch",
@@ -36,8 +37,8 @@ export const CLI_COMMANDS = [
   "autolaunch ens prepare-erc8004",
   "autolaunch factory revenue-ingress set-authorized-creator",
   "autolaunch factory revenue-share set-authorized-creator",
-  "autolaunch fee-registry show",
-  "autolaunch fee-vault show",
+  "autolaunch fee-registry get",
+  "autolaunch fee-vault get",
   "autolaunch fee-vault withdraw-regent",
   "autolaunch holdings claim-and-stake-emissions",
   "autolaunch holdings claim-emissions",
@@ -57,14 +58,14 @@ export const CLI_COMMANDS = [
   "autolaunch launch monitor",
   "autolaunch launch preview",
   "autolaunch launch run",
+  "autolaunch prelaunch get",
   "autolaunch prelaunch publish",
-  "autolaunch prelaunch show",
   "autolaunch prelaunch validate",
   "autolaunch prelaunch wizard",
+  "autolaunch registry get",
   "autolaunch registry link-identity",
   "autolaunch registry rotate-safe",
   "autolaunch registry set-subject-manager",
-  "autolaunch registry show",
   "autolaunch safe create",
   "autolaunch safe wizard",
   "autolaunch splitter accept-ownership",
@@ -72,6 +73,7 @@ export const CLI_COMMANDS = [
   "autolaunch splitter cancel-eligible-revenue-share",
   "autolaunch splitter cancel-treasury-recipient-rotation",
   "autolaunch splitter execute-treasury-recipient-rotation",
+  "autolaunch splitter get",
   "autolaunch splitter propose-eligible-revenue-share",
   "autolaunch splitter propose-treasury-recipient-rotation",
   "autolaunch splitter pull-treasury-share",
@@ -79,7 +81,6 @@ export const CLI_COMMANDS = [
   "autolaunch splitter set-label",
   "autolaunch splitter set-paused",
   "autolaunch splitter set-protocol-recipient",
-  "autolaunch splitter show",
   "autolaunch splitter sweep-protocol-reserve",
   "autolaunch splitter sweep-treasury-reserved",
   "autolaunch splitter sweep-treasury-residual",
@@ -89,8 +90,8 @@ export const CLI_COMMANDS = [
   "autolaunch subjects claim-and-stake-emissions",
   "autolaunch subjects claim-emissions",
   "autolaunch subjects claim-usdc",
+  "autolaunch subjects get",
   "autolaunch subjects ingress",
-  "autolaunch subjects show",
   "autolaunch subjects stake",
   "autolaunch subjects sweep-ingress",
   "autolaunch subjects unstake",
@@ -104,7 +105,7 @@ export const CLI_COMMANDS = [
   "chatbox history",
   "chatbox post",
   "chatbox tail",
-  "config read",
+  "config get",
   "config write",
   "create init",
   "create wallet",
@@ -142,18 +143,18 @@ export const CLI_COMMANDS = [
   "regent-staking claim-and-restake-regent",
   "regent-staking claim-regent",
   "regent-staking claim-usdc",
-  "regent-staking show",
+  "regent-staking get",
   "regent-staking stake",
   "regent-staking unstake",
   "run",
   "runtime checkpoint",
   "runtime create",
+  "runtime get",
   "runtime health",
   "runtime pause",
   "runtime restore",
   "runtime resume",
   "runtime services",
-  "runtime show",
   "search",
   "security-report",
   "status",
@@ -265,10 +266,10 @@ export const CLI_COMMANDS = [
   "wallet status",
   "whoami",
   "work create",
+  "work get",
   "work list",
   "work local-loop",
   "work run",
-  "work show",
   "work watch",
   "xmtp doctor",
   "xmtp group add-admin",
@@ -284,14 +285,13 @@ export const CLI_COMMANDS = [
   "xmtp group remove-super-admin",
   "xmtp group super-admins",
   "xmtp group update-permission",
-  "xmtp info",
   "xmtp init",
   "xmtp owner add",
   "xmtp owner list",
   "xmtp owner remove",
   "xmtp policy edit",
+  "xmtp policy get",
   "xmtp policy init",
-  "xmtp policy show",
   "xmtp policy validate",
   "xmtp resolve",
   "xmtp revoke-other-installations",
@@ -312,9 +312,12 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "agent harness list",
     "agent init",
     "agent link",
+    "agent profile get",
     "agent profile list",
-    "agent profile show",
     "agent status"
+  ],
+  "agent-context": [
+    "agent-context"
   ],
   "agentbook": [
     "agentbook lookup",
@@ -346,8 +349,8 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch ens prepare-erc8004",
     "autolaunch factory revenue-ingress set-authorized-creator",
     "autolaunch factory revenue-share set-authorized-creator",
-    "autolaunch fee-registry show",
-    "autolaunch fee-vault show",
+    "autolaunch fee-registry get",
+    "autolaunch fee-vault get",
     "autolaunch fee-vault withdraw-regent",
     "autolaunch holdings claim-and-stake-emissions",
     "autolaunch holdings claim-emissions",
@@ -367,14 +370,14 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch launch monitor",
     "autolaunch launch preview",
     "autolaunch launch run",
+    "autolaunch prelaunch get",
     "autolaunch prelaunch publish",
-    "autolaunch prelaunch show",
     "autolaunch prelaunch validate",
     "autolaunch prelaunch wizard",
+    "autolaunch registry get",
     "autolaunch registry link-identity",
     "autolaunch registry rotate-safe",
     "autolaunch registry set-subject-manager",
-    "autolaunch registry show",
     "autolaunch safe create",
     "autolaunch safe wizard",
     "autolaunch splitter accept-ownership",
@@ -382,6 +385,7 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch splitter cancel-eligible-revenue-share",
     "autolaunch splitter cancel-treasury-recipient-rotation",
     "autolaunch splitter execute-treasury-recipient-rotation",
+    "autolaunch splitter get",
     "autolaunch splitter propose-eligible-revenue-share",
     "autolaunch splitter propose-treasury-recipient-rotation",
     "autolaunch splitter pull-treasury-share",
@@ -389,7 +393,6 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch splitter set-label",
     "autolaunch splitter set-paused",
     "autolaunch splitter set-protocol-recipient",
-    "autolaunch splitter show",
     "autolaunch splitter sweep-protocol-reserve",
     "autolaunch splitter sweep-treasury-reserved",
     "autolaunch splitter sweep-treasury-residual",
@@ -399,8 +402,8 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch subjects claim-and-stake-emissions",
     "autolaunch subjects claim-emissions",
     "autolaunch subjects claim-usdc",
+    "autolaunch subjects get",
     "autolaunch subjects ingress",
-    "autolaunch subjects show",
     "autolaunch subjects stake",
     "autolaunch subjects sweep-ingress",
     "autolaunch subjects unstake",
@@ -422,7 +425,7 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "chatbox tail"
   ],
   "config": [
-    "config read",
+    "config get",
     "config write"
   ],
   "create": [
@@ -480,7 +483,7 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "regent-staking claim-and-restake-regent",
     "regent-staking claim-regent",
     "regent-staking claim-usdc",
-    "regent-staking show",
+    "regent-staking get",
     "regent-staking stake",
     "regent-staking unstake"
   ],
@@ -490,12 +493,12 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
   "runtime": [
     "runtime checkpoint",
     "runtime create",
+    "runtime get",
     "runtime health",
     "runtime pause",
     "runtime restore",
     "runtime resume",
-    "runtime services",
-    "runtime show"
+    "runtime services"
   ],
   "search": [
     "search"
@@ -621,10 +624,10 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
   ],
   "work": [
     "work create",
+    "work get",
     "work list",
     "work local-loop",
     "work run",
-    "work show",
     "work watch"
   ],
   "xmtp": [
@@ -642,14 +645,13 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "xmtp group remove-super-admin",
     "xmtp group super-admins",
     "xmtp group update-permission",
-    "xmtp info",
     "xmtp init",
     "xmtp owner add",
     "xmtp owner list",
     "xmtp owner remove",
     "xmtp policy edit",
+    "xmtp policy get",
     "xmtp policy init",
-    "xmtp policy show",
     "xmtp policy validate",
     "xmtp resolve",
     "xmtp revoke-other-installations",
@@ -661,4 +663,8386 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "xmtp trusted list",
     "xmtp trusted remove"
   ]
+} as const;
+
+export const CLI_COMMAND_DETAILS_BY_COMMAND = {
+  "agent connect hermes": {
+    "command": "agent connect hermes",
+    "owner": "platform",
+    "group": "agent",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "registerRwrWorker"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--name",
+        "type": "string",
+        "required": false,
+        "description": "Display name."
+      },
+      {
+        "name": "--role",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "manager",
+          "executor",
+          "hybrid"
+        ],
+        "description": "Worker role."
+      },
+      {
+        "name": "--write-connector",
+        "type": "boolean",
+        "required": false,
+        "default": true,
+        "description": "Write the local Hermes connector files."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Connect a Hermes worker to one Regent company."
+  },
+  "agent connect openclaw": {
+    "command": "agent connect openclaw",
+    "owner": "platform",
+    "group": "agent",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "registerRwrWorker"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--name",
+        "type": "string",
+        "required": false,
+        "description": "Display name."
+      },
+      {
+        "name": "--role",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "manager",
+          "executor",
+          "hybrid"
+        ],
+        "description": "Worker role."
+      },
+      {
+        "name": "--write-skill",
+        "type": "boolean",
+        "required": false,
+        "default": true,
+        "description": "Write the local OpenClaw Regents skill file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Connect a local OpenClaw worker to one Regent company."
+  },
+  "agent execution-pool": {
+    "command": "agent execution-pool",
+    "owner": "platform",
+    "group": "agent",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "listRwrExecutionPool"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--manager",
+        "type": "string",
+        "required": true,
+        "description": "Manager agent or worker id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List the workers available to one manager."
+  },
+  "agent harness list": {
+    "command": "agent harness list",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agent init": {
+    "command": "agent init",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agent link": {
+    "command": "agent link",
+    "owner": "platform",
+    "group": "agent",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createRwrAgentRelationship"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--manager-agent-id",
+        "type": "string",
+        "required": false,
+        "description": "Manager agent id."
+      },
+      {
+        "name": "--manager-worker-id",
+        "type": "string",
+        "required": false,
+        "description": "Manager worker id."
+      },
+      {
+        "name": "--executor-agent-id",
+        "type": "string",
+        "required": false,
+        "description": "Executor agent id."
+      },
+      {
+        "name": "--executor-worker-id",
+        "type": "string",
+        "required": false,
+        "description": "Executor worker id."
+      },
+      {
+        "name": "--relationship",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "manager_of",
+          "preferred_executor",
+          "can_delegate_to",
+          "reports_to"
+        ],
+        "description": "Relationship to create."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Link one manager to one worker for a Regent company."
+  },
+  "agent profile get": {
+    "command": "agent profile get",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agent profile list": {
+    "command": "agent profile list",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agent status": {
+    "command": "agent status",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agent-context": {
+    "command": "agent-context",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "agentbook lookup": {
+    "command": "agentbook lookup",
+    "owner": "platform",
+    "group": "agentbook",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "lookupAgentbookTrust"
+    ],
+    "args": [],
+    "flags": [],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show the saved human-backed trust summary for the current Regent agent identity."
+  },
+  "agentbook register": {
+    "command": "agentbook register",
+    "owner": "platform",
+    "group": "agentbook",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createAgentbookTrustSession"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--watch",
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Keep polling until the hosted trust session finishes or fails."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Start a hosted human-backed trust flow for the saved Regent agent identity."
+  },
+  "agentbook sessions watch": {
+    "command": "agentbook sessions watch",
+    "owner": "platform",
+    "group": "agentbook",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getAgentbookTrustSession"
+    ],
+    "args": [
+      {
+        "name": "session_id",
+        "type": "string",
+        "required": true,
+        "description": "Session id returned by `regents agentbook register`."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--interval",
+        "type": "number",
+        "required": false,
+        "default": 2,
+        "description": "Seconds between status polls."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Poll one hosted human-backed trust session for the saved Regent agent identity."
+  },
+  "auth login": {
+    "command": "auth login",
+    "owner": "shared-services",
+    "group": "auth",
+    "interface": "http",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents auth status",
+      "regents auth login --audience regent-services"
+    ],
+    "agent_metadata": {
+      "category": "auth",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "session-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "auth logout": {
+    "command": "auth logout",
+    "owner": "shared-services",
+    "group": "auth",
+    "interface": "http",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents auth status",
+      "regents auth login --audience regent-services"
+    ],
+    "agent_metadata": {
+      "category": "auth",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "session-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "auth status": {
+    "command": "auth status",
+    "owner": "shared-services",
+    "group": "auth",
+    "interface": "http",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents auth status",
+      "regents auth login --audience regent-services"
+    ],
+    "agent_metadata": {
+      "category": "auth",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "session-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "autolaunch agent <id>": {
+    "command": "autolaunch agent <id>",
+    "owner": "autolaunch",
+    "group": "agents-trust",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch agents list",
+      "regents autolaunch agent <id>"
+    ],
+    "agent_metadata": {
+      "category": "agents",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read",
+      "retry_behavior": "safe",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List and inspect launchable Agent account projects.",
+    "usage": "regents autolaunch agents list",
+    "next_step": "Use `regents autolaunch agent readiness <id>`."
+  },
+  "autolaunch agent readiness <id>": {
+    "command": "autolaunch agent readiness <id>",
+    "owner": "autolaunch",
+    "group": "agents-trust",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch agents list",
+      "regents autolaunch agent <id>"
+    ],
+    "agent_metadata": {
+      "category": "agents",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read",
+      "retry_behavior": "safe",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List and inspect launchable Agent account projects.",
+    "usage": "regents autolaunch agents list",
+    "next_step": "Use `regents autolaunch agent readiness <id>`."
+  },
+  "autolaunch agents list": {
+    "command": "autolaunch agents list",
+    "owner": "autolaunch",
+    "group": "agents-trust",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch agents list",
+      "regents autolaunch agent <id>"
+    ],
+    "agent_metadata": {
+      "category": "agents",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read",
+      "retry_behavior": "safe",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List and inspect launchable Agent account projects.",
+    "usage": "regents autolaunch agents list",
+    "next_step": "Use `regents autolaunch agent readiness <id>`."
+  },
+  "autolaunch auction <id>": {
+    "command": "autolaunch auction <id>",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch auction-returns list": {
+    "command": "autolaunch auction-returns list",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch auctions list": {
+    "command": "autolaunch auctions list",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch bids claim": {
+    "command": "autolaunch bids claim",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch bids exit": {
+    "command": "autolaunch bids exit",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch bids place": {
+    "command": "autolaunch bids place",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch bids quote": {
+    "command": "autolaunch bids quote",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch contracts admin": {
+    "command": "autolaunch contracts admin",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch contracts job": {
+    "command": "autolaunch contracts job",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch contracts subject": {
+    "command": "autolaunch contracts subject",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ens plan": {
+    "command": "autolaunch ens plan",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ens prepare-bidirectional": {
+    "command": "autolaunch ens prepare-bidirectional",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ens prepare-ensip25": {
+    "command": "autolaunch ens prepare-ensip25",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ens prepare-erc8004": {
+    "command": "autolaunch ens prepare-erc8004",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch factory revenue-ingress set-authorized-creator": {
+    "command": "autolaunch factory revenue-ingress set-authorized-creator",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch factory revenue-share set-authorized-creator": {
+    "command": "autolaunch factory revenue-share set-authorized-creator",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch fee-registry get": {
+    "command": "autolaunch fee-registry get",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch fee-vault get": {
+    "command": "autolaunch fee-vault get",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch fee-vault withdraw-regent": {
+    "command": "autolaunch fee-vault withdraw-regent",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings claim-and-stake-emissions": {
+    "command": "autolaunch holdings claim-and-stake-emissions",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings claim-emissions": {
+    "command": "autolaunch holdings claim-emissions",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings claim-usdc": {
+    "command": "autolaunch holdings claim-usdc",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings stake": {
+    "command": "autolaunch holdings stake",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "flags": [
+      {
+        "name": "--amount",
+        "type": "string",
+        "required": true,
+        "description": "Amount of subject tokens to stake."
+      },
+      {
+        "name": "--receiver",
+        "type": "string",
+        "required": false,
+        "description": "Optional wallet address that receives the stake position."
+      }
+    ],
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings sweep-ingress": {
+    "command": "autolaunch holdings sweep-ingress",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch holdings unstake": {
+    "command": "autolaunch holdings unstake",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch identities list": {
+    "command": "autolaunch identities list",
+    "owner": "autolaunch",
+    "group": "identities",
+    "interface": "onchain",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch identities list --chain base-sepolia",
+      "regents autolaunch identities mint --chain base-sepolia"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "onchain-read-or-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch identities mint": {
+    "command": "autolaunch identities mint",
+    "owner": "autolaunch",
+    "group": "identities",
+    "interface": "onchain",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch identities list --chain base-sepolia",
+      "regents autolaunch identities mint --chain base-sepolia"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "onchain-read-or-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ingress create": {
+    "command": "autolaunch ingress create",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ingress rescue": {
+    "command": "autolaunch ingress rescue",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ingress set-default": {
+    "command": "autolaunch ingress set-default",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch ingress set-label": {
+    "command": "autolaunch ingress set-label",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch jobs watch": {
+    "command": "autolaunch jobs watch",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch launch create": {
+    "command": "autolaunch launch create",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch launch finalize": {
+    "command": "autolaunch launch finalize",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch launch monitor": {
+    "command": "autolaunch launch monitor",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch launch preview": {
+    "command": "autolaunch launch preview",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch launch run": {
+    "command": "autolaunch launch run",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch prelaunch get": {
+    "command": "autolaunch prelaunch get",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch prelaunch publish": {
+    "command": "autolaunch prelaunch publish",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch prelaunch validate": {
+    "command": "autolaunch prelaunch validate",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch prelaunch wizard": {
+    "command": "autolaunch prelaunch wizard",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch registry get": {
+    "command": "autolaunch registry get",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch registry link-identity": {
+    "command": "autolaunch registry link-identity",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch registry rotate-safe": {
+    "command": "autolaunch registry rotate-safe",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch registry set-subject-manager": {
+    "command": "autolaunch registry set-subject-manager",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch safe create": {
+    "command": "autolaunch safe create",
+    "owner": "autolaunch",
+    "group": "safe-setup",
+    "interface": "local",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch safe wizard"
+    ],
+    "agent_metadata": {
+      "category": "wallet-setup",
+      "prompt_behavior": "prompt_for_local_wallet_changes",
+      "json_support": "supported",
+      "mutation_class": "local-write",
+      "retry_behavior": "manual",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "interactive"
+    }
+  },
+  "autolaunch safe wizard": {
+    "command": "autolaunch safe wizard",
+    "owner": "autolaunch",
+    "group": "safe-setup",
+    "interface": "local",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents autolaunch safe wizard"
+    ],
+    "agent_metadata": {
+      "category": "wallet-setup",
+      "prompt_behavior": "prompt_for_local_wallet_changes",
+      "json_support": "supported",
+      "mutation_class": "local-write",
+      "retry_behavior": "manual",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "interactive"
+    }
+  },
+  "autolaunch splitter accept-ownership": {
+    "command": "autolaunch splitter accept-ownership",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter activate-eligible-revenue-share": {
+    "command": "autolaunch splitter activate-eligible-revenue-share",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter cancel-eligible-revenue-share": {
+    "command": "autolaunch splitter cancel-eligible-revenue-share",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter cancel-treasury-recipient-rotation": {
+    "command": "autolaunch splitter cancel-treasury-recipient-rotation",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter execute-treasury-recipient-rotation": {
+    "command": "autolaunch splitter execute-treasury-recipient-rotation",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter get": {
+    "command": "autolaunch splitter get",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter propose-eligible-revenue-share": {
+    "command": "autolaunch splitter propose-eligible-revenue-share",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter propose-treasury-recipient-rotation": {
+    "command": "autolaunch splitter propose-treasury-recipient-rotation",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter pull-treasury-share": {
+    "command": "autolaunch splitter pull-treasury-share",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter reassign-dust": {
+    "command": "autolaunch splitter reassign-dust",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter set-label": {
+    "command": "autolaunch splitter set-label",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter set-paused": {
+    "command": "autolaunch splitter set-paused",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter set-protocol-recipient": {
+    "command": "autolaunch splitter set-protocol-recipient",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter sweep-protocol-reserve": {
+    "command": "autolaunch splitter sweep-protocol-reserve",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter sweep-treasury-reserved": {
+    "command": "autolaunch splitter sweep-treasury-reserved",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch splitter sweep-treasury-residual": {
+    "command": "autolaunch splitter sweep-treasury-residual",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch strategy migrate": {
+    "command": "autolaunch strategy migrate",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch strategy sweep-currency": {
+    "command": "autolaunch strategy sweep-currency",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch strategy sweep-token": {
+    "command": "autolaunch strategy sweep-token",
+    "owner": "autolaunch",
+    "group": "ens-contracts",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "prepared-action-or-status",
+    "examples": [
+      "regents autolaunch fee-registry get --job <job_id>",
+      "regents autolaunch fee-vault get --job <job_id>",
+      "regents autolaunch splitter get --subject <subject_id>",
+      "regents autolaunch registry get --subject <subject_id>"
+    ],
+    "agent_metadata": {
+      "category": "contracts",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_prepares",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects claim-and-stake-emissions": {
+    "command": "autolaunch subjects claim-and-stake-emissions",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects claim-emissions": {
+    "command": "autolaunch subjects claim-emissions",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects claim-usdc": {
+    "command": "autolaunch subjects claim-usdc",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects get": {
+    "command": "autolaunch subjects get",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects ingress": {
+    "command": "autolaunch subjects ingress",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects stake": {
+    "command": "autolaunch subjects stake",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "flags": [
+      {
+        "name": "--amount",
+        "type": "string",
+        "required": true,
+        "description": "Amount of subject tokens to stake."
+      },
+      {
+        "name": "--receiver",
+        "type": "string",
+        "required": false,
+        "description": "Optional wallet address that receives the stake position."
+      }
+    ],
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects sweep-ingress": {
+    "command": "autolaunch subjects sweep-ingress",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects unstake": {
+    "command": "autolaunch subjects unstake",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch vesting cancel-beneficiary-rotation": {
+    "command": "autolaunch vesting cancel-beneficiary-rotation",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch vesting execute-beneficiary-rotation": {
+    "command": "autolaunch vesting execute-beneficiary-rotation",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch vesting propose-beneficiary-rotation": {
+    "command": "autolaunch vesting propose-beneficiary-rotation",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch vesting release": {
+    "command": "autolaunch vesting release",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch vesting status": {
+    "command": "autolaunch vesting status",
+    "owner": "autolaunch",
+    "group": "prelaunch-launch",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "launch-envelopes",
+    "examples": [
+      "regents autolaunch prelaunch get --plan <id>",
+      "regents autolaunch prelaunch validate --plan <id>",
+      "regents autolaunch jobs watch <job_id>"
+    ],
+    "agent_metadata": {
+      "category": "launch",
+      "prompt_behavior": "confirm_before_publish_or_submit",
+      "json_support": "supported",
+      "mutation_class": "workflow-write",
+      "retry_behavior": "retry_status_and_prepare_only",
+      "pagination": "bounded",
+      "async_behavior": "job_or_polling",
+      "input_mode": "mixed"
+    },
+    "summary": "Prepare, validate, publish, and launch an Agent account project.",
+    "usage": "regents autolaunch prelaunch wizard",
+    "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "balance": {
+    "command": "balance",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "bug": {
+    "command": "bug",
+    "owner": "platform",
+    "group": "bug",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createAgentBugReport"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--summary",
+        "type": "string",
+        "required": true,
+        "description": "Short report summary."
+      },
+      {
+        "name": "--details",
+        "type": "string",
+        "required": true,
+        "description": "Report details."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Send a signed bug report to Platform."
+  },
+  "chatbox history": {
+    "command": "chatbox history",
+    "owner": "techtree",
+    "group": "chatbox",
+    "interface": "runtime",
+    "auth_mode": "mixed",
+    "output_envelope": "chatbox-list-or-stream",
+    "examples": [
+      "regents chatbox history --room <room_key>",
+      "regents chatbox post --room <room_key> --message \"Ready\""
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read-or-message-write",
+      "retry_behavior": "retry_history_only",
+      "pagination": "cursor",
+      "async_behavior": "stream_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "chatbox post": {
+    "command": "chatbox post",
+    "owner": "techtree",
+    "group": "chatbox",
+    "interface": "runtime",
+    "auth_mode": "mixed",
+    "output_envelope": "chatbox-list-or-stream",
+    "examples": [
+      "regents chatbox history --room <room_key>",
+      "regents chatbox post --room <room_key> --message \"Ready\""
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read-or-message-write",
+      "retry_behavior": "retry_history_only",
+      "pagination": "cursor",
+      "async_behavior": "stream_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "chatbox tail": {
+    "command": "chatbox tail",
+    "owner": "techtree",
+    "group": "chatbox",
+    "interface": "runtime",
+    "auth_mode": "mixed",
+    "output_envelope": "chatbox-list-or-stream",
+    "examples": [
+      "regents chatbox history --room <room_key>",
+      "regents chatbox post --room <room_key> --message \"Ready\""
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "read-or-message-write",
+      "retry_behavior": "retry_history_only",
+      "pagination": "cursor",
+      "async_behavior": "stream_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "config get": {
+    "command": "config get",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "config write": {
+    "command": "config write",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "create init": {
+    "command": "create init",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "create wallet": {
+    "command": "create wallet",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "doctor": {
+    "command": "doctor",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor auth": {
+    "command": "doctor auth",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor contracts": {
+    "command": "doctor contracts",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor runtime": {
+    "command": "doctor runtime",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor techtree": {
+    "command": "doctor techtree",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor transports": {
+    "command": "doctor transports",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor workspace": {
+    "command": "doctor workspace",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "doctor xmtp": {
+    "command": "doctor xmtp",
+    "owner": "shared-services",
+    "group": "doctor",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents doctor",
+      "regents doctor xmtp"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "ens set-primary": {
+    "command": "ens set-primary",
+    "owner": "shared-services",
+    "group": "ens",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "platform",
+    "output_envelope": "loose-object",
+    "flags": [
+      {
+        "name": "--submit",
+        "type": "boolean",
+        "required": false,
+        "description": "Submit the prepared transaction with the local wallet."
+      }
+    ],
+    "examples": [
+      "regents ens set-primary --name example.eth"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "transaction_prepare_or_submit",
+      "retry_behavior": "retry_prepare_only",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "feynman": {
+    "command": "feynman",
+    "owner": "shared-services",
+    "group": "feynman",
+    "interface": "local-process",
+    "auth_mode": "none",
+    "output_envelope": "passthrough",
+    "examples": [
+      "regents feynman"
+    ],
+    "agent_metadata": {
+      "category": "local-tool",
+      "prompt_behavior": "may_prompt",
+      "json_support": "not_supported",
+      "mutation_class": "local-process",
+      "retry_behavior": "manual",
+      "pagination": "none",
+      "async_behavior": "interactive",
+      "input_mode": "interactive"
+    }
+  },
+  "gossipsub status": {
+    "command": "gossipsub status",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "identity ensure": {
+    "command": "identity ensure",
+    "owner": "shared-services",
+    "group": "identity",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents identity status",
+      "regents identity graph --json"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "identity graph": {
+    "command": "identity graph",
+    "owner": "shared-services",
+    "group": "identity",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "flags": [
+      {
+        "name": "--json",
+        "type": "boolean",
+        "required": false,
+        "description": "Print the current identity graph as JSON for automation."
+      }
+    ],
+    "examples": [
+      "regents identity status",
+      "regents identity graph --json"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "identity status": {
+    "command": "identity status",
+    "owner": "shared-services",
+    "group": "identity",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents identity status",
+      "regents identity graph --json"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "prompt_when_signing",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "retry_after_user_action",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "init": {
+    "command": "init",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "mcp export hermes": {
+    "command": "mcp export hermes",
+    "owner": "shared-services",
+    "group": "mcp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents mcp export hermes"
+    ],
+    "agent_metadata": {
+      "category": "integration",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "platform auth login": {
+    "command": "platform auth login",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "privy-identity-token",
+    "output_envelope": "json",
+    "operation_ids": [
+      "privySessionCsrf",
+      "privySessionCreate"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--identity-token",
+        "type": "string",
+        "required": false,
+        "description": "Privy identity token for the platform account."
+      },
+      {
+        "name": "--identity-token-env",
+        "type": "string",
+        "required": false,
+        "description": "Environment variable name that contains the Privy identity token."
+      },
+      {
+        "name": "--display-name",
+        "type": "string",
+        "required": false,
+        "description": "Optional display name to save for the signed-in person."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Sign in to the Regent website from the terminal and save the session for later platform commands."
+  },
+  "platform auth logout": {
+    "command": "platform auth logout",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "privySessionDelete"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Delete the saved platform session and sign out from platform commands."
+  },
+  "platform auth status": {
+    "command": "platform auth status",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "privySessionProfile"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show who is signed in through the saved platform session."
+  },
+  "platform billing account": {
+    "command": "platform billing account",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformBillingAccount"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show the billing account tied to the saved platform session."
+  },
+  "platform billing setup": {
+    "command": "platform billing setup",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "beta-disabled",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "args": [],
+    "flags": [
+      {
+        "name": "--claimed-label",
+        "type": "string",
+        "required": false,
+        "description": "Optional claimed name to carry into the hosted billing return link."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Open billing setup for the saved platform account."
+  },
+  "platform billing topup": {
+    "command": "platform billing topup",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "beta-disabled",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "args": [],
+    "flags": [
+      {
+        "name": "--amount-usd-cents",
+        "type": "integer",
+        "required": true,
+        "description": "Runtime credit amount in US cents."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Open runtime credit checkout for the saved platform account."
+  },
+  "platform billing usage": {
+    "command": "platform billing usage",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformBillingUsage"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show shared runtime credit and company usage from the saved platform session."
+  },
+  "platform company create": {
+    "command": "platform company create",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "beta-disabled",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "args": [],
+    "flags": [
+      {
+        "name": "--claimed-label",
+        "type": "string",
+        "required": true,
+        "description": "Claimed name label to launch as a company."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Launch a company for one claimed name from the saved platform account."
+  },
+  "platform company runtime": {
+    "command": "platform company runtime",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformFormationRuntime"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--slug",
+        "type": "string",
+        "required": true,
+        "description": "Company slug to inspect."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show runtime state for one owned company from the saved platform session."
+  },
+  "platform formation doctor": {
+    "command": "platform formation doctor",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformFormationDoctor"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Explain why company opening is blocked or what is ready next."
+  },
+  "platform formation status": {
+    "command": "platform formation status",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformFormation"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show launch readiness from the saved session, including claimed names, billing, and owned companies."
+  },
+  "platform projection": {
+    "command": "platform projection",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "agentPlatformProjection"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show the canonical Platform projection for product and mobile clients."
+  },
+  "platform sprite pause": {
+    "command": "platform sprite pause",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "beta-disabled",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "args": [],
+    "flags": [
+      {
+        "name": "--slug",
+        "type": "string",
+        "required": true,
+        "description": "Company slug to pause."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Pause one owned company runtime from the saved platform session."
+  },
+  "platform sprite resume": {
+    "command": "platform sprite resume",
+    "owner": "platform",
+    "group": "platform",
+    "interface": "beta-disabled",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "args": [],
+    "flags": [
+      {
+        "name": "--slug",
+        "type": "string",
+        "required": true,
+        "description": "Company slug to resume."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Resume one owned company runtime from the saved platform session."
+  },
+  "regent-staking account": {
+    "command": "regent-staking account",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getAgentRegentStakingAccount"
+    ],
+    "args": [
+      {
+        "name": "address",
+        "type": "string",
+        "required": true,
+        "description": "Wallet address to inspect."
+      }
+    ],
+    "flags": [],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show Regent staking state for one wallet."
+  },
+  "regent-staking claim-and-restake-regent": {
+    "command": "regent-staking claim-and-restake-regent",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "claimAndRestakeAgentRegentStakingRegent"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--submit",
+        "type": "boolean",
+        "required": false,
+        "description": "Submit the prepared transaction with the local wallet."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Prepare a wallet action to claim and restake REGENT rewards."
+  },
+  "regent-staking claim-regent": {
+    "command": "regent-staking claim-regent",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "claimAgentRegentStakingRegent"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--submit",
+        "type": "boolean",
+        "required": false,
+        "description": "Submit the prepared transaction with the local wallet."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Prepare a wallet action to claim REGENT rewards."
+  },
+  "regent-staking claim-usdc": {
+    "command": "regent-staking claim-usdc",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "claimAgentRegentStakingUsdc"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--submit",
+        "type": "boolean",
+        "required": false,
+        "description": "Submit the prepared transaction with the local wallet."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Prepare a wallet action to claim staking USDC."
+  },
+  "regent-staking get": {
+    "command": "regent-staking get",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getAgentRegentStakingOverview"
+    ],
+    "args": [],
+    "flags": [],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show Regent staking state for the saved Agent account."
+  },
+  "regent-staking stake": {
+    "command": "regent-staking stake",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "stakeAgentRegent"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--amount",
+        "type": "string",
+        "required": true,
+        "description": "Amount of REGENT to stake."
+      },
+      {
+        "name": "--receiver",
+        "type": "string",
+        "required": false,
+        "description": "Optional wallet address that receives the stake position."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Prepare a wallet action to stake REGENT."
+  },
+  "regent-staking unstake": {
+    "command": "regent-staking unstake",
+    "owner": "platform",
+    "group": "regent-staking",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "unstakeAgentRegent"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--amount",
+        "type": "string",
+        "required": true,
+        "description": "Amount of REGENT to unstake."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Prepare a wallet action to unstake REGENT."
+  },
+  "run": {
+    "command": "run",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "runtime checkpoint": {
+    "command": "runtime checkpoint",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "checkpointRwrRuntime"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--checkpoint-ref",
+        "type": "string",
+        "required": true,
+        "description": "Checkpoint reference."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Save a checkpoint for one runtime."
+  },
+  "runtime create": {
+    "command": "runtime create",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createRwrRuntime"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--name",
+        "type": "string",
+        "required": true,
+        "description": "Runtime name."
+      },
+      {
+        "name": "--platform-agent-id",
+        "type": "string",
+        "required": false,
+        "description": "Platform agent id for hosted Sprite runtimes."
+      },
+      {
+        "name": "--runner",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "hermes_local_manager",
+          "hermes_hosted_manager",
+          "openclaw_local_manager",
+          "codex_exec",
+          "codex_app_server",
+          "openclaw_local_executor",
+          "openclaw_code_agent_local",
+          "fake",
+          "custom_worker"
+        ],
+        "description": "Worker path to use."
+      },
+      {
+        "name": "--execution-surface",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "hosted_sprite",
+          "local_bridge",
+          "external_webhook"
+        ],
+        "description": "Where the runtime runs."
+      },
+      {
+        "name": "--billing-mode",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "platform_hosted",
+          "user_local",
+          "external_self_reported"
+        ],
+        "description": "How runtime costs are handled."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Create a runtime for one Regent company."
+  },
+  "runtime get": {
+    "command": "runtime get",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getRwrRuntime"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show one runtime for a Regent company."
+  },
+  "runtime health": {
+    "command": "runtime health",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getRwrRuntimeHealth"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show health for one runtime."
+  },
+  "runtime pause": {
+    "command": "runtime pause",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "pauseRwrRuntime"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Pause one runtime for a Regent company."
+  },
+  "runtime restore": {
+    "command": "runtime restore",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "restoreRwrRuntime"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--checkpoint-id",
+        "type": "string",
+        "required": true,
+        "description": "Checkpoint id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Restore one runtime from a checkpoint."
+  },
+  "runtime resume": {
+    "command": "runtime resume",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "resumeRwrRuntime"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Resume one runtime for a Regent company."
+  },
+  "runtime services": {
+    "command": "runtime services",
+    "owner": "platform",
+    "group": "runtime",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "listRwrRuntimeServices"
+    ],
+    "args": [
+      {
+        "name": "runtime_id",
+        "type": "string",
+        "required": true,
+        "description": "Runtime id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List services for one runtime."
+  },
+  "search": {
+    "command": "search",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "security-report": {
+    "command": "security-report",
+    "owner": "platform",
+    "group": "security-report",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "regent-services",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createAgentSecurityReport"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--summary",
+        "type": "string",
+        "required": true,
+        "description": "Short report summary."
+      },
+      {
+        "name": "--details",
+        "type": "string",
+        "required": true,
+        "description": "Report details."
+      },
+      {
+        "name": "--contact",
+        "type": "string",
+        "required": true,
+        "description": "Contact path for private follow-up."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Send a signed security report to Platform."
+  },
+  "status": {
+    "command": "status",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree activity": {
+    "command": "techtree activity",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill buy": {
+    "command": "techtree autoskill buy",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill init eval": {
+    "command": "techtree autoskill init eval",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill init skill": {
+    "command": "techtree autoskill init skill",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill listing create": {
+    "command": "techtree autoskill listing create",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill notebook pair": {
+    "command": "techtree autoskill notebook pair",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill publish eval": {
+    "command": "techtree autoskill publish eval",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill publish result": {
+    "command": "techtree autoskill publish result",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill publish skill": {
+    "command": "techtree autoskill publish skill",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill pull": {
+    "command": "techtree autoskill pull",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree autoskill review": {
+    "command": "techtree autoskill review",
+    "owner": "techtree",
+    "group": "autoskill",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "autoskill-envelopes",
+    "examples": [
+      "regents techtree autoskill init skill",
+      "regents techtree autoskill publish skill"
+    ],
+    "agent_metadata": {
+      "category": "autoskill",
+      "prompt_behavior": "confirm_before_publish_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh capsules get": {
+    "command": "techtree bbh capsules get",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh capsules list": {
+    "command": "techtree bbh capsules list",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft apply": {
+    "command": "techtree bbh draft apply",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft create": {
+    "command": "techtree bbh draft create",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft init": {
+    "command": "techtree bbh draft init",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft list": {
+    "command": "techtree bbh draft list",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft proposals": {
+    "command": "techtree bbh draft proposals",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft propose": {
+    "command": "techtree bbh draft propose",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft pull": {
+    "command": "techtree bbh draft pull",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh draft ready": {
+    "command": "techtree bbh draft ready",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh fetch": {
+    "command": "techtree bbh fetch",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh genome improve": {
+    "command": "techtree bbh genome improve",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh genome init": {
+    "command": "techtree bbh genome init",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh genome propose": {
+    "command": "techtree bbh genome propose",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh genome score": {
+    "command": "techtree bbh genome score",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh leaderboard": {
+    "command": "techtree bbh leaderboard",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh notebook pair": {
+    "command": "techtree bbh notebook pair",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh run exec": {
+    "command": "techtree bbh run exec",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh run solve": {
+    "command": "techtree bbh run solve",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh submit": {
+    "command": "techtree bbh submit",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh sync": {
+    "command": "techtree bbh sync",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh validate": {
+    "command": "techtree bbh validate",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree bbh verify": {
+    "command": "techtree bbh verify",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks capsule init": {
+    "command": "techtree benchmarks capsule init",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks capsule pack": {
+    "command": "techtree benchmarks capsule pack",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks capsule submit": {
+    "command": "techtree benchmarks capsule submit",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks get <capsule_id>": {
+    "command": "techtree benchmarks get <capsule_id>",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks list": {
+    "command": "techtree benchmarks list",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks reliability <capsule_id>": {
+    "command": "techtree benchmarks reliability <capsule_id>",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks run materialize": {
+    "command": "techtree benchmarks run materialize",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks run repeat": {
+    "command": "techtree benchmarks run repeat",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks run submit": {
+    "command": "techtree benchmarks run submit",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks scoreboard <capsule_id>": {
+    "command": "techtree benchmarks scoreboard <capsule_id>",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree benchmarks validate": {
+    "command": "techtree benchmarks validate",
+    "owner": "techtree",
+    "group": "benchmarks",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "benchmark-capsule-envelopes",
+    "examples": [
+      "regents techtree benchmarks list",
+      "regents techtree benchmarks get <capsule_id>"
+    ],
+    "agent_metadata": {
+      "category": "benchmarks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree certificate verify": {
+    "command": "techtree certificate verify",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree comment add": {
+    "command": "techtree comment add",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree identities list": {
+    "command": "techtree identities list",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree identities mint": {
+    "command": "techtree identities mint",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree inbox": {
+    "command": "techtree inbox",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main artifact compile": {
+    "command": "techtree main artifact compile",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main artifact init": {
+    "command": "techtree main artifact init",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main artifact pin": {
+    "command": "techtree main artifact pin",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main artifact publish": {
+    "command": "techtree main artifact publish",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main fetch": {
+    "command": "techtree main fetch",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main review compile": {
+    "command": "techtree main review compile",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main review exec": {
+    "command": "techtree main review exec",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main review init": {
+    "command": "techtree main review init",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main review pin": {
+    "command": "techtree main review pin",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main review publish": {
+    "command": "techtree main review publish",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main run compile": {
+    "command": "techtree main run compile",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main run exec": {
+    "command": "techtree main run exec",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main run init": {
+    "command": "techtree main run init",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main run pin": {
+    "command": "techtree main run pin",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main run publish": {
+    "command": "techtree main run publish",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree main verify": {
+    "command": "techtree main verify",
+    "owner": "techtree",
+    "group": "runtime-workspace",
+    "interface": "mixed",
+    "auth_mode": "local-or-http",
+    "output_envelope": "runtime-workspace-envelopes",
+    "examples": [
+      "regents techtree main artifact init",
+      "regents techtree main run exec"
+    ],
+    "agent_metadata": {
+      "category": "runtime-workspace",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_local_builds_and_reads",
+      "pagination": "bounded",
+      "async_behavior": "local_run_or_synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node children <id>": {
+    "command": "techtree node children <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node comments <id>": {
+    "command": "techtree node comments <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node create": {
+    "command": "techtree node create",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node cross-chain-links clear": {
+    "command": "techtree node cross-chain-links clear",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node cross-chain-links create": {
+    "command": "techtree node cross-chain-links create",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node cross-chain-links list": {
+    "command": "techtree node cross-chain-links list",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node get <id>": {
+    "command": "techtree node get <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node lineage claim": {
+    "command": "techtree node lineage claim",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node lineage list": {
+    "command": "techtree node lineage list",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node lineage withdraw": {
+    "command": "techtree node lineage withdraw",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree node work-packet <id>": {
+    "command": "techtree node work-packet <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree nodes list": {
+    "command": "techtree nodes list",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree opportunities": {
+    "command": "techtree opportunities",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree review claim": {
+    "command": "techtree review claim",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree review list": {
+    "command": "techtree review list",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree review pull": {
+    "command": "techtree review pull",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree review submit": {
+    "command": "techtree review submit",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree reviewer apply": {
+    "command": "techtree reviewer apply",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree reviewer orcid link": {
+    "command": "techtree reviewer orcid link",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree reviewer status": {
+    "command": "techtree reviewer status",
+    "owner": "techtree",
+    "group": "bbh-review",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "bbh-and-review-envelopes",
+    "examples": [
+      "regents techtree review list",
+      "regents techtree bbh capsules list",
+      "regents techtree bbh run solve"
+    ],
+    "agent_metadata": {
+      "category": "review",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_runs",
+      "pagination": "cursor",
+      "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks checklist": {
+    "command": "techtree science-tasks checklist",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks evidence": {
+    "command": "techtree science-tasks evidence",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks export": {
+    "command": "techtree science-tasks export",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks get": {
+    "command": "techtree science-tasks get",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks init": {
+    "command": "techtree science-tasks init",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks list": {
+    "command": "techtree science-tasks list",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks review-loop": {
+    "command": "techtree science-tasks review-loop",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks review-update": {
+    "command": "techtree science-tasks review-update",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree science-tasks submit": {
+    "command": "techtree science-tasks submit",
+    "owner": "techtree",
+    "group": "science-tasks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "science-task-envelopes",
+    "examples": [
+      "regents techtree science-tasks list",
+      "regents techtree science-tasks get <id>"
+    ],
+    "agent_metadata": {
+      "category": "science-tasks",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_exports",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree search": {
+    "command": "techtree search",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree star <id>": {
+    "command": "techtree star <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree start": {
+    "command": "techtree start",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree status": {
+    "command": "techtree status",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree unstar <id>": {
+    "command": "techtree unstar <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree unwatch <id>": {
+    "command": "techtree unwatch <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree watch <id>": {
+    "command": "techtree watch <id>",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree watch list": {
+    "command": "techtree watch list",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree watch tail": {
+    "command": "techtree watch tail",
+    "owner": "techtree",
+    "group": "tree",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tree-envelopes",
+    "examples": [
+      "regents techtree search \"alignment\"",
+      "regents techtree node get <id>",
+      "regents techtree inbox"
+    ],
+    "agent_metadata": {
+      "category": "tree",
+      "prompt_behavior": "never_prompt_for_reads",
+      "json_support": "supported",
+      "mutation_class": "read-or-tree-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "wallet setup": {
+    "command": "wallet setup",
+    "owner": "shared-services",
+    "group": "wallet",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents wallet status"
+    ],
+    "agent_metadata": {
+      "category": "wallet",
+      "prompt_behavior": "prompt_when_creating_wallet",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_status",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "wallet status": {
+    "command": "wallet status",
+    "owner": "shared-services",
+    "group": "wallet",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents wallet status"
+    ],
+    "agent_metadata": {
+      "category": "wallet",
+      "prompt_behavior": "prompt_when_creating_wallet",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_status",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "whoami": {
+    "command": "whoami",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--full",
+        "type": "boolean",
+        "required": false,
+        "description": "Include the saved Platform account projection when a Platform session is present."
+      }
+    ],
+    "examples": [
+      "regents status",
+      "regents agent-context",
+      "regents config get",
+      "regents agent profile get"
+    ],
+    "agent_metadata": {
+      "category": "local-control",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read-or-write",
+      "retry_behavior": "safe_for_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "work create": {
+    "command": "work create",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "createRwrWorkItem"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--title",
+        "type": "string",
+        "required": true,
+        "description": "Work title."
+      },
+      {
+        "name": "--description",
+        "type": "string",
+        "required": false,
+        "description": "Work details."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Create work for one Regent company."
+  },
+  "work get": {
+    "command": "work get",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "getRwrWorkItem"
+    ],
+    "args": [
+      {
+        "name": "work_item_id",
+        "type": "string",
+        "required": true,
+        "description": "Work item id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Show one work item for a Regent company."
+  },
+  "work list": {
+    "command": "work list",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "listRwrWorkItems"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "List work for one Regent company."
+  },
+  "work local-loop": {
+    "command": "work local-loop",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "json",
+    "operation_ids": [
+      "heartbeatRwrWorker",
+      "listRwrWorkerAssignments",
+      "claimRwrWorkerAssignment",
+      "appendRwrRunEvent",
+      "createRwrRunArtifact",
+      "requestRwrDelegation",
+      "releaseRwrWorkerAssignment",
+      "completeRwrWorkerAssignment"
+    ],
+    "args": [],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--worker-id",
+        "type": "string",
+        "required": true,
+        "description": "Local worker id."
+      },
+      {
+        "name": "--once",
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Check once and exit."
+      },
+      {
+        "name": "--sleep-ms",
+        "type": "integer",
+        "required": false,
+        "default": 5000,
+        "description": "Wait time between checks."
+      },
+      {
+        "name": "--artifact-title",
+        "type": "string",
+        "required": false,
+        "description": "Approved artifact title to upload for the claimed run."
+      },
+      {
+        "name": "--artifact-body",
+        "type": "string",
+        "required": false,
+        "description": "Approved artifact text to upload for the claimed run."
+      },
+      {
+        "name": "--delegate-runner",
+        "type": "string",
+        "required": false,
+        "enum": [
+          "hermes_local_manager",
+          "hermes_hosted_manager",
+          "openclaw_local_manager",
+          "codex_exec",
+          "codex_app_server",
+          "openclaw_local_executor",
+          "openclaw_code_agent_local",
+          "fake",
+          "custom_worker"
+        ],
+        "description": "Worker path to request for delegated work."
+      },
+      {
+        "name": "--delegate-title",
+        "type": "string",
+        "required": false,
+        "description": "Delegated work title."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Let one local worker check for assigned Regent work."
+  },
+  "work run": {
+    "command": "work run",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "startRwrWorkRun"
+    ],
+    "args": [
+      {
+        "name": "work_item_id",
+        "type": "string",
+        "required": true,
+        "description": "Work item id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--runner",
+        "type": "string",
+        "required": true,
+        "enum": [
+          "hermes_local_manager",
+          "hermes_hosted_manager",
+          "openclaw_local_manager",
+          "codex_exec",
+          "codex_app_server",
+          "openclaw_local_executor",
+          "openclaw_code_agent_local",
+          "fake",
+          "custom_worker"
+        ],
+        "description": "Worker path to use."
+      },
+      {
+        "name": "--worker-id",
+        "type": "string",
+        "required": false,
+        "description": "Specific worker id."
+      },
+      {
+        "name": "--instructions",
+        "type": "string",
+        "required": false,
+        "description": "Extra instructions for this run."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Start a run for one work item."
+  },
+  "work watch": {
+    "command": "work watch",
+    "owner": "platform",
+    "group": "work",
+    "interface": "http-cookie-session",
+    "auth_mode": "session-file",
+    "output_envelope": "json",
+    "operation_ids": [
+      "listRwrRunEvents"
+    ],
+    "args": [
+      {
+        "name": "run_id",
+        "type": "string",
+        "required": true,
+        "description": "Run id."
+      }
+    ],
+    "flags": [
+      {
+        "name": "--company-id",
+        "type": "string",
+        "required": true,
+        "description": "Regent company id."
+      },
+      {
+        "name": "--origin",
+        "type": "string",
+        "required": false,
+        "default": "https://regents.sh",
+        "description": "Platform origin to call. Defaults to the saved session origin when present."
+      },
+      {
+        "name": "--session-file",
+        "type": "string",
+        "required": false,
+        "description": "Local path for the saved platform session file."
+      },
+      {
+        "name": "--poll-ms",
+        "type": "integer",
+        "required": false,
+        "default": 2000,
+        "description": "Wait time between progress checks."
+      },
+      {
+        "name": "--max-polls",
+        "type": "integer",
+        "required": false,
+        "description": "Stop after this many progress checks."
+      },
+      {
+        "name": "--once",
+        "type": "boolean",
+        "required": false,
+        "default": false,
+        "description": "Check once and exit."
+      }
+    ],
+    "examples": [
+      "regents platform auth status",
+      "regents runtime get <runtime_id> --company-id <company_id>",
+      "regents work get <work_item_id> --company-id <company_id>",
+      "regents regent-staking get"
+    ],
+    "agent_metadata": {
+      "category": "platform",
+      "prompt_behavior": "prompt_when_signing_or_opening_hosted_flow",
+      "json_support": "supported",
+      "mutation_class": "command_specific",
+      "retry_behavior": "safe_for_reads_prepare_only_for_actions",
+      "pagination": "bounded_unless_command_declares_cursor",
+      "async_behavior": "synchronous_or_polling",
+      "input_mode": "args-and-flags"
+    },
+    "summary": "Watch events for one work run."
+  },
+  "xmtp doctor": {
+    "command": "xmtp doctor",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group add-admin": {
+    "command": "xmtp group add-admin",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group add-member": {
+    "command": "xmtp group add-member",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group add-super-admin": {
+    "command": "xmtp group add-super-admin",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group admins": {
+    "command": "xmtp group admins",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group create": {
+    "command": "xmtp group create",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group list": {
+    "command": "xmtp group list",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group members": {
+    "command": "xmtp group members",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group permissions": {
+    "command": "xmtp group permissions",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group remove-admin": {
+    "command": "xmtp group remove-admin",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group remove-member": {
+    "command": "xmtp group remove-member",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group remove-super-admin": {
+    "command": "xmtp group remove-super-admin",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group super-admins": {
+    "command": "xmtp group super-admins",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp group update-permission": {
+    "command": "xmtp group update-permission",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp init": {
+    "command": "xmtp init",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp owner add": {
+    "command": "xmtp owner add",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp owner list": {
+    "command": "xmtp owner list",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp owner remove": {
+    "command": "xmtp owner remove",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp policy edit": {
+    "command": "xmtp policy edit",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp policy get": {
+    "command": "xmtp policy get",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp policy init": {
+    "command": "xmtp policy init",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp policy validate": {
+    "command": "xmtp policy validate",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp resolve": {
+    "command": "xmtp resolve",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp revoke-other-installations": {
+    "command": "xmtp revoke-other-installations",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp rotate-db-key": {
+    "command": "xmtp rotate-db-key",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp rotate-wallet": {
+    "command": "xmtp rotate-wallet",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp status": {
+    "command": "xmtp status",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp test dm": {
+    "command": "xmtp test dm",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp trusted add": {
+    "command": "xmtp trusted add",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp trusted list": {
+    "command": "xmtp trusted list",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "xmtp trusted remove": {
+    "command": "xmtp trusted remove",
+    "owner": "shared-services",
+    "group": "xmtp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents xmtp status",
+      "regents xmtp policy get",
+      "regents xmtp group list"
+    ],
+    "agent_metadata": {
+      "category": "messaging",
+      "prompt_behavior": "prompt_for_local_identity_changes",
+      "json_support": "supported",
+      "mutation_class": "local-and-network-write",
+      "retry_behavior": "retry_idempotent_reads",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  }
 } as const;

@@ -17,7 +17,7 @@ const readFileFlag = (value: string | undefined, name: string): string => {
   return fs.readFileSync(fileFlag.slice(1), "utf8");
 };
 
-export async function runConfigRead(args: ParsedCliArgs): Promise<void> {
+export async function runConfigGet(args: ParsedCliArgs): Promise<void> {
   printJson(RegentRuntime.loadConfig(resolveConfigPath(args)));
 }
 

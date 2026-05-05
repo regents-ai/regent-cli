@@ -59,7 +59,7 @@ export async function runRuntimeCreate(args: ParsedCliArgs): Promise<void> {
   printRuntimeResult(args, { ok: true, command: "regents runtime create", origin, result: data }, "created");
 }
 
-export async function runRuntimeShow(args: ParsedCliArgs): Promise<void> {
+export async function runRuntimeGet(args: ParsedCliArgs): Promise<void> {
   const resolvedCompanyId = companyId(args);
   const runtimeId = positional(args, 2, "runtime_id");
   const { origin, data } = await requestRuntimeJson(args, {
@@ -67,7 +67,7 @@ export async function runRuntimeShow(args: ParsedCliArgs): Promise<void> {
     path: runtimePath(resolvedCompanyId, runtimeId),
   });
 
-  printRuntimeResult(args, { ok: true, command: "regents runtime show", origin, result: data }, "status");
+  printRuntimeResult(args, { ok: true, command: "regents runtime get", origin, result: data }, "status");
 }
 
 export async function runRuntimeCheckpoint(args: ParsedCliArgs): Promise<void> {

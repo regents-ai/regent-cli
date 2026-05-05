@@ -8,7 +8,7 @@ import type {
 } from "../contracts/openapi-helpers.js";
 import { submitPreparedTxRequest, txRequestFromWalletAction } from "./autolaunch/shared.js";
 import { requestProductJson } from "./product-http.js";
-import { confirmStakeReceiver, stakeBody, stakeReceiverFlag } from "./stake-receiver.js";
+import { stakeBody, stakeReceiverFlag } from "./stake-receiver.js";
 
 type RegentStakingOverviewResponse = JsonSuccessResponseFor<
   PlatformPaths,
@@ -97,7 +97,7 @@ const printPreparedOrSubmitted = async (
   printJson({ ...payload, submitted: true, tx_hash: txHash });
 };
 
-export async function runRegentStakingShow(configPath?: string): Promise<void> {
+export async function runRegentStakingGet(configPath?: string): Promise<void> {
   printJson(
     await requestStakingJson<RegentStakingOverviewResponse>("GET", "/v1/agent/regent/staking", {
       configPath,
@@ -127,9 +127,6 @@ export async function runRegentStakingStake(
 ): Promise<void> {
   const amount = requireArg(getFlag(args, "amount"), "amount");
   const receiver = stakeReceiverFlag(args);
-  if (receiver) {
-    await confirmStakeReceiver(amount, "$REGENT", receiver);
-  }
 
   const body: RegentStakingStakeBody = stakeBody(amount, receiver);
   await printPreparedOrSubmitted(

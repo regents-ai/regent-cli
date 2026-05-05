@@ -5017,6 +5017,15 @@ export interface operations {
                     "application/json": components["schemas"]["PreparedActionEnvelope"];
                 };
             };
+            /** @description Signed-in wallet is not an authorized contract operator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
         };
     };
     agentListAgents: {
@@ -5807,6 +5816,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PreparedActionEnvelope"];
+                };
+            };
+            /** @description Signed agent wallet is not an authorized contract operator */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };

@@ -119,7 +119,7 @@ export const runTechtreeRunInit = createTreeWorkspaceRunner("techtree.v1.run.ini
   return {
     artifact_id: normalizeNodeId(
       getFlag(args, "artifact") ?? getFlag(args, "artifact-id"),
-      "artifact id",
+      "--artifact or --artifact-id",
     ),
     ...(metadata ? { metadata } : {}),
   };

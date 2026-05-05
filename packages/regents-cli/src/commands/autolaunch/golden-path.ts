@@ -1,6 +1,5 @@
 import fs from "node:fs";
 import path from "node:path";
-import readline from "node:readline/promises";
 
 import { loadConfig } from "../../internal-runtime/config.js";
 import { ensureSecureDir, writeJsonFileAtomicSync } from "../../internal-runtime/paths.js";
@@ -27,6 +26,7 @@ import {
   renderPanel,
   tone,
 } from "../../printer.js";
+import { createPromptBoundary, type PromptBoundary } from "../../terminal/prompts.js";
 import { requireAgentAuthState } from "../agent-auth.js";
 import {
   parsePollingIntervalSeconds,
@@ -126,19 +126,45 @@ const resolvePlanId = (args: ParsedCliArgs, configPath?: string): string => {
   return latest.plan_id;
 };
 
-const prompt = async (label: string, fallback?: string): Promise<string> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
+const requiredFlagMessage = (label: string, flag: string, placeholder = "<value>"): string =>
+  `${label} is required. Pass --${flag} ${placeholder}.`;
+
+const promptedRequiredFlag = async (
+  args: ParsedCliArgs,
+  prompts: PromptBoundary,
+  flag: string,
+  label: string,
+  promptLabel: string,
+  placeholder = "<value>",
+): Promise<string> =>
+  normalizeText(getFlag(args, flag)) ??
+  await prompts.text(promptLabel, {
+    unavailableMessage: requiredFlagMessage(label, flag, placeholder),
   });
 
-  try {
-    const suffix = fallback ? ` [${fallback}]` : "";
-    const answer = (await rl.question(`${label}${suffix}: `)).trim();
-    return answer || fallback || "";
-  } finally {
-    rl.close();
+const promptedOptionalFlag = async (
+  args: ParsedCliArgs,
+  prompts: PromptBoundary,
+  flag: string,
+  promptLabel: string,
+  fallback?: string,
+): Promise<string | undefined> => {
+  const explicit = normalizeText(getFlag(args, flag));
+  if (explicit) {
+    return explicit;
   }
+
+  if (!prompts.inputAllowed) {
+    return fallback;
+  }
+
+  return normalizeText(
+    await prompts.text(promptLabel, {
+      allowEmpty: true,
+      fallback,
+      unavailableMessage: `Pass --${flag} <value>.`,
+    }),
+  );
 };
 
 const configuredPrivateKey = async (
@@ -257,47 +283,40 @@ const createOrUpdateRemotePlan = async (
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<Record<string, unknown>> => {
-  const agentId =
-    normalizeText(getFlag(args, "agent")) ||
-    (isHumanTerminal() ? await prompt("Agent id") : undefined);
-  const tokenName =
-    normalizeText(getFlag(args, "name")) ||
-    (isHumanTerminal() ? await prompt("Token name") : undefined);
-  const tokenSymbol =
-    normalizeText(getFlag(args, "symbol")) ||
-    (isHumanTerminal() ? await prompt("Token symbol") : undefined);
-  const minimumRaiseUsdc =
-    normalizeText(getFlag(args, "minimum-raise-usdc")) ||
-    (isHumanTerminal() ? await prompt("Minimum USDC raise") : undefined);
+  const prompts = createPromptBoundary(args);
+  const agentId = await promptedRequiredFlag(args, prompts, "agent", "Agent id", "Agent id", "<agent>");
+  const tokenName = await promptedRequiredFlag(args, prompts, "name", "Token name", "Token name", "<name>");
+  const tokenSymbol = await promptedRequiredFlag(args, prompts, "symbol", "Token symbol", "Token symbol", "<symbol>");
+  const minimumRaiseUsdc = await promptedRequiredFlag(
+    args,
+    prompts,
+    "minimum-raise-usdc",
+    "Minimum USDC raise",
+    "Minimum USDC raise",
+    "<amount>",
+  );
   const agentSafe =
-    normalizeText(getFlag(args, "agent-safe-address")) ||
-    (isHumanTerminal()
-      ? await prompt("Agent Safe (leave blank if you still need to create it)")
+    normalizeText(getFlag(args, "agent-safe-address")) ??
+    (prompts.inputAllowed
+      ? normalizeText(
+          await prompts.text("Agent Safe (leave blank if you still need to create it)", {
+            allowEmpty: true,
+            unavailableMessage:
+              "Agent Safe is required. Pass --agent-safe-address <safe>.",
+          }),
+        )
       : undefined);
-  const fallbackWallet =
-    normalizeText(getFlag(args, "fallback-operator-wallet")) ||
-    (isHumanTerminal()
-      ? await prompt("Fallback operator wallet (optional)")
-      : undefined);
-  const launchNotes =
-    normalizeText(getFlag(args, "launch-notes")) ||
-    (isHumanTerminal() ? await prompt("Launch notes (optional)") : undefined);
-  const title =
-    normalizeText(getFlag(args, "title")) ||
-    (isHumanTerminal()
-      ? await prompt("Hosted page title", tokenName)
-      : tokenName);
-  const subtitle =
-    normalizeText(getFlag(args, "subtitle")) ||
-    (isHumanTerminal()
-      ? await prompt("Hosted page subtitle", "CCA launch draft")
-      : undefined);
-  const description =
-    normalizeText(getFlag(args, "description")) ||
-    (isHumanTerminal() ? await prompt("Hosted page description") : undefined);
-  const websiteUrl =
-    normalizeText(getFlag(args, "website-url")) ||
-    (isHumanTerminal() ? await prompt("Website URL (optional)") : undefined);
+  const fallbackWallet = await promptedOptionalFlag(
+    args,
+    prompts,
+    "fallback-operator-wallet",
+    "Fallback operator wallet (optional)",
+  );
+  const launchNotes = await promptedOptionalFlag(args, prompts, "launch-notes", "Launch notes (optional)");
+  const title = await promptedOptionalFlag(args, prompts, "title", "Hosted page title", tokenName);
+  const subtitle = await promptedOptionalFlag(args, prompts, "subtitle", "Hosted page subtitle", "CCA launch draft");
+  const description = await promptedOptionalFlag(args, prompts, "description", "Hosted page description");
+  const websiteUrl = await promptedOptionalFlag(args, prompts, "website-url", "Website URL (optional)");
 
   const payload = {
     agent_id: requireArg(agentId, "agent"),
@@ -471,7 +490,7 @@ export async function runAutolaunchPrelaunchWizard(
   printJson(validation);
 }
 
-export async function runAutolaunchPrelaunchShow(
+export async function runAutolaunchPrelaunchGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {

@@ -32,20 +32,35 @@ command_groups:
     interface: runtime
     auth_mode: none
     output_envelope: operator-status-envelopes
+    agent_metadata:
+      category: local-control
+      prompt_behavior: never_prompt
+      json_support: supported
+      mutation_class: local-read-or-write
+      retry_behavior: safe_for_reads
+      pagination: bounded
+      async_behavior: synchronous
+      input_mode: args-and-flags
+      examples:
+        - regents status
+        - regents agent-context
+        - regents config get
+        - regents agent profile get
     commands:
       - init
       - status
       - whoami
       - balance
+      - agent-context
       - run
-      - config read
+      - config get
       - config write
       - create init
       - create wallet
       - agent init
       - agent status
       - agent profile list
-      - agent profile show
+      - agent profile get
       - agent harness list
       - gossipsub status
     flags:
@@ -58,6 +73,17 @@ command_groups:
     interface: runtime
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: wallet
+      prompt_behavior: prompt_when_creating_wallet
+      json_support: supported
+      mutation_class: local-read-or-write
+      retry_behavior: safe_for_status
+      pagination: none
+      async_behavior: synchronous
+      input_mode: flags
+      examples:
+        - regents wallet status
     commands:
       - wallet status
       - wallet setup
@@ -65,6 +91,18 @@ command_groups:
     interface: runtime
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: identity
+      prompt_behavior: prompt_when_signing
+      json_support: supported
+      mutation_class: local-read-or-write
+      retry_behavior: retry_after_user_action
+      pagination: none
+      async_behavior: synchronous
+      input_mode: flags
+      examples:
+        - regents identity status
+        - regents identity graph --json
     commands:
       - identity status
       - identity ensure
@@ -79,6 +117,18 @@ command_groups:
     interface: http
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: auth
+      prompt_behavior: prompt_when_signing
+      json_support: supported
+      mutation_class: session-write
+      retry_behavior: retry_after_user_action
+      pagination: none
+      async_behavior: synchronous
+      input_mode: flags
+      examples:
+        - regents auth status
+        - regents auth login --audience regent-services
     commands:
       - auth login
       - auth status
@@ -90,6 +140,17 @@ command_groups:
     interface: runtime
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: integration
+      prompt_behavior: never_prompt
+      json_support: supported
+      mutation_class: local-read
+      retry_behavior: safe
+      pagination: none
+      async_behavior: synchronous
+      input_mode: args
+      examples:
+        - regents mcp export hermes
     commands:
       - mcp export hermes
   - name: feynman
@@ -97,12 +158,35 @@ command_groups:
     auth_mode: none
     output_envelope: passthrough
     note: Launches the installed Feynman research shell from Regents CLI. Feynman keeps its own setup and sessions under its normal local folder.
+    agent_metadata:
+      category: local-tool
+      prompt_behavior: may_prompt
+      json_support: not_supported
+      mutation_class: local-process
+      retry_behavior: manual
+      pagination: none
+      async_behavior: interactive
+      input_mode: interactive
+      examples:
+        - regents feynman
     commands:
       - feynman
   - name: doctor
     interface: runtime
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: diagnostics
+      prompt_behavior: never_prompt
+      json_support: supported
+      mutation_class: local-read
+      retry_behavior: safe
+      pagination: none
+      async_behavior: synchronous
+      input_mode: args
+      examples:
+        - regents doctor
+        - regents doctor xmtp
     commands:
       - doctor
       - doctor runtime
@@ -118,6 +202,17 @@ command_groups:
     auth_audience: platform
     output_envelope: loose-object
     note: Ethereum mainnet only. The Regent ENS name must already be attached to the authenticated agent and already resolve to that wallet. This command prepares the reverse-name transaction by default and submits only with --submit.
+    agent_metadata:
+      category: identity
+      prompt_behavior: confirm_before_submit
+      json_support: supported
+      mutation_class: transaction_prepare_or_submit
+      retry_behavior: retry_prepare_only
+      pagination: none
+      async_behavior: synchronous
+      input_mode: flags
+      examples:
+        - regents ens set-primary --name example.eth
     commands:
       - ens set-primary
     flags:
@@ -132,9 +227,21 @@ command_groups:
     interface: runtime
     auth_mode: none
     output_envelope: loose-object
+    agent_metadata:
+      category: messaging
+      prompt_behavior: prompt_for_local_identity_changes
+      json_support: supported
+      mutation_class: local-and-network-write
+      retry_behavior: retry_idempotent_reads
+      pagination: bounded
+      async_behavior: synchronous
+      input_mode: args-and-flags
+      examples:
+        - regents xmtp status
+        - regents xmtp policy get
+        - regents xmtp group list
     commands:
       - xmtp init
-      - xmtp info
       - xmtp status
       - xmtp resolve
       - xmtp owner add
@@ -144,7 +251,7 @@ command_groups:
       - xmtp trusted list
       - xmtp trusted remove
       - xmtp policy init
-      - xmtp policy show
+      - xmtp policy get
       - xmtp policy validate
       - xmtp policy edit
       - xmtp doctor

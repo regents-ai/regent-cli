@@ -3,7 +3,7 @@ import {
   runWorkList,
   runWorkLocalLoop,
   runWorkRun,
-  runWorkShow,
+  runWorkGet,
   runWorkWatch,
 } from "../commands/work.js";
 import { route, type CliRoute } from "./shared.js";
@@ -21,8 +21,8 @@ export const workRoutes: readonly CliRoute[] = [
     await runWorkLocalLoop(parsedArgs);
     return 0;
   }),
-  route("work show", async ({ parsedArgs }) => {
-    await runWorkShow(parsedArgs);
+  route("work get", async ({ parsedArgs }) => {
+    await runWorkGet(parsedArgs);
     return 0;
   }, { variadicTail: true }),
   route("work run", async ({ parsedArgs }) => {

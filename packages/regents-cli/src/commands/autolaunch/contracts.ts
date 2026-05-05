@@ -152,14 +152,14 @@ export async function runAutolaunchVestingExecuteBeneficiaryRotation(
   await postPrepareJobAction(args, "vesting", "execute_beneficiary_rotation", {}, configPath);
 }
 
-export async function runAutolaunchFeeRegistryShow(
+export async function runAutolaunchFeeRegistryGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
   await runAutolaunchContractsJobShow(args, configPath);
 }
 
-export async function runAutolaunchFeeVaultShow(
+export async function runAutolaunchFeeVaultGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
@@ -186,7 +186,7 @@ export async function runAutolaunchFeeVaultWithdrawRegent(
   }, configPath);
 }
 
-export async function runAutolaunchSplitterShow(
+export async function runAutolaunchSplitterGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
@@ -368,7 +368,7 @@ export async function runAutolaunchIngressRescue(
   }, configPath);
 }
 
-export async function runAutolaunchRegistryShow(
+export async function runAutolaunchRegistryGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {

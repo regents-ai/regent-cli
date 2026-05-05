@@ -5,7 +5,7 @@ import {
   type ParsedCliArgs,
 } from "../../parse.js";
 import { printJson } from "../../printer.js";
-import { confirmStakeReceiver, stakeBody, stakeReceiverFlag } from "../stake-receiver.js";
+import { stakeBody, stakeReceiverFlag } from "../stake-receiver.js";
 import {
   type JsonObject,
   requestJson,
@@ -61,7 +61,7 @@ const prepareOrSubmitWrite = async (
 const requireHoldingSubjectId = (args: ParsedCliArgs): string =>
   requirePositional(args, 3, "subject-id");
 
-export async function runAutolaunchSubjectShow(
+export async function runAutolaunchSubjectGet(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
@@ -95,9 +95,6 @@ export async function runAutolaunchSubjectStake(
   const subjectId = requirePositional(args, 3, "subject-id");
   const amount = requireArg(getFlag(args, "amount"), "amount");
   const receiver = stakeReceiverFlag(args);
-  if (receiver) {
-    await confirmStakeReceiver(amount, "this subject token", receiver);
-  }
 
   await prepareOrSubmitWrite(
     "POST",
@@ -187,9 +184,6 @@ export async function runAutolaunchHoldingsStake(
   const subjectId = requireHoldingSubjectId(args);
   const amount = requireArg(getFlag(args, "amount"), "amount");
   const receiver = stakeReceiverFlag(args);
-  if (receiver) {
-    await confirmStakeReceiver(amount, "this subject token", receiver);
-  }
 
   await prepareOrSubmitWrite(
     "POST",

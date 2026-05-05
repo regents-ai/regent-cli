@@ -131,7 +131,7 @@ const expectedLoop = [
     pathTemplate: "/v1/agent/subjects/{id}",
     method: "get",
     operationId: "agentGetSubject",
-    command: "autolaunch subjects show",
+    command: "autolaunch subjects get",
   },
   {
     owner: "platform",
@@ -139,7 +139,7 @@ const expectedLoop = [
     pathTemplate: "/v1/agent/regent/staking",
     method: "get",
     operationId: "getAgentRegentStakingOverview",
-    command: "regent-staking show",
+    command: "regent-staking get",
   },
 ] as const;
 
@@ -217,8 +217,8 @@ const samplePayloads = {
       "platform formation doctor",
       "platform projection",
       "techtree main fetch",
-      "autolaunch subjects show",
-      "regent-staking show",
+      "autolaunch subjects get",
+      "regent-staking get",
     ],
   },
 } as const;

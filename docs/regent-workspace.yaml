@@ -428,7 +428,7 @@ incident_classes:
     requires_reconciliation_job: true
   - id: staking_claims
     owner_repo: platform
-    recovery_command: regents regent-staking show
+    recovery_command: regents regent-staking get
     requires_reconciliation_job: true
   - id: paid_payload_entitlement
     owner_repo: techtree

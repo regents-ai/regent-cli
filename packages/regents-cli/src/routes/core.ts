@@ -2,10 +2,11 @@ import {
   runAgentHarnessList,
   runAgentInit,
   runAgentProfileList,
-  runAgentProfileShow,
+  runAgentProfileGet,
   runAgentStatus,
 } from "../commands/agent.js";
-import { runConfigRead, runConfigWrite } from "../commands/config.js";
+import { runAgentContext } from "../commands/agent-context.js";
+import { runConfigGet, runConfigWrite } from "../commands/config.js";
 import { runCreateInit, runCreateWallet } from "../commands/create.js";
 import { runDoctorCommand, runDoctorContractsCommand, runDoctorWorkspaceCommand } from "../commands/doctor.js";
 import { runGossipsubStatus } from "../commands/gossipsub.js";
@@ -25,6 +26,10 @@ export const coreRoutes: readonly CliRoute[] = [
   route("status", async ({ parsedArgs, configPath }) => runOperatorStatus(parsedArgs, configPath)),
   route("whoami", async ({ parsedArgs, configPath }) => runOperatorWhoami(parsedArgs, configPath)),
   route("balance", async ({ parsedArgs, configPath }) => runOperatorBalance(parsedArgs, configPath)),
+  route("agent-context", async ({ configPath }) => {
+    await runAgentContext(configPath);
+    return 0;
+  }),
   route("search", async ({ parsedArgs, configPath }) => runOperatorSearch(parsedArgs, configPath), { variadicTail: true }),
   route("run", async ({ configPath }) => {
     await runRuntime(configPath);
@@ -38,8 +43,8 @@ export const coreRoutes: readonly CliRoute[] = [
     await runCreateWallet(parsedArgs);
     return 0;
   }),
-  route("config read", async ({ parsedArgs }) => {
-    await runConfigRead(parsedArgs);
+  route("config get", async ({ parsedArgs }) => {
+    await runConfigGet(parsedArgs);
     return 0;
   }),
   route("config write", async ({ parsedArgs }) => {
@@ -70,8 +75,8 @@ export const coreRoutes: readonly CliRoute[] = [
     await runAgentProfileList(configPath);
     return 0;
   }),
-  route("agent profile show", async ({ parsedArgs, configPath }) => {
-    await runAgentProfileShow(parsedArgs, configPath);
+  route("agent profile get", async ({ parsedArgs, configPath }) => {
+    await runAgentProfileGet(parsedArgs, configPath);
     return 0;
   }),
   route("agent harness list", async ({ configPath }) => {

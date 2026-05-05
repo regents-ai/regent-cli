@@ -23,7 +23,7 @@ export async function runAgentProfileList(configPath?: string): Promise<void> {
   await callAgent("agent.profile.list", undefined, configPath);
 }
 
-export async function runAgentProfileShow(args: readonly string[] | ParsedCliArgs, configPath?: string): Promise<void> {
+export async function runAgentProfileGet(args: readonly string[] | ParsedCliArgs, configPath?: string): Promise<void> {
   await callAgent(
     "agent.profile.show",
     {

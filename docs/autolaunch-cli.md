@@ -56,7 +56,7 @@ The CLI pairs with the current Autolaunch site:
 - live Regent staking status through `regents regent-staking ...`
 - cleaner subject pages for staking, claims, revenue, ingress, and next actions
 - a unified action panel pattern for wallet actions and prepared operator actions
-- Dragonfly-backed hot reads for subject revenue and wallet position state
+- local Cachex hot reads for subject revenue and wallet position state
 
 ## Environment
 
@@ -172,7 +172,7 @@ regents autolaunch prelaunch wizard \
   [--website-url <url>] \
   [--image-url <url> | --image-file <path>]
 
-regents autolaunch prelaunch show [--plan <id>]
+regents autolaunch prelaunch get [--plan <id>]
 regents autolaunch prelaunch validate [--plan <id>]
 regents autolaunch prelaunch publish [--plan <id>]
 ```
@@ -214,7 +214,7 @@ Everything below is advanced or later-lifecycle tooling. Treat the guided lifecy
 Use it when Regent income has already reached Base USDC:
 
 ```bash
-regents regent-staking show
+regents regent-staking get
 regents regent-staking account <wallet-address>
 regents regent-staking stake --amount <regent-amount> [--receiver <0xaddress>]
 regents regent-staking unstake --amount <regent-amount>
@@ -241,7 +241,7 @@ For read surfaces, trust data now lives under the nested `trust` object:
 
 - auction list items use `item.trust.erc8004`, `item.trust.ens`, `item.trust.world`, and `item.trust.x`
 - single auction detail uses `auction.trust.erc8004`, `auction.trust.ens`, `auction.trust.world`, and `auction.trust.x`
-- direct agent trust reads use `GET /v1/agent/trust/agents/{id}`
+- agent detail and readiness responses include trust fields when available
 
 ### Low-level launches
 
@@ -344,7 +344,7 @@ regents autolaunch bids claim <bid-id> --tx-hash <hash> [--json]
 ### Subjects
 
 ```bash
-regents autolaunch subjects show <subject-id> [--json]
+regents autolaunch subjects get <subject-id> [--json]
 regents autolaunch subjects ingress <subject-id> [--json]
 regents autolaunch subjects stake <subject-id> --amount <token-amount> [--receiver <0xaddress>] [--json]
 regents autolaunch subjects unstake <subject-id> --amount <token-amount> [--json]
@@ -372,12 +372,12 @@ regents autolaunch strategy sweep-token --job <job-id> [--json]
 regents autolaunch strategy sweep-currency --job <job-id> [--json]
 regents autolaunch vesting release --job <job-id> [--json]
 
-regents autolaunch fee-registry show --job <job-id> [--json]
+regents autolaunch fee-registry get --job <job-id> [--json]
 
-regents autolaunch fee-vault show --job <job-id> [--json]
+regents autolaunch fee-vault get --job <job-id> [--json]
 regents autolaunch fee-vault withdraw-regent --job <job-id> --currency <address> --amount <raw-units> --recipient <address> [--json]
 
-regents autolaunch splitter show --subject <subject-id> [--json]
+regents autolaunch splitter get --subject <subject-id> [--json]
 regents autolaunch splitter pull-treasury-share --job <job-id> --amount <raw-units> [--json]
 regents autolaunch splitter set-paused --subject <subject-id> --paused true|false [--json]
 regents autolaunch splitter set-label --subject <subject-id> --label <text> [--json]
@@ -394,7 +394,7 @@ regents autolaunch ingress set-default --subject <subject-id> --address <ingress
 regents autolaunch ingress set-label --subject <subject-id> --address <ingress-address> --label <text> [--json]
 regents autolaunch ingress rescue --subject <subject-id> --address <ingress-address> --token <address> --amount <raw-units> --recipient <address> [--json]
 
-regents autolaunch registry show --subject <subject-id> [--json]
+regents autolaunch registry get --subject <subject-id> [--json]
 regents autolaunch registry set-subject-manager --subject <subject-id> --account <address> --enabled true|false [--json]
 regents autolaunch registry link-identity --subject <subject-id> --identity-chain-id <id> --identity-registry <address> --identity-agent-id <id> [--json]
 regents autolaunch registry rotate-safe --subject <subject-id> --new-safe <address> [--json]

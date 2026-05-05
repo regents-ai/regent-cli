@@ -60,7 +60,7 @@ export function renderUsageScreen(configPath: string): string {
       "regents create init",
       "regents create wallet",
       "regents doctor",
-      "regents config read",
+      "regents config get",
       "regents config write",
     ]),
     renderPanel("◆ IDENTITY + SETUP", [

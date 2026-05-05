@@ -160,15 +160,6 @@ export async function runXmtpInit(args: ParsedCliArgs, configPath?: string): Pro
   return 0;
 }
 
-export async function runXmtpInfo(configPath?: string): Promise<void> {
-  const { resolvedConfigPath, config } = loadResolvedConfig(configPath);
-
-  printJson({
-    config: config.xmtp,
-    status: await resolveStatus(resolvedConfigPath),
-  });
-}
-
 export async function runXmtpStatus(configPath?: string): Promise<void> {
   printJson(await resolveStatus(configPath));
 }
@@ -223,7 +214,7 @@ export async function runXmtpPolicyEdit(configPath?: string): Promise<void> {
   printJson(openXmtpPolicyInEditor(config.xmtp));
 }
 
-export async function runXmtpPolicyShow(configPath?: string): Promise<void> {
+export async function runXmtpPolicyGet(configPath?: string): Promise<void> {
   const { config } = loadResolvedConfig(configPath);
   printJson(showXmtpPolicy(config.xmtp));
 }

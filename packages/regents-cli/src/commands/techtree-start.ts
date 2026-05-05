@@ -1,7 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
-import readline from "node:readline/promises";
 
 import type { AuthStatusResponse, DoctorReport, RegentConfig } from "../internal-types/index.js";
 
@@ -14,7 +13,7 @@ import {
   writeInitialConfigIfMissing,
 } from "../internal-runtime/index.js";
 import { getBooleanFlag, getFlag, type ParsedCliArgs, parseCliArgs } from "../parse.js";
-import { CLI_PALETTE, isHumanTerminal, printText, renderPanel, tone } from "../printer.js";
+import { CLI_PALETTE, printText, renderPanel, tone } from "../printer.js";
 import { renderDoctorReport } from "../printers/doctorPrinter.js";
 import {
   listTechtreeIdentities,
@@ -22,6 +21,7 @@ import {
   type TechtreeIdentityListResult as IdentityListResult,
   type TechtreeIdentityMintResult as IdentityMintResult,
 } from "./techtree-identities.js";
+import { createPromptBoundary, type PromptBoundary } from "../terminal/prompts.js";
 
 type WizardStep =
   | "config"
@@ -69,9 +69,7 @@ interface StartWizardDeps {
   readonly bbhProbe: (configPath?: string) => Promise<unknown>;
   readonly printText: typeof printText;
   readonly renderDoctorReport: typeof renderDoctorReport;
-  readonly isHumanTerminal: typeof isHumanTerminal;
-  readonly promptConfirm: (message: string) => Promise<boolean>;
-  readonly promptChoice: (message: string, options: readonly string[]) => Promise<number>;
+  readonly promptBoundary: (args: ParsedCliArgs) => PromptBoundary;
   readonly wait: (ms: number) => Promise<void>;
   readonly spawnDetachedRuntime: (configPath?: string) => Promise<void>;
 }
@@ -102,39 +100,6 @@ const withDefaultBaseSepoliaChain = (args: ParsedCliArgs): ParsedCliArgs => {
   }
 
   return parseCliArgs([...args.raw, "--chain", "base-sepolia"]);
-};
-
-const promptConfirm = async (message: string): Promise<boolean> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  try {
-    const answer = (await rl.question(`${message} [y/N] `)).trim().toLowerCase();
-    return answer === "y" || answer === "yes";
-  } finally {
-    rl.close();
-  }
-};
-
-const promptChoice = async (message: string, options: readonly string[]): Promise<number> => {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  try {
-    while (true) {
-      const choice = (await rl.question(`${message} [1-${options.length}] `)).trim();
-      const index = Number.parseInt(choice, 10);
-      if (Number.isSafeInteger(index) && index >= 1 && index <= options.length) {
-        return index - 1;
-      }
-    }
-  } finally {
-    rl.close();
-  }
 };
 
 const spawnDetachedRuntime = async (configPath?: string): Promise<void> => {
@@ -192,9 +157,7 @@ export const startWizardDeps: StartWizardDeps = {
   bbhProbe: defaultBbhProbe,
   printText,
   renderDoctorReport,
-  isHumanTerminal,
-  promptConfirm,
-  promptChoice,
+  promptBoundary: createPromptBoundary,
   wait: sleep,
   spawnDetachedRuntime,
 };
@@ -299,15 +262,22 @@ const chooseIdentity = async (
     (identity) => `${identity.name} · ${identity.access_mode} · token ${identity.token_id}`,
   );
 
-  if (!startWizardDeps.isHumanTerminal()) {
-    return {
-      registryAddress: identities.launchable[0].registry_address,
-      tokenId: identities.launchable[0].token_id,
-    };
+  const prompts = startWizardDeps.promptBoundary(args);
+  if (!prompts.inputAllowed) {
+    throw new Error(
+      "Multiple Techtree identities are available. Pass --registry-address <address> and --token-id <token>.",
+    );
   }
 
   startWizardDeps.printText(stepPanel("◆ IDENTITY PICK", choices.map((choice, index) => `${index + 1}. ${choice}`)));
-  const selected = await startWizardDeps.promptChoice("Choose the Techtree identity to use for this machine", choices);
+  const selected = await prompts.choice(
+    "Choose the Techtree identity to use for this machine",
+    choices,
+    {
+      unavailableMessage:
+        "Multiple Techtree identities are available. Pass --registry-address <address> and --token-id <token>.",
+    },
+  );
   const identity = identities.launchable[selected];
   return {
     registryAddress: identity.registry_address,
@@ -353,7 +323,8 @@ const ensureIdentity = async (
   const wantsMintFlag = getBooleanFlag(args, "mint") || getBooleanFlag(args, "yes");
   let shouldMint = wantsMintFlag;
   if (!shouldMint) {
-    if (!startWizardDeps.isHumanTerminal()) {
+    const prompts = startWizardDeps.promptBoundary(args);
+    if (!prompts.inputAllowed) {
       startWizardDeps.printText(blockerPanel("identity", "No Techtree agent identity was found.", [
         "This guided start can mint one, but only with explicit confirmation.",
         "Rerun with `--mint` after confirming the wallet has Base Sepolia ETH.",
@@ -361,8 +332,12 @@ const ensureIdentity = async (
       return null;
     }
 
-    shouldMint = await startWizardDeps.promptConfirm(
+    shouldMint = await prompts.confirm(
       "No Techtree identity is ready. Mint a new Base Sepolia ERC-8004 identity now so the guided start can continue?",
+      {
+        unavailableMessage:
+          "No Techtree agent identity was found. Pass --mint to mint one after confirming the wallet has Base Sepolia ETH.",
+      },
     );
   }
 

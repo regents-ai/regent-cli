@@ -22,8 +22,8 @@ import {
   runAutolaunchEnsPrepareBidirectional,
   runAutolaunchEnsPrepareErc8004,
   runAutolaunchEnsPrepareEnsip25,
-  runAutolaunchFeeRegistryShow,
-  runAutolaunchFeeVaultShow,
+  runAutolaunchFeeRegistryGet,
+  runAutolaunchFeeVaultGet,
   runAutolaunchFeeVaultWithdrawRegent,
   runAutolaunchIdentitiesList,
   runAutolaunchIdentitiesMint,
@@ -40,13 +40,13 @@ import {
   runAutolaunchSafeCreate,
   runAutolaunchSafeWizard,
   runAutolaunchPrelaunchPublish,
-  runAutolaunchPrelaunchShow,
+  runAutolaunchPrelaunchGet,
   runAutolaunchPrelaunchValidate,
   runAutolaunchPrelaunchWizard,
   runAutolaunchRegistryLinkIdentity,
   runAutolaunchRegistryRotateSafe,
   runAutolaunchRegistrySetSubjectManager,
-  runAutolaunchRegistryShow,
+  runAutolaunchRegistryGet,
   runAutolaunchRevenueIngressFactorySetAuthorizedCreator,
   runAutolaunchRevenueShareFactorySetAuthorizedCreator,
   runAutolaunchSplitterAcceptOwnership,
@@ -64,7 +64,7 @@ import {
   runAutolaunchSplitterSweepProtocolReserve,
   runAutolaunchSplitterSweepTreasuryReserved,
   runAutolaunchSplitterSweepTreasuryResidual,
-  runAutolaunchSplitterShow,
+  runAutolaunchSplitterGet,
   runAutolaunchStrategyMigrate,
   runAutolaunchStrategySweepCurrency,
   runAutolaunchStrategySweepToken,
@@ -72,7 +72,7 @@ import {
   runAutolaunchSubjectClaimAndStakeEmissions,
   runAutolaunchSubjectClaimEmissions,
   runAutolaunchSubjectIngress,
-  runAutolaunchSubjectShow,
+  runAutolaunchSubjectGet,
   runAutolaunchSubjectStake,
   runAutolaunchSubjectSweepIngress,
   runAutolaunchSubjectUnstake,
@@ -162,8 +162,8 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchSafeCreate(parsedArgs, configPath);
     return 0;
   }),
-  route("autolaunch prelaunch show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchPrelaunchShow(parsedArgs, configPath);
+  route("autolaunch prelaunch get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchPrelaunchGet(parsedArgs, configPath);
     return 0;
   }),
   route("autolaunch prelaunch validate", async ({ parsedArgs, configPath }) => {
@@ -198,10 +198,10 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchJobsWatch(parsedArgs, configPath);
     return 0;
   }, { variadicTail: true }),
-  route("autolaunch subjects show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchSubjectShow(parsedArgs, configPath);
+  route("autolaunch subjects get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectGet(parsedArgs, configPath);
     return 0;
-  }, { pattern: "autolaunch subjects show <subject-id>" }),
+  }, { pattern: "autolaunch subjects get <subject-id>" }),
   route("autolaunch subjects ingress", async ({ parsedArgs, configPath }) => {
     await runAutolaunchSubjectIngress(parsedArgs, configPath);
     return 0;
@@ -298,20 +298,20 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchVestingStatus(parsedArgs, configPath);
     return 0;
   }),
-  route("autolaunch fee-registry show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchFeeRegistryShow(parsedArgs, configPath);
+  route("autolaunch fee-registry get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchFeeRegistryGet(parsedArgs, configPath);
     return 0;
   }),
-  route("autolaunch fee-vault show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchFeeVaultShow(parsedArgs, configPath);
+  route("autolaunch fee-vault get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchFeeVaultGet(parsedArgs, configPath);
     return 0;
   }),
   route("autolaunch fee-vault withdraw-regent", async ({ parsedArgs, configPath }) => {
     await runAutolaunchFeeVaultWithdrawRegent(parsedArgs, configPath);
     return 0;
   }),
-  route("autolaunch splitter show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchSplitterShow(parsedArgs, configPath);
+  route("autolaunch splitter get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSplitterGet(parsedArgs, configPath);
     return 0;
   }),
   route("autolaunch splitter accept-ownership", async ({ parsedArgs, configPath }) => {
@@ -390,8 +390,8 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchIngressRescue(parsedArgs, configPath);
     return 0;
   }),
-  route("autolaunch registry show", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchRegistryShow(parsedArgs, configPath);
+  route("autolaunch registry get", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchRegistryGet(parsedArgs, configPath);
     return 0;
   }),
   route("autolaunch registry set-subject-manager", async ({ parsedArgs, configPath }) => {

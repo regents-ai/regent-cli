@@ -4,7 +4,7 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { runConfigRead, runConfigWrite } from "../../src/commands/config.js";
+import { runConfigGet, runConfigWrite } from "../../src/commands/config.js";
 import { parseCliArgs } from "../../src/parse.js";
 import { captureOutput, parsePrintedJson } from "../helpers/output.js";
 
@@ -25,7 +25,7 @@ describe("config commands", () => {
       "utf8",
     );
 
-    const { stdout } = await captureOutput(() => runConfigRead(parseCliArgs(["--config", configPath])));
+    const { stdout } = await captureOutput(() => runConfigGet(parseCliArgs(["--config", configPath])));
     const printed = parsePrintedJson<{
       runtime: { socketPath: string; stateDir: string; logLevel: string };
       auth: { audience: string; defaultChainId: number };

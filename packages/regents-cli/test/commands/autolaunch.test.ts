@@ -662,7 +662,7 @@ describe("autolaunch CLI command group", () => {
       runCliEntrypoint([
         "autolaunch",
         "subjects",
-        "show",
+        "get",
         "0xabc",
         "--config",
         configPath,
@@ -772,7 +772,7 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("prepares a subject stake with a confirmed receiver", async () => {
+  it("prepares a subject stake with a receiver without prompting", async () => {
     const configPath = createConfigPath();
     const receiver = "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
     fetchMock.mockResolvedValue(
@@ -813,9 +813,7 @@ describe("autolaunch CLI command group", () => {
       amount: "2",
       receiver,
     });
-    expect(questionMock).toHaveBeenCalledWith(
-      `If you confirm this command it will stake 2 of this subject token for the address ${receiver}. Only that address will be able to withdraw the stake, do you confirm? y / n `,
-    );
+    expect(questionMock).not.toHaveBeenCalled();
   });
 
   it("submits a holdings claim from the nested prepared action", async () => {
@@ -1497,6 +1495,25 @@ describe("autolaunch CLI command group", () => {
     ).toMatchObject({
       validation: { launchable: true },
     });
+  });
+
+  it("fails prelaunch wizard input clearly when prompts are disabled", async () => {
+    const configPath = createConfigPath();
+
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "prelaunch",
+        "wizard",
+        "--config",
+        configPath,
+        "--no-input",
+      ]),
+    );
+
+    expect(output.result).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(output.stderr).toContain("Pass --agent <agent>.");
   });
 
   it("guides Safe setup and lets the operator wait for the website wallet", async () => {

@@ -3,15 +3,15 @@ import {
   runRegentStakingClaimAndRestakeRegent,
   runRegentStakingClaimRegent,
   runRegentStakingClaimUsdc,
-  runRegentStakingShow,
+  runRegentStakingGet,
   runRegentStakingStake,
   runRegentStakingUnstake,
 } from "../commands/regent-staking.js";
 import { route, type CliRoute } from "./shared.js";
 
 export const regentStakingRoutes: readonly CliRoute[] = [
-  route("regent-staking show", async ({ configPath }) => {
-    await runRegentStakingShow(configPath);
+  route("regent-staking get", async ({ configPath }) => {
+    await runRegentStakingGet(configPath);
     return 0;
   }),
   route("regent-staking account", async ({ parsedArgs, configPath }) => {

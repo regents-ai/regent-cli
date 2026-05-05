@@ -45,7 +45,7 @@ Test levels used here:
 - `regents techtree opportunities`
 - `regents create init`
 - `regents create wallet`
-- `regents config read`
+- `regents config get`
 - `regents config write`
 - daemon restart with persisted session/state
 

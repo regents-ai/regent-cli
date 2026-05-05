@@ -13,14 +13,13 @@ import {
   runXmtpGroupRemoveSuperAdmin,
   runXmtpGroupSuperAdmins,
   runXmtpGroupUpdatePermission,
-  runXmtpInfo,
   runXmtpInit,
   runXmtpOwnerAdd,
   runXmtpOwnerList,
   runXmtpOwnerRemove,
   runXmtpPolicyEdit,
   runXmtpPolicyInit,
-  runXmtpPolicyShow,
+  runXmtpPolicyGet,
   runXmtpPolicyValidate,
   runXmtpRevokeOtherInstallations,
   runXmtpResolve,
@@ -36,10 +35,6 @@ import { route, type CliRoute } from "./shared.js";
 
 export const xmtpRoutes: readonly CliRoute[] = [
   route("xmtp init", async ({ parsedArgs, configPath }) => runXmtpInit(parsedArgs, configPath)),
-  route("xmtp info", async ({ configPath }) => {
-    await runXmtpInfo(configPath);
-    return 0;
-  }),
   route("xmtp status", async ({ configPath }) => {
     await runXmtpStatus(configPath);
     return 0;
@@ -76,8 +71,8 @@ export const xmtpRoutes: readonly CliRoute[] = [
     await runXmtpPolicyInit(configPath);
     return 0;
   }),
-  route("xmtp policy show", async ({ configPath }) => {
-    await runXmtpPolicyShow(configPath);
+  route("xmtp policy get", async ({ configPath }) => {
+    await runXmtpPolicyGet(configPath);
     return 0;
   }),
   route("xmtp policy validate", async ({ configPath }) => runXmtpPolicyValidate(configPath)),

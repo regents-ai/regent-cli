@@ -100,6 +100,126 @@ const platformPublicCommand = (command) =>
   command === "security-report" ||
   command.startsWith("regent-staking ");
 
+const bannedCommandVerbs = new Set(["show", "info", "read"]);
+const paginatedCommandWords = new Set([
+  "activity",
+  "history",
+  "inbox",
+  "list",
+  "opportunities",
+  "search",
+]);
+const dataCommandWords = new Set([
+  "account",
+  "activity",
+  "admins",
+  "balance",
+  "capsules",
+  "certificate",
+  "children",
+  "comments",
+  "cross-chain-links",
+  "doctor",
+  "get",
+  "graph",
+  "health",
+  "history",
+  "inbox",
+  "leaderboard",
+  "lineage",
+  "list",
+  "lookup",
+  "members",
+  "opportunities",
+  "permissions",
+  "policy",
+  "projection",
+  "reliability",
+  "scoreboard",
+  "services",
+  "status",
+  "super-admins",
+  "verify",
+  "whoami",
+  "work-packet",
+]);
+const jsonSupportValues = new Set(["supported", "required", "auto"]);
+const paginationValues = new Set(["bounded", "cursor", "offset", "stream", "none", "not_applicable"]);
+
+const commandWords = (command) =>
+  command
+    .split(/\s+/u)
+    .filter((part) => part && !part.startsWith("<"));
+
+const metadataValue = (metadata, key) =>
+  metadata && typeof metadata === "object" && typeof metadata[key] === "string"
+    ? metadata[key]
+    : undefined;
+
+const hasExamples = (metadata, group) =>
+  (Array.isArray(metadata?.examples) && metadata.examples.length > 0) ||
+  (Array.isArray(group?.examples) && group.examples.length > 0);
+
+const isPaginationDeclared = (metadata) => {
+  const pagination = metadataValue(metadata, "pagination");
+  if (!pagination) {
+    return false;
+  }
+
+  return paginationValues.has(pagination) || pagination.startsWith("bounded");
+};
+
+const declaresJsonSupport = (metadata) => {
+  const jsonSupport = metadataValue(metadata, "json_support");
+  return Boolean(jsonSupport && jsonSupportValues.has(jsonSupport));
+};
+
+const commandHasWord = (command, words) => commandWords(command).some((word) => words.has(word));
+
+const agentMetadataForCommand = (contract, group, command) => {
+  if (group?.agent_metadata && typeof group.agent_metadata === "object") {
+    const commandMetadata = group.agent_metadata.commands?.[command];
+    if (commandMetadata && typeof commandMetadata === "object") {
+      const { commands: _commands, ...defaults } = group.agent_metadata;
+      return { ...defaults, ...commandMetadata };
+    }
+
+    return group.agent_metadata;
+  }
+
+  if (contract?.["x-regent-agent-defaults"] && typeof contract["x-regent-agent-defaults"] === "object") {
+    return contract["x-regent-agent-defaults"];
+  }
+
+  return undefined;
+};
+
+const iterContractCommandRecords = (owner, contract) => {
+  if (Array.isArray(contract.commands)) {
+    return contract.commands
+      .filter((command) => command && typeof command === "object" && typeof command.name === "string")
+      .map((command) => ({
+        owner,
+        command: normalizeCommandName(command.name),
+        availability: typeof command.availability === "string" ? command.availability : "current",
+        group: undefined,
+        metadata: command.agent_metadata ?? contract["x-regent-agent-defaults"],
+        examples: command.examples,
+      }));
+  }
+
+  return (contract.command_groups ?? []).flatMap((group) =>
+    (group.commands ?? []).map((command) => ({
+      owner,
+      command: normalizeCommandName(command),
+      availability: "current",
+      group,
+      metadata: agentMetadataForCommand(contract, group, normalizeCommandName(command)),
+      examples: group.examples,
+    })),
+  );
+};
+
 const flattenContract = (contract, operationPaths) => {
   if (Array.isArray(contract.commands)) {
     const commands = new Set();
@@ -203,6 +323,10 @@ const flattenOwnershipGroups = (groups) => ({
   paths: new Set(groups.flatMap((group) => group.pathTemplates)),
 });
 
+const ownershipByOwner = Object.fromEntries(
+  Object.entries(expectedByOwner).map(([owner, groups]) => [owner, flattenOwnershipGroups(groups)]),
+);
+
 const contracts = Object.fromEntries(
   Object.entries(cliContractFiles).map(([owner, file]) => [owner, parseYaml(file)]),
 );
@@ -217,6 +341,56 @@ const flattenedContracts = Object.fromEntries(
     flattenContract(contract, operationPathsByOwner[owner]),
   ]),
 );
+
+const contractCommandRecords = Object.entries(contracts).flatMap(([owner, contract]) =>
+  iterContractCommandRecords(owner, contract).filter((record) => {
+    if (owner !== "platform") {
+      return true;
+    }
+
+    return platformPublicCommand(record.command) && currentAvailabilityValues.has(record.availability);
+  }),
+);
+
+for (const record of contractCommandRecords) {
+  const words = commandWords(record.command);
+  const bannedVerb = words.find((word) => bannedCommandVerbs.has(word));
+  if (bannedVerb) {
+    fail(`CLI contract command uses banned verb "${bannedVerb}": ${record.command}`);
+  }
+
+  if (!record.metadata || typeof record.metadata !== "object") {
+    fail(`CLI contract command is missing agent metadata: ${record.command}`);
+    continue;
+  }
+
+  if (!hasExamples(record.metadata, record.group) && !(Array.isArray(record.examples) && record.examples.length > 0)) {
+    fail(`CLI contract command is missing examples: ${record.command}`);
+  }
+
+  for (const key of [
+    "category",
+    "prompt_behavior",
+    "json_support",
+    "mutation_class",
+    "retry_behavior",
+    "pagination",
+    "async_behavior",
+    "input_mode",
+  ]) {
+    if (!metadataValue(record.metadata, key)) {
+      fail(`CLI contract command metadata is missing ${key}: ${record.command}`);
+    }
+  }
+
+  if (commandHasWord(record.command, paginatedCommandWords) && !isPaginationDeclared(record.metadata)) {
+    fail(`CLI contract command needs pagination metadata: ${record.command}`);
+  }
+
+  if (commandHasWord(record.command, dataCommandWords) && !declaresJsonSupport(record.metadata)) {
+    fail(`CLI contract data command must declare JSON support: ${record.command}`);
+  }
+}
 
 for (const [command, availability] of flattenedContracts.platform.availabilityByCommand) {
   if (platformPublicCommand(command) && !currentAvailabilityValues.has(availability)) {
@@ -283,15 +457,47 @@ for (const [owner, groups] of Object.entries(expectedByOwner)) {
   }
 }
 
-const techtreeOwnership = flattenOwnershipGroups(expectedByOwner.techtree);
 for (const command of flattenedContracts.techtree.commands) {
-  if (!techtreeOwnership.commands.has(command)) {
+  if (!ownershipByOwner.techtree.commands.has(command)) {
     fail(`Techtree API ownership registry is missing CLI contract command: ${command}`);
   }
 }
 for (const path of flattenedContracts.techtree.paths) {
-  if (!techtreeOwnership.paths.has(path)) {
+  if (!ownershipByOwner.techtree.paths.has(path)) {
     fail(`Techtree API ownership registry is missing CLI contract path binding: ${path}`);
+  }
+}
+
+const platformApiBackedCommands = (contracts.platform.commands ?? [])
+  .filter((command) => {
+    if (!command || typeof command !== "object" || typeof command.name !== "string") {
+      return false;
+    }
+    if (!platformPublicCommand(normalizeCommandName(command.name))) {
+      return false;
+    }
+    if (!currentAvailabilityValues.has(typeof command.availability === "string" ? command.availability : "current")) {
+      return false;
+    }
+    if (command.transport?.kind === "beta-disabled") {
+      return false;
+    }
+
+    return Array.isArray(command.transport?.operationIds) && command.transport.operationIds.length > 0;
+  })
+  .map((command) => normalizeCommandName(command.name));
+
+for (const command of platformApiBackedCommands) {
+  if (!ownershipByOwner.platform.commands.has(command)) {
+    fail(`Platform API ownership registry is missing API-backed CLI contract command: ${command}`);
+  }
+}
+
+for (const owner of ["platform", "autolaunch"]) {
+  for (const path of flattenedContracts[owner].paths) {
+    if (!ownershipByOwner[owner].paths.has(path)) {
+      fail(`${owner} API ownership registry is missing CLI contract path binding: ${path}`);
+    }
   }
 }
 

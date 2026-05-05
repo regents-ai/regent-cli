@@ -61,7 +61,7 @@ money_movement:
 incident_classes:
   - id: staking_claims
     owner_repo: shared-services
-    recovery_command: regents regent-staking show
+    recovery_command: regents regent-staking get
     requires_reconciliation_job: true
 `);
     const report = buildContractDoctorReport(undefined, { manifestPath });

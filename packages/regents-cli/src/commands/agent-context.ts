@@ -1,0 +1,147 @@
+import fs from "node:fs";
+import path from "node:path";
+
+import {
+  CLI_COMMANDS,
+  CLI_COMMANDS_BY_TOP_LEVEL_GROUP,
+  CLI_COMMAND_DETAILS_BY_COMMAND,
+} from "../generated/cli-command-metadata.js";
+import type { RegentConfig } from "../internal-types/index.js";
+import { loadConfig } from "../internal-runtime/config.js";
+import { defaultConfigPath, expandHome } from "../internal-runtime/paths.js";
+
+interface PackageMetadata {
+  readonly name: string;
+  readonly version: string;
+}
+
+interface AgentContextPayload {
+  readonly schema_version: string;
+  readonly package: PackageMetadata;
+  readonly command_count: number;
+  readonly command_groups: Readonly<Record<string, readonly string[]>>;
+  readonly commands: Readonly<Record<string, unknown>>;
+  readonly profile: ReturnType<typeof safeConfigSummary>;
+  readonly conventions: {
+    readonly json_flag: string;
+    readonly no_input_flag: string;
+    readonly value_movement: string;
+    readonly aliases: string;
+  };
+}
+
+const resolveConfigPath = (configPath?: string): string => {
+  const expanded = expandHome(configPath ?? defaultConfigPath());
+  return path.isAbsolute(expanded) ? path.normalize(expanded) : path.resolve(process.cwd(), expanded);
+};
+
+const readPackageMetadata = (): PackageMetadata => {
+  try {
+    const parsed = JSON.parse(
+      fs.readFileSync(new URL("../../package.json", import.meta.url), "utf8"),
+    ) as Partial<PackageMetadata>;
+    return {
+      name: typeof parsed.name === "string" ? parsed.name : "@regentslabs/cli",
+      version: typeof parsed.version === "string" ? parsed.version : "0.0.0",
+    };
+  } catch {
+    return {
+      name: "@regentslabs/cli",
+      version: "0.0.0",
+    };
+  }
+};
+
+const safeHarnesses = (config: RegentConfig) =>
+  Object.fromEntries(
+    Object.entries(config.agents.harnesses).map(([name, harness]) => [
+      name,
+      {
+        enabled: harness.enabled,
+        entrypoint: harness.entrypoint,
+        workspace_root: harness.workspaceRoot,
+        profiles: harness.profiles,
+      },
+    ]),
+  );
+
+const availableProfiles = (config: RegentConfig): readonly string[] =>
+  Array.from(
+    new Set([
+      ...Object.values(config.xmtp.profiles),
+      ...Object.values(config.agents.harnesses).flatMap((harness) => harness.profiles),
+      config.workloads.bbh.defaultProfile,
+    ]),
+  ).sort();
+
+const safeConfigSummary = (configPath?: string) => {
+  const resolvedConfigPath = resolveConfigPath(configPath);
+  const configPresent = fs.existsSync(resolvedConfigPath);
+  const config = loadConfig(resolvedConfigPath);
+
+  return {
+    config_path: resolvedConfigPath,
+    config_present: configPresent,
+    auth: {
+      audience: config.auth.audience,
+      default_chain_id: config.auth.defaultChainId,
+    },
+    services: Object.fromEntries(
+      Object.entries(config.services).map(([name, service]) => [
+        name,
+        {
+          base_url: service.baseUrl,
+          request_timeout_ms: service.requestTimeoutMs,
+        },
+      ]),
+    ),
+    runtime: {
+      state_dir: config.runtime.stateDir,
+      socket_path: config.runtime.socketPath,
+      log_level: config.runtime.logLevel,
+    },
+    wallet: {
+      private_key_env: config.wallet.privateKeyEnv,
+      keystore_configured: Boolean(config.wallet.keystorePath),
+    },
+    agents: {
+      default_harness: config.agents.defaultHarness,
+      harnesses: safeHarnesses(config),
+    },
+    xmtp: {
+      enabled: config.xmtp.enabled,
+      env: config.xmtp.env,
+      profiles: config.xmtp.profiles,
+      owner_inbox_count: config.xmtp.ownerInboxIds.length,
+      trusted_inbox_count: config.xmtp.trustedInboxIds.length,
+      public_policy_path: config.xmtp.publicPolicyPath,
+    },
+    workloads: {
+      bbh: {
+        workspace_root: config.workloads.bbh.workspaceRoot,
+        default_harness: config.workloads.bbh.defaultHarness,
+        default_profile: config.workloads.bbh.defaultProfile,
+      },
+    },
+    available_profiles: availableProfiles(config),
+  };
+};
+
+export const buildAgentContext = (configPath?: string): AgentContextPayload => ({
+  schema_version: "1",
+  package: readPackageMetadata(),
+  command_count: CLI_COMMANDS.length,
+  command_groups: CLI_COMMANDS_BY_TOP_LEVEL_GROUP as unknown as Readonly<Record<string, readonly string[]>>,
+  commands: CLI_COMMAND_DETAILS_BY_COMMAND as unknown as Readonly<Record<string, unknown>>,
+  profile: safeConfigSummary(configPath),
+  conventions: {
+    json_flag: "--json",
+    no_input_flag: "--no-input",
+    value_movement: "prepare first; submit only with --submit",
+    aliases: "none",
+  },
+});
+
+export async function runAgentContext(configPath?: string): Promise<void> {
+  process.stdout.write(`${JSON.stringify(buildAgentContext(configPath), null, 2)}\n`);
+}

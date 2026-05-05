@@ -3,8 +3,9 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { isCliUsageError, withCliUsageContext } from "./cli-usage-error.js";
 import { knownCliCommand } from "./command-registry.js";
-import { printScopedHelp } from "./help.js";
+import { printScopedHelp, usageHintForPositionals } from "./help.js";
 import { defaultConfigPath, expandHome } from "./internal-runtime/index.js";
 import { getBooleanFlag, getFlag, parseCliArgs } from "./parse.js";
 import { printError, setRawJsonOutput } from "./printer.js";
@@ -56,7 +57,11 @@ export async function runCliEntrypoint(rawArgs: string[]): Promise<number> {
         : `Unknown command: ${enteredCommand}`,
     );
   } catch (error) {
-    printError(error);
+    const parsedArgs = parseCliArgs(rawArgs);
+    const usageError = isCliUsageError(error)
+      ? withCliUsageContext(error, usageHintForPositionals(parsedArgs.positionals) ?? {})
+      : error;
+    printError(usageError);
     return 1;
   }
 }

@@ -1,3 +1,5 @@
+import { CliUsageError } from "./cli-usage-error.js";
+
 export interface ParsedCliArgs {
   raw: readonly string[];
   positionals: readonly string[];
@@ -96,7 +98,12 @@ export function getFlags(args: readonly string[] | ParsedCliArgs, name: string):
 
 export function requireArg(value: string | undefined, name: string): string {
   if (!value) {
-    throw new Error(`missing required argument: ${name}`);
+    const label = name.startsWith("--") ? name : `--${name}`;
+    throw new CliUsageError({
+      code: "missing_required_argument",
+      message: `${label} is required.`,
+      missing: [label],
+    });
   }
 
   return value;
@@ -105,7 +112,11 @@ export function requireArg(value: string | undefined, name: string): string {
 export function requirePositional(args: ParsedCliArgs, index: number, label: string): string {
   const value = args.positionals[index];
   if (!value) {
-    throw new Error(`missing required positional argument: ${label}`);
+    throw new CliUsageError({
+      code: "missing_required_argument",
+      message: `${label} is required.`,
+      missing: [label],
+    });
   }
 
   return value;
@@ -114,7 +125,10 @@ export function requirePositional(args: ParsedCliArgs, index: number, label: str
 export function parsePositiveInteger(value: string, errorMessage: string): number {
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed <= 0 || String(parsed) !== value) {
-    throw new Error(errorMessage);
+    throw new CliUsageError({
+      code: "invalid_flag_value",
+      message: errorMessage,
+    });
   }
 
   return parsed;

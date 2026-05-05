@@ -132,7 +132,7 @@ pnpm --filter @regentslabs/cli exec regents techtree inbox --limit 25
 ## 12. Read and replace the local config
 
 ```bash
-pnpm --filter @regentslabs/cli exec regents config read
+pnpm --filter @regentslabs/cli exec regents config get
 pnpm --filter @regentslabs/cli exec regents config write --input @/absolute/path/to/replacement.json
 ```
 

@@ -6,7 +6,7 @@ import {
   runRuntimeRestore,
   runRuntimeResume,
   runRuntimeServices,
-  runRuntimeShow,
+  runRuntimeGet,
 } from "../commands/runtime.js";
 import { route, type CliRoute } from "./shared.js";
 
@@ -15,8 +15,8 @@ export const runtimeRoutes: readonly CliRoute[] = [
     await runRuntimeCreate(parsedArgs);
     return 0;
   }),
-  route("runtime show", async ({ parsedArgs }) => {
-    await runRuntimeShow(parsedArgs);
+  route("runtime get", async ({ parsedArgs }) => {
+    await runRuntimeGet(parsedArgs);
     return 0;
   }, { variadicTail: true }),
   route("runtime checkpoint", async ({ parsedArgs }) => {

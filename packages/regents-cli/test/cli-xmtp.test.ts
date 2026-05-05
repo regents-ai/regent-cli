@@ -146,7 +146,7 @@ describe("CLI XMTP flows", () => {
     fs.writeFileSync(path.join(harness.tempDir, "policies", "xmtp-public.md"), "Public messages stay restricted.\n");
 
     const shown = await captureOutput(async () =>
-      harness.runCliEntrypoint(["xmtp", "policy", "show", "--config", harness.configPath]),
+      harness.runCliEntrypoint(["xmtp", "policy", "get", "--config", harness.configPath]),
     );
     expect(JSON.parse(shown.stdout)).toEqual({
       ok: true,

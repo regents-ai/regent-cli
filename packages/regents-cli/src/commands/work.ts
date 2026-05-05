@@ -85,7 +85,7 @@ export async function runWorkList(args: ParsedCliArgs): Promise<void> {
   printWorkListResult(args, { ok: true, command: "regents work list", origin, result: data });
 }
 
-export async function runWorkShow(args: ParsedCliArgs): Promise<void> {
+export async function runWorkGet(args: ParsedCliArgs): Promise<void> {
   const resolvedCompanyId = companyId(args);
   const workItemId = positional(args, 2, "work_item_id");
   const { origin, data } = await requestWorkJson(args, {
@@ -93,7 +93,7 @@ export async function runWorkShow(args: ParsedCliArgs): Promise<void> {
     path: `/api/agent-platform/companies/${encodeURIComponent(resolvedCompanyId)}/rwr/work-items/${encodeURIComponent(workItemId)}`,
   });
 
-  printWorkShowResult(args, { ok: true, command: "regents work show", origin, result: data });
+  printWorkShowResult(args, { ok: true, command: "regents work get", origin, result: data });
 }
 
 export async function runWorkRun(args: ParsedCliArgs): Promise<void> {
