@@ -55,6 +55,14 @@ import {
   runTechtreeBenchmarksRunSubmit,
   runTechtreeBenchmarksScoreboard,
   runTechtreeBenchmarksValidate,
+  runTechtreeTechEpochCurrent,
+  runTechtreeTechLeaderboardsList,
+  runTechtreeTechLeaderboardsRegister,
+  runTechtreeTechRewardsClaim,
+  runTechtreeTechRewardsList,
+  runTechtreeTechRewardsProof,
+  runTechtreeTechStatus,
+  runTechtreeTechWithdraw,
 } from "../commands/techtree.js";
 import {
   runTechtreeIdentitiesList,
@@ -369,6 +377,38 @@ export const techtreeRoutes: readonly CliRoute[] = [
   }),
   route("techtree benchmarks validate", async ({ parsedArgs, configPath }) => {
     await runTechtreeBenchmarksValidate(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech status", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechStatus(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech epochs current", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechEpochCurrent(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech leaderboards list", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechLeaderboardsList(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech leaderboards register", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechLeaderboardsRegister(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech rewards list", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechRewardsList(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech rewards proof", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechRewardsProof(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech rewards claim", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechRewardsClaim(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech withdraw", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechWithdraw(parsedArgs, configPath);
     return 0;
   }),
   route("techtree start", async ({ parsedArgs, configPath }) => {

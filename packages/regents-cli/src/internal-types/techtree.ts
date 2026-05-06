@@ -749,6 +749,129 @@ export interface BenchmarkWorkspaceActionResult {
   manifest_sha256?: string;
 }
 
+export type TechRewardLane = "science" | "usdc_input";
+
+export interface TechContractStatus {
+  chain_id: number;
+  token: `0x${string}`;
+  reward_router: `0x${string}`;
+  agent_reward_vault: `0x${string}`;
+  emission_controller: `0x${string}`;
+  leaderboard_registry: `0x${string}`;
+  exit_swap: `0x${string}`;
+}
+
+export interface TechRewardEpoch {
+  epoch: number;
+  status: "planned" | "open" | "sealed" | "posted";
+  starts_at?: string | null;
+  ends_at?: string | null;
+  total_emission_amount: string;
+  science_budget_amount: string;
+  input_budget_amount: string;
+}
+
+export interface TechStatusResponse {
+  data: {
+    contracts: TechContractStatus;
+    current_epoch: TechRewardEpoch | null;
+  };
+}
+
+export interface TechEpochResponse {
+  data: TechRewardEpoch | null;
+}
+
+export interface TechLeaderboard {
+  leaderboard_id: string;
+  kind: string;
+  title: string;
+  weight_bps: number;
+  starts_epoch?: number | null;
+  ends_epoch?: number | null;
+  config_hash: `0x${string}`;
+  uri: string;
+  active: boolean;
+}
+
+export interface TechLeaderboardListResponse {
+  data: TechLeaderboard[];
+}
+
+export interface TechRewardManifest {
+  manifest_id: string;
+  epoch: number;
+  lane: TechRewardLane;
+  merkle_root: `0x${string}`;
+  manifest_hash: `0x${string}`;
+  total_allocated_amount: string;
+  allocation_count?: number;
+  policy_version?: string;
+  leaderboard_ids?: string[];
+}
+
+export interface TechRewardsResponse {
+  data: TechRewardManifest[];
+}
+
+export interface TechRewardProof {
+  epoch: number;
+  lane: TechRewardLane;
+  agent_id: string;
+  amount: string;
+  allocation_ref: `0x${string}`;
+  proof: `0x${string}`[];
+  merkle_root: `0x${string}`;
+}
+
+export interface TechRewardProofResponse {
+  data: TechRewardProof;
+}
+
+export interface TechUnsignedTransaction {
+  chain_id: number;
+  to: `0x${string}`;
+  value: string;
+  function_signature: string;
+  args: unknown[];
+  data?: `0x${string}` | null;
+}
+
+export interface TechPreparedTransactionResponse {
+  data: {
+    transaction: TechUnsignedTransaction;
+    proof?: TechRewardProof;
+    manifest?: TechRewardManifest;
+  };
+}
+
+export interface TechRewardClaimPrepareInput {
+  epoch: number;
+  lane: TechRewardLane;
+  agent_id: string;
+}
+
+export interface TechWithdrawPrepareInput {
+  agent_id: string;
+  amount: string;
+  tech_recipient: `0x${string}`;
+  regent_recipient: `0x${string}`;
+  min_regent_out: string;
+  deadline: number;
+}
+
+export interface TechLeaderboardRegisterPrepareInput {
+  leaderboard_id: string;
+  kind: string;
+  title: string;
+  weight_bps: number;
+  starts_epoch?: number | null;
+  ends_epoch?: number | null;
+  config_hash: `0x${string}`;
+  uri: string;
+  active?: boolean;
+}
+
 export interface NodeTagEdge {
   id: number;
   src_node_id: number;

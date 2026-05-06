@@ -51,6 +51,14 @@ import {
   handleTechtreeBenchmarksRunSubmit,
   handleTechtreeBenchmarksScoreboard,
   handleTechtreeBenchmarksValidate,
+  handleTechtreeTechEpochCurrent,
+  handleTechtreeTechLeaderboardsList,
+  handleTechtreeTechLeaderboardsRegister,
+  handleTechtreeTechRewardsClaim,
+  handleTechtreeTechRewardsList,
+  handleTechtreeTechRewardsProof,
+  handleTechtreeTechStatus,
+  handleTechtreeTechWithdraw,
   handleTechtreeCommentCreate,
   handleTechtreeInboxGet,
   handleTechtreeNodeChildren,
@@ -568,6 +576,40 @@ export class RegentRuntime {
         return handleTechtreeBenchmarksValidate(
           ctx,
           params as Parameters<typeof handleTechtreeBenchmarksValidate>[1],
+        );
+      case "techtree.tech.status":
+        return handleTechtreeTechStatus(ctx);
+      case "techtree.tech.epochs.current":
+        return handleTechtreeTechEpochCurrent(ctx);
+      case "techtree.tech.leaderboards.list":
+        return handleTechtreeTechLeaderboardsList(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechLeaderboardsList>[1],
+        );
+      case "techtree.tech.leaderboards.register":
+        return handleTechtreeTechLeaderboardsRegister(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechLeaderboardsRegister>[1],
+        );
+      case "techtree.tech.rewards.list":
+        return handleTechtreeTechRewardsList(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechRewardsList>[1],
+        );
+      case "techtree.tech.rewards.proof":
+        return handleTechtreeTechRewardsProof(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechRewardsProof>[1],
+        );
+      case "techtree.tech.rewards.claim":
+        return handleTechtreeTechRewardsClaim(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechRewardsClaim>[1],
+        );
+      case "techtree.tech.withdraw":
+        return handleTechtreeTechWithdraw(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechWithdraw>[1],
         );
       case "techtree.autoskill.initSkill":
         return handleTechtreeAutoskillInitSkill(

@@ -97,6 +97,15 @@ import type {
   BenchmarkScoreboardResponse,
   BenchmarkValidationResponse,
   BenchmarkWorkspaceActionResult,
+  TechEpochResponse,
+  TechLeaderboardListResponse,
+  TechLeaderboardRegisterPrepareInput,
+  TechPreparedTransactionResponse,
+  TechRewardClaimPrepareInput,
+  TechRewardProofResponse,
+  TechRewardsResponse,
+  TechStatusResponse,
+  TechWithdrawPrepareInput,
   WatchRecord,
   WorkPacketResponse,
 } from "./techtree.js";
@@ -213,6 +222,14 @@ export type RegentRpcMethod =
   | "techtree.benchmarks.run.submit"
   | "techtree.benchmarks.run.repeat"
   | "techtree.benchmarks.validate"
+  | "techtree.tech.status"
+  | "techtree.tech.epochs.current"
+  | "techtree.tech.leaderboards.list"
+  | "techtree.tech.leaderboards.register"
+  | "techtree.tech.rewards.list"
+  | "techtree.tech.rewards.proof"
+  | "techtree.tech.rewards.claim"
+  | "techtree.tech.withdraw"
   | "techtree.autoskill.initSkill"
   | "techtree.autoskill.initEval"
   | "techtree.autoskill.notebook.pair"
@@ -389,6 +406,14 @@ export interface RegentRpcParamsMap {
   "techtree.benchmarks.run.submit": { workspace_path: string };
   "techtree.benchmarks.run.repeat": { workspace_path: string; n?: number; submit?: boolean };
   "techtree.benchmarks.validate": { workspace_path: string };
+  "techtree.tech.status": undefined;
+  "techtree.tech.epochs.current": undefined;
+  "techtree.tech.leaderboards.list": { status?: string; limit?: number } | undefined;
+  "techtree.tech.leaderboards.register": TechLeaderboardRegisterPrepareInput;
+  "techtree.tech.rewards.list": { epoch?: number; lane?: string; limit?: number } | undefined;
+  "techtree.tech.rewards.proof": { epoch: number; lane: string; agent_id: string };
+  "techtree.tech.rewards.claim": TechRewardClaimPrepareInput;
+  "techtree.tech.withdraw": TechWithdrawPrepareInput;
   "techtree.autoskill.initSkill": { workspace_path: string };
   "techtree.autoskill.initEval": { workspace_path: string };
   "techtree.autoskill.notebook.pair": AutoskillNotebookPairParams;
@@ -558,6 +583,14 @@ export interface RegentRpcResultMap {
   "techtree.benchmarks.run.submit": BenchmarkAttemptResponse;
   "techtree.benchmarks.run.repeat": BenchmarkWorkspaceActionResult & { attempts?: BenchmarkAttemptResponse[] };
   "techtree.benchmarks.validate": BenchmarkValidationResponse;
+  "techtree.tech.status": TechStatusResponse;
+  "techtree.tech.epochs.current": TechEpochResponse;
+  "techtree.tech.leaderboards.list": TechLeaderboardListResponse;
+  "techtree.tech.leaderboards.register": TechPreparedTransactionResponse;
+  "techtree.tech.rewards.list": TechRewardsResponse;
+  "techtree.tech.rewards.proof": TechRewardProofResponse;
+  "techtree.tech.rewards.claim": TechPreparedTransactionResponse;
+  "techtree.tech.withdraw": TechPreparedTransactionResponse;
   "techtree.autoskill.initSkill": {
     ok: true;
     entrypoint: "autoskill.init.skill";

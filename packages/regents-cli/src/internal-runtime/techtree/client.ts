@@ -29,6 +29,15 @@ import type {
   BenchmarkVersionCreateInput,
   BenchmarkVersionListResponse,
   BenchmarkVersionResponse,
+  TechEpochResponse,
+  TechLeaderboardListResponse,
+  TechLeaderboardRegisterPrepareInput,
+  TechPreparedTransactionResponse,
+  TechRewardClaimPrepareInput,
+  TechRewardProofResponse,
+  TechRewardsResponse,
+  TechStatusResponse,
+  TechWithdrawPrepareInput,
   BbhAssignmentResponse,
   BbhCapsuleGetResponse,
   BbhCapsuleListResponse,
@@ -100,6 +109,7 @@ import { ChatboxResource } from "./client/chatbox.js";
 import { TechtreeRequestClient } from "./client/request.js";
 import { ReviewsResource } from "./client/reviews.js";
 import { ScienceTasksResource } from "./client/science-tasks.js";
+import { TechResource } from "./client/tech.js";
 import { TransportResource } from "./client/transport.js";
 import { TreeResource } from "./client/tree.js";
 import type { SiwaClient } from "../siwa/siwa.js";
@@ -121,6 +131,7 @@ export class TechtreeClient {
   private readonly chatbox: ChatboxResource;
   private readonly reviews: ReviewsResource;
   private readonly scienceTasks: ScienceTasksResource;
+  private readonly tech: TechResource;
   private readonly transport: TransportResource;
   private readonly tree: TreeResource;
 
@@ -152,6 +163,7 @@ export class TechtreeClient {
     this.chatbox = new ChatboxResource(this.request);
     this.reviews = new ReviewsResource(this.request);
     this.scienceTasks = new ScienceTasksResource(this.request);
+    this.tech = new TechResource(this.request);
     this.transport = new TransportResource(this.request);
     this.tree = new TreeResource(this.request, this.stateStore);
     this.siwaClient = this.auth.siwaClient;
@@ -308,6 +320,40 @@ export class TechtreeClient {
 
   recomputeBenchmarkReliability(capsuleId: string): Promise<BenchmarkReliabilityListResponse> {
     return this.benchmarks.recomputeReliability(capsuleId);
+  }
+
+  techStatus(): Promise<TechStatusResponse> {
+    return this.tech.status();
+  }
+
+  techCurrentEpoch(): Promise<TechEpochResponse> {
+    return this.tech.currentEpoch();
+  }
+
+  listTechLeaderboards(params?: { status?: string; limit?: number }): Promise<TechLeaderboardListResponse> {
+    return this.tech.listLeaderboards(params);
+  }
+
+  listTechRewards(params?: { epoch?: number; lane?: string; limit?: number }): Promise<TechRewardsResponse> {
+    return this.tech.listRewards(params);
+  }
+
+  techRewardProof(params: { epoch: number; lane: string; agent_id: string }): Promise<TechRewardProofResponse> {
+    return this.tech.rewardProof(params);
+  }
+
+  prepareTechRewardClaim(input: TechRewardClaimPrepareInput): Promise<TechPreparedTransactionResponse> {
+    return this.tech.prepareClaim(input);
+  }
+
+  prepareTechWithdrawal(input: TechWithdrawPrepareInput): Promise<TechPreparedTransactionResponse> {
+    return this.tech.prepareWithdrawal(input);
+  }
+
+  prepareTechLeaderboardRegistration(
+    input: TechLeaderboardRegisterPrepareInput,
+  ): Promise<TechPreparedTransactionResponse> {
+    return this.tech.prepareLeaderboardRegistration(input);
   }
 
   getLatestSkill(slug: string): Promise<SkillTextResponse> {

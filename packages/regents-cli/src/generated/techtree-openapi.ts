@@ -1560,6 +1560,150 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tech/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTechStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tech/epochs/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getCurrentTechEpoch"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tech/leaderboards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listTechLeaderboards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tech/rewards": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listTechRewards"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tech/rewards/proof": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getTechRewardProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/tech/rewards/claim/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareTechRewardClaim"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/tech/withdraw/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareTechWithdrawal"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/tech/leaderboards/register/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareTechLeaderboardRegistration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/tech/rewards/root/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareTechRewardRoot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/bbh/leaderboard": {
         parameters: {
             query?: never;
@@ -2887,6 +3031,156 @@ export interface components {
             };
         } & {
             [key: string]: unknown;
+        };
+        /** @enum {string} */
+        TechRewardLane: "science" | "usdc_input";
+        TechContractStatus: {
+            /** @enum {integer} */
+            chain_id: 8453;
+            token: components["schemas"]["Address"];
+            reward_router: components["schemas"]["Address"];
+            agent_reward_vault: components["schemas"]["Address"];
+            emission_controller: components["schemas"]["Address"];
+            leaderboard_registry: components["schemas"]["Address"];
+            exit_swap: components["schemas"]["Address"];
+        };
+        TechStatusResponse: {
+            data: {
+                contracts: components["schemas"]["TechContractStatus"];
+                current_epoch: components["schemas"]["TechRewardEpoch"] | null;
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardEpoch: {
+            epoch: number;
+            /** @enum {string} */
+            status: "planned" | "open" | "sealed" | "posted";
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            total_emission_amount: string;
+            science_budget_amount: string;
+            input_budget_amount: string;
+        };
+        TechEpochResponse: {
+            data: components["schemas"]["TechRewardEpoch"] | null;
+        } & {
+            [key: string]: unknown;
+        };
+        TechLeaderboard: {
+            leaderboard_id: string;
+            kind: string;
+            title: string;
+            weight_bps: number;
+            starts_epoch?: number | null;
+            ends_epoch?: number | null;
+            config_hash: components["schemas"]["Bytes32Hex"];
+            uri: string;
+            active: boolean;
+        } & {
+            [key: string]: unknown;
+        };
+        TechLeaderboardListResponse: {
+            data: components["schemas"]["TechLeaderboard"][];
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardManifest: {
+            manifest_id: string;
+            epoch: number;
+            lane: components["schemas"]["TechRewardLane"];
+            merkle_root: components["schemas"]["Bytes32Hex"];
+            manifest_hash: components["schemas"]["Bytes32Hex"];
+            total_allocated_amount: string;
+            allocation_count?: number;
+            policy_version?: string;
+            leaderboard_ids?: string[];
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardsResponse: {
+            data: components["schemas"]["TechRewardManifest"][];
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardProof: {
+            epoch: number;
+            lane: components["schemas"]["TechRewardLane"];
+            agent_id: string;
+            amount: string;
+            allocation_ref: components["schemas"]["Bytes32Hex"];
+            proof: components["schemas"]["Bytes32Hex"][];
+            merkle_root: components["schemas"]["Bytes32Hex"];
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardProofResponse: {
+            data: components["schemas"]["TechRewardProof"];
+        } & {
+            [key: string]: unknown;
+        };
+        Bytes32Hex: string;
+        TechUnsignedTransaction: {
+            /** @enum {integer} */
+            chain_id: 8453;
+            to: components["schemas"]["Address"];
+            value: string;
+            function_signature: string;
+            args: unknown[];
+            data?: string | null;
+        };
+        TechPreparedTransactionResponse: {
+            data: {
+                transaction: components["schemas"]["TechUnsignedTransaction"];
+                proof?: components["schemas"]["TechRewardProof"];
+                manifest?: components["schemas"]["TechRewardManifest"];
+            } & {
+                [key: string]: unknown;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        TechRewardClaimPrepareRequest: {
+            epoch: number;
+            lane: components["schemas"]["TechRewardLane"];
+            agent_id: string;
+        };
+        TechWithdrawPrepareRequest: {
+            agent_id: string;
+            amount: string;
+            tech_recipient: components["schemas"]["Address"];
+            regent_recipient: components["schemas"]["Address"];
+            min_regent_out: string;
+            deadline: number;
+        };
+        TechLeaderboardRegisterPrepareRequest: {
+            leaderboard_id: string;
+            kind: string;
+            title: string;
+            weight_bps: number;
+            starts_epoch?: number | null;
+            ends_epoch?: number | null;
+            config_hash: components["schemas"]["Bytes32Hex"];
+            uri: string;
+            active?: boolean;
+        };
+        TechRewardRootAllocationInput: {
+            agent_id: string;
+            wallet_address?: components["schemas"]["Address"];
+            score: string;
+            leaderboard_id?: string;
+        };
+        TechRewardRootPrepareRequest: {
+            epoch: number;
+            lane: components["schemas"]["TechRewardLane"];
+            total_budget_amount: string;
+            challenge_ends_at?: number | null;
+            leaderboard_ids?: string[];
+            allocations: components["schemas"]["TechRewardRootAllocationInput"][];
         };
         ChatboxMessage: {
             id?: number;
@@ -5957,6 +6251,222 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BenchmarkReliabilityListResponse"];
+                };
+            };
+        };
+    };
+    getTechStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TECH reward status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechStatusResponse"];
+                };
+            };
+        };
+    };
+    getCurrentTechEpoch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Current TECH reward epoch */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechEpochResponse"];
+                };
+            };
+        };
+    };
+    listTechLeaderboards: {
+        parameters: {
+            query?: {
+                status?: "active" | "inactive";
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TECH leaderboard sources */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechLeaderboardListResponse"];
+                };
+            };
+        };
+    };
+    listTechRewards: {
+        parameters: {
+            query?: {
+                epoch?: number;
+                lane?: components["schemas"]["TechRewardLane"];
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TECH reward manifests */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechRewardsResponse"];
+                };
+            };
+        };
+    };
+    getTechRewardProof: {
+        parameters: {
+            query: {
+                epoch: number;
+                lane: components["schemas"]["TechRewardLane"];
+                agent_id: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description TECH reward Merkle proof */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechRewardProofResponse"];
+                };
+            };
+            /** @description TECH reward proof not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    prepareTechRewardClaim: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechRewardClaimPrepareRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared TECH reward claim transaction */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+        };
+    };
+    prepareTechWithdrawal: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechWithdrawPrepareRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared TECH withdrawal transaction */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+        };
+    };
+    prepareTechLeaderboardRegistration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechLeaderboardRegisterPrepareRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared TECH leaderboard registration transaction */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+        };
+    };
+    prepareTechRewardRoot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechRewardRootPrepareRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared TECH reward-root transaction */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechPreparedTransactionResponse"];
                 };
             };
         };
