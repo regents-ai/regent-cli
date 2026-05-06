@@ -442,8 +442,7 @@ The CLI is JSON-first. It forwards directly to the `autolaunch` Phoenix JSON API
 - `POST /v1/agent/subjects/{id}/stake`
 - `POST /v1/agent/subjects/{id}/unstake`
 - `POST /v1/agent/subjects/{id}/claim-usdc`
-- `POST /v1/agent/subjects/{id}/claim-emissions`
-- `POST /v1/agent/subjects/{id}/claim-and-stake-emissions`
+- `GET /v1/agent/subjects/{id}/regent-emissions`
 - `POST /v1/agent/subjects/{id}/ingress/{address}/sweep`
 - `GET /v1/agent/contracts/admin`
 - `GET /v1/agent/contracts/jobs/{id}`

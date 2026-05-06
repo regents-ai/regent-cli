@@ -40,8 +40,6 @@ export const CLI_COMMANDS = [
   "autolaunch fee-registry get",
   "autolaunch fee-vault get",
   "autolaunch fee-vault withdraw-regent",
-  "autolaunch holdings claim-and-stake-emissions",
-  "autolaunch holdings claim-emissions",
   "autolaunch holdings claim-usdc",
   "autolaunch holdings stake",
   "autolaunch holdings sweep-ingress",
@@ -87,12 +85,16 @@ export const CLI_COMMANDS = [
   "autolaunch strategy migrate",
   "autolaunch strategy sweep-currency",
   "autolaunch strategy sweep-token",
-  "autolaunch subjects claim-and-stake-emissions",
-  "autolaunch subjects claim-emissions",
+  "autolaunch subjects by-token",
   "autolaunch subjects claim-usdc",
+  "autolaunch subjects create-deferred-autolaunch",
+  "autolaunch subjects create-existing-token",
   "autolaunch subjects get",
   "autolaunch subjects ingress",
+  "autolaunch subjects protocol-fee-settlements",
+  "autolaunch subjects regent-emissions",
   "autolaunch subjects stake",
+  "autolaunch subjects staking",
   "autolaunch subjects sweep-ingress",
   "autolaunch subjects unstake",
   "autolaunch vesting cancel-beneficiary-rotation",
@@ -352,8 +354,6 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch fee-registry get",
     "autolaunch fee-vault get",
     "autolaunch fee-vault withdraw-regent",
-    "autolaunch holdings claim-and-stake-emissions",
-    "autolaunch holdings claim-emissions",
     "autolaunch holdings claim-usdc",
     "autolaunch holdings stake",
     "autolaunch holdings sweep-ingress",
@@ -399,12 +399,16 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch strategy migrate",
     "autolaunch strategy sweep-currency",
     "autolaunch strategy sweep-token",
-    "autolaunch subjects claim-and-stake-emissions",
-    "autolaunch subjects claim-emissions",
+    "autolaunch subjects by-token",
     "autolaunch subjects claim-usdc",
+    "autolaunch subjects create-deferred-autolaunch",
+    "autolaunch subjects create-existing-token",
     "autolaunch subjects get",
     "autolaunch subjects ingress",
+    "autolaunch subjects protocol-fee-settlements",
+    "autolaunch subjects regent-emissions",
     "autolaunch subjects stake",
+    "autolaunch subjects staking",
     "autolaunch subjects sweep-ingress",
     "autolaunch subjects unstake",
     "autolaunch vesting cancel-beneficiary-rotation",
@@ -1799,54 +1803,6 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
-  "autolaunch holdings claim-and-stake-emissions": {
-    "command": "autolaunch holdings claim-and-stake-emissions",
-    "owner": "autolaunch",
-    "group": "markets-subjects",
-    "interface": "http",
-    "auth_mode": "agent-siwa",
-    "auth_audience": "autolaunch",
-    "output_envelope": "market-envelopes",
-    "examples": [
-      "regents autolaunch auctions list",
-      "regents autolaunch subjects get <subject_id>",
-      "regents autolaunch bids quote --auction <auction_id>"
-    ],
-    "agent_metadata": {
-      "category": "market",
-      "prompt_behavior": "confirm_before_submit",
-      "json_support": "supported",
-      "mutation_class": "read-or-transaction-prepare",
-      "retry_behavior": "retry_reads_and_quotes",
-      "pagination": "cursor",
-      "async_behavior": "synchronous",
-      "input_mode": "args-and-flags"
-    }
-  },
-  "autolaunch holdings claim-emissions": {
-    "command": "autolaunch holdings claim-emissions",
-    "owner": "autolaunch",
-    "group": "markets-subjects",
-    "interface": "http",
-    "auth_mode": "agent-siwa",
-    "auth_audience": "autolaunch",
-    "output_envelope": "market-envelopes",
-    "examples": [
-      "regents autolaunch auctions list",
-      "regents autolaunch subjects get <subject_id>",
-      "regents autolaunch bids quote --auction <auction_id>"
-    ],
-    "agent_metadata": {
-      "category": "market",
-      "prompt_behavior": "confirm_before_submit",
-      "json_support": "supported",
-      "mutation_class": "read-or-transaction-prepare",
-      "retry_behavior": "retry_reads_and_quotes",
-      "pagination": "cursor",
-      "async_behavior": "synchronous",
-      "input_mode": "args-and-flags"
-    }
-  },
   "autolaunch holdings claim-usdc": {
     "command": "autolaunch holdings claim-usdc",
     "owner": "autolaunch",
@@ -1890,7 +1846,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
         "name": "--receiver",
         "type": "string",
         "required": false,
-        "description": "Optional wallet address that receives the stake position."
+        "description": "Optional wallet address or ENS name that receives the stake position."
       }
     ],
     "examples": [
@@ -2988,38 +2944,22 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
-  "autolaunch subjects claim-and-stake-emissions": {
-    "command": "autolaunch subjects claim-and-stake-emissions",
+  "autolaunch subjects by-token": {
+    "command": "autolaunch subjects by-token",
     "owner": "autolaunch",
     "group": "markets-subjects",
     "interface": "http",
     "auth_mode": "agent-siwa",
     "auth_audience": "autolaunch",
     "output_envelope": "market-envelopes",
-    "examples": [
-      "regents autolaunch auctions list",
-      "regents autolaunch subjects get <subject_id>",
-      "regents autolaunch bids quote --auction <auction_id>"
+    "flags": [
+      {
+        "name": "--token",
+        "type": "address",
+        "required": true,
+        "description": "Token address."
+      }
     ],
-    "agent_metadata": {
-      "category": "market",
-      "prompt_behavior": "confirm_before_submit",
-      "json_support": "supported",
-      "mutation_class": "read-or-transaction-prepare",
-      "retry_behavior": "retry_reads_and_quotes",
-      "pagination": "cursor",
-      "async_behavior": "synchronous",
-      "input_mode": "args-and-flags"
-    }
-  },
-  "autolaunch subjects claim-emissions": {
-    "command": "autolaunch subjects claim-emissions",
-    "owner": "autolaunch",
-    "group": "markets-subjects",
-    "interface": "http",
-    "auth_mode": "agent-siwa",
-    "auth_audience": "autolaunch",
-    "output_envelope": "market-envelopes",
     "examples": [
       "regents autolaunch auctions list",
       "regents autolaunch subjects get <subject_id>",
@@ -3044,6 +2984,124 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_mode": "agent-siwa",
     "auth_audience": "autolaunch",
     "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects create-deferred-autolaunch": {
+    "command": "autolaunch subjects create-deferred-autolaunch",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "flags": [
+      {
+        "name": "--token-name",
+        "type": "string",
+        "required": true,
+        "description": "New token name."
+      },
+      {
+        "name": "--token-symbol",
+        "type": "string",
+        "required": true,
+        "description": "New token symbol."
+      },
+      {
+        "name": "--total-supply",
+        "type": "string",
+        "required": true,
+        "description": "Total token supply."
+      },
+      {
+        "name": "--treasury",
+        "type": "address",
+        "required": true,
+        "description": "Treasury that receives vested tokens and revenue."
+      },
+      {
+        "name": "--token-factory",
+        "type": "address",
+        "required": true,
+        "description": "Token factory address."
+      },
+      {
+        "name": "--subject-label",
+        "type": "string",
+        "required": true,
+        "description": "Subject label."
+      }
+    ],
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects create-existing-token": {
+    "command": "autolaunch subjects create-existing-token",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "flags": [
+      {
+        "name": "--stake-token",
+        "type": "address",
+        "required": true,
+        "description": "Existing token address."
+      },
+      {
+        "name": "--treasury",
+        "type": "address",
+        "required": true,
+        "description": "Treasury that receives the subject revenue lane."
+      },
+      {
+        "name": "--staker-pool-bps",
+        "type": "integer",
+        "required": true,
+        "description": "Share of the post-fee lane reserved for token stakers."
+      },
+      {
+        "name": "--label",
+        "type": "string",
+        "required": true,
+        "description": "Subject label."
+      },
+      {
+        "name": "--salt",
+        "type": "bytes32",
+        "required": false,
+        "description": "Optional deterministic creation salt."
+      }
+    ],
     "examples": [
       "regents autolaunch auctions list",
       "regents autolaunch subjects get <subject_id>",
@@ -3108,6 +3166,54 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "autolaunch subjects protocol-fee-settlements": {
+    "command": "autolaunch subjects protocol-fee-settlements",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects regent-emissions": {
+    "command": "autolaunch subjects regent-emissions",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
   "autolaunch subjects stake": {
     "command": "autolaunch subjects stake",
     "owner": "autolaunch",
@@ -3127,9 +3233,33 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
         "name": "--receiver",
         "type": "string",
         "required": false,
-        "description": "Optional wallet address that receives the stake position."
+        "description": "Optional wallet address or ENS name that receives the stake position."
       }
     ],
+    "examples": [
+      "regents autolaunch auctions list",
+      "regents autolaunch subjects get <subject_id>",
+      "regents autolaunch bids quote --auction <auction_id>"
+    ],
+    "agent_metadata": {
+      "category": "market",
+      "prompt_behavior": "confirm_before_submit",
+      "json_support": "supported",
+      "mutation_class": "read-or-transaction-prepare",
+      "retry_behavior": "retry_reads_and_quotes",
+      "pagination": "cursor",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "autolaunch subjects staking": {
+    "command": "autolaunch subjects staking",
+    "owner": "autolaunch",
+    "group": "markets-subjects",
+    "interface": "http",
+    "auth_mode": "agent-siwa",
+    "auth_audience": "autolaunch",
+    "output_envelope": "market-envelopes",
     "examples": [
       "regents autolaunch auctions list",
       "regents autolaunch subjects get <subject_id>",

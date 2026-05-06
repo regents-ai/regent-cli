@@ -4,7 +4,7 @@ This file lists the full command surface shipped by the standalone Regents CLI i
 
 Source used: CLI contract YAML files via `scripts/generate-cli-command-metadata.mjs`.
 
-Total commands: 300.
+Total commands: 302.
 
 ## Full Command List
 
@@ -60,8 +60,6 @@ Total commands: 300.
 - `regents autolaunch fee-registry get`
 - `regents autolaunch fee-vault get`
 - `regents autolaunch fee-vault withdraw-regent`
-- `regents autolaunch holdings claim-and-stake-emissions`
-- `regents autolaunch holdings claim-emissions`
 - `regents autolaunch holdings claim-usdc`
 - `regents autolaunch holdings stake`
 - `regents autolaunch holdings sweep-ingress`
@@ -107,12 +105,16 @@ Total commands: 300.
 - `regents autolaunch strategy migrate`
 - `regents autolaunch strategy sweep-currency`
 - `regents autolaunch strategy sweep-token`
-- `regents autolaunch subjects claim-and-stake-emissions`
-- `regents autolaunch subjects claim-emissions`
+- `regents autolaunch subjects by-token`
 - `regents autolaunch subjects claim-usdc`
+- `regents autolaunch subjects create-deferred-autolaunch`
+- `regents autolaunch subjects create-existing-token`
 - `regents autolaunch subjects get`
 - `regents autolaunch subjects ingress`
+- `regents autolaunch subjects protocol-fee-settlements`
+- `regents autolaunch subjects regent-emissions`
 - `regents autolaunch subjects stake`
+- `regents autolaunch subjects staking`
 - `regents autolaunch subjects sweep-ingress`
 - `regents autolaunch subjects unstake`
 - `regents autolaunch vesting cancel-beneficiary-rotation` - Prepare, validate, publish, and launch an Agent account project.

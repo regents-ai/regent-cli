@@ -12,8 +12,6 @@ import {
   runAutolaunchBidsExit,
   runAutolaunchBidsPlace,
   runAutolaunchBidsQuote,
-  runAutolaunchHoldingsClaimAndStakeEmissions,
-  runAutolaunchHoldingsClaimEmissions,
   runAutolaunchHoldingsClaimUsdc,
   runAutolaunchHoldingsStake,
   runAutolaunchHoldingsSweepIngress,
@@ -68,12 +66,16 @@ import {
   runAutolaunchStrategyMigrate,
   runAutolaunchStrategySweepCurrency,
   runAutolaunchStrategySweepToken,
+  runAutolaunchSubjectByToken,
   runAutolaunchSubjectClaimUsdc,
-  runAutolaunchSubjectClaimAndStakeEmissions,
-  runAutolaunchSubjectClaimEmissions,
+  runAutolaunchSubjectCreateDeferredAutolaunch,
+  runAutolaunchSubjectCreateExistingToken,
   runAutolaunchSubjectIngress,
   runAutolaunchSubjectGet,
+  runAutolaunchSubjectProtocolFeeSettlements,
+  runAutolaunchSubjectRegentEmissions,
   runAutolaunchSubjectStake,
+  runAutolaunchSubjectStaking,
   runAutolaunchSubjectSweepIngress,
   runAutolaunchSubjectUnstake,
   runAutolaunchVestingCancelBeneficiaryRotation,
@@ -202,10 +204,26 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchSubjectGet(parsedArgs, configPath);
     return 0;
   }, { pattern: "autolaunch subjects get <subject-id>" }),
+  route("autolaunch subjects create-existing-token", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectCreateExistingToken(parsedArgs, configPath);
+    return 0;
+  }),
+  route("autolaunch subjects create-deferred-autolaunch", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectCreateDeferredAutolaunch(parsedArgs, configPath);
+    return 0;
+  }),
+  route("autolaunch subjects by-token", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectByToken(parsedArgs, configPath);
+    return 0;
+  }),
   route("autolaunch subjects ingress", async ({ parsedArgs, configPath }) => {
     await runAutolaunchSubjectIngress(parsedArgs, configPath);
     return 0;
   }, { pattern: "autolaunch subjects ingress <subject-id>" }),
+  route("autolaunch subjects staking", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectStaking(parsedArgs, configPath);
+    return 0;
+  }, { pattern: "autolaunch subjects staking <subject-id>" }),
   route("autolaunch subjects stake", async ({ parsedArgs, configPath }) => {
     await runAutolaunchSubjectStake(parsedArgs, configPath);
     return 0;
@@ -218,18 +236,18 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchSubjectClaimUsdc(parsedArgs, configPath);
     return 0;
   }, { pattern: "autolaunch subjects claim-usdc <subject-id>" }),
-  route("autolaunch subjects claim-emissions", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchSubjectClaimEmissions(parsedArgs, configPath);
-    return 0;
-  }, { pattern: "autolaunch subjects claim-emissions <subject-id>" }),
-  route("autolaunch subjects claim-and-stake-emissions", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchSubjectClaimAndStakeEmissions(parsedArgs, configPath);
-    return 0;
-  }, { pattern: "autolaunch subjects claim-and-stake-emissions <subject-id>" }),
   route("autolaunch subjects sweep-ingress", async ({ parsedArgs, configPath }) => {
     await runAutolaunchSubjectSweepIngress(parsedArgs, configPath);
     return 0;
   }, { pattern: "autolaunch subjects sweep-ingress <subject-id>" }),
+  route("autolaunch subjects protocol-fee-settlements", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectProtocolFeeSettlements(parsedArgs, configPath);
+    return 0;
+  }, { pattern: "autolaunch subjects protocol-fee-settlements <subject-id>" }),
+  route("autolaunch subjects regent-emissions", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchSubjectRegentEmissions(parsedArgs, configPath);
+    return 0;
+  }, { pattern: "autolaunch subjects regent-emissions <subject-id>" }),
   route("autolaunch holdings stake", async ({ parsedArgs, configPath }) => {
     await runAutolaunchHoldingsStake(parsedArgs, configPath);
     return 0;
@@ -242,14 +260,6 @@ export const autolaunchRoutes: readonly CliRoute[] = [
     await runAutolaunchHoldingsClaimUsdc(parsedArgs, configPath);
     return 0;
   }, { pattern: "autolaunch holdings claim-usdc <subject-id>" }),
-  route("autolaunch holdings claim-emissions", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchHoldingsClaimEmissions(parsedArgs, configPath);
-    return 0;
-  }, { pattern: "autolaunch holdings claim-emissions <subject-id>" }),
-  route("autolaunch holdings claim-and-stake-emissions", async ({ parsedArgs, configPath }) => {
-    await runAutolaunchHoldingsClaimAndStakeEmissions(parsedArgs, configPath);
-    return 0;
-  }, { pattern: "autolaunch holdings claim-and-stake-emissions <subject-id>" }),
   route("autolaunch holdings sweep-ingress", async ({ parsedArgs, configPath }) => {
     await runAutolaunchHoldingsSweepIngress(parsedArgs, configPath);
     return 0;

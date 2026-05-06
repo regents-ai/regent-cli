@@ -976,6 +976,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/app/subjects/existing-token/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareExistingTokenRevenueSubject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/existing-token/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["confirmExistingTokenRevenueSubject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/deferred-autolaunch/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["prepareDeferredAutolaunch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/deferred-autolaunch/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["confirmDeferredAutolaunch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/by-token/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listSubjectsByToken"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/app/subjects/{id}/ingress": {
         parameters: {
             query?: never;
@@ -984,6 +1064,54 @@ export interface paths {
             cookie?: never;
         };
         get: operations["getSubjectIngress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/{id}/staking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getSubjectStaking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/{id}/protocol-fee-settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listSubjectProtocolFeeSettlements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/subjects/{id}/regent-emissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listSubjectRegentEmissions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1034,38 +1162,6 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["claimSubjectUsdc"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/app/subjects/{id}/claim-emissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["claimSubjectEmissions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/app/subjects/{id}/claim-and-stake-emissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["claimAndStakeSubjectEmissions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1332,6 +1428,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/agent/subjects/existing-token/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["agentPrepareExistingTokenRevenueSubject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/existing-token/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["agentConfirmExistingTokenRevenueSubject"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/deferred-autolaunch/prepare": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["agentPrepareDeferredAutolaunch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/deferred-autolaunch/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["agentConfirmDeferredAutolaunch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/by-token/{token}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentListSubjectsByToken"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/agent/subjects/{id}/ingress": {
         parameters: {
             query?: never;
@@ -1340,6 +1516,54 @@ export interface paths {
             cookie?: never;
         };
         get: operations["agentGetSubjectIngress"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/{id}/staking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentGetSubjectStaking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/{id}/protocol-fee-settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentListSubjectProtocolFeeSettlements"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/subjects/{id}/regent-emissions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["agentListSubjectRegentEmissions"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1406,38 +1630,6 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["agentClaimSubjectUsdc"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/agent/subjects/{id}/claim-emissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["agentClaimSubjectEmissions"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/v1/agent/subjects/{id}/claim-and-stake-emissions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: operations["agentClaimAndStakeSubjectEmissions"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1993,6 +2185,8 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         Address: string;
+        /** @description Wallet address or ENS name that resolves to a wallet address. */
+        AddressOrEnsName: string;
         /** @enum {integer} */
         AutolaunchChainId: 84532 | 8453;
         DecimalString: string;
@@ -2148,7 +2342,30 @@ export interface components {
         };
         StakeRequest: {
             amount: components["schemas"]["DecimalString"];
-            receiver?: components["schemas"]["Address"];
+            receiver?: components["schemas"]["AddressOrEnsName"];
+        };
+        ExistingTokenRevenueSubjectRequest: {
+            stake_token: components["schemas"]["Address"];
+            treasury: components["schemas"]["Address"];
+            staker_pool_bps: number;
+            label: string;
+            salt?: components["schemas"]["HexData"];
+        };
+        DeferredAutolaunchRequest: {
+            token_name: string;
+            token_symbol: string;
+            total_supply: string;
+            treasury: components["schemas"]["Address"];
+            token_factory: components["schemas"]["Address"];
+            token_factory_data?: components["schemas"]["HexData"];
+            token_factory_salt?: components["schemas"]["HexData"];
+            subject_label: string;
+            identity_chain_id?: number | null;
+            identity_registry?: components["schemas"]["Address"] | null;
+            identity_agent_id?: number | null;
+        };
+        ConfirmRevenueSubjectRequest: {
+            tx_hash: components["schemas"]["HexData"];
         };
         RegentStakingDepositPrepareRequest: {
             amount: components["schemas"]["DecimalString"];
@@ -2206,6 +2423,12 @@ export interface components {
             ok: true;
             job_id?: string;
             subject_id?: string;
+            prepared: components["schemas"]["PreparedAction"];
+        };
+        PreparedRevenueSubjectActionEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject?: components["schemas"]["RevenueSubject"] | null;
             prepared: components["schemas"]["PreparedAction"];
         };
         RegentStakingPreparedActionEnvelope: {
@@ -2635,8 +2858,110 @@ export interface components {
             ok: true;
             items: components["schemas"]["BidPosition"][];
         };
+        /** @enum {string} */
+        RevenueSubjectKind: "cca_launch" | "existing_token_revenue" | "deferred_autolaunch";
+        /** @enum {string} */
+        RevenueSplitterKind: "denominator_v2" | "live_stake_fee_pool";
+        /** @enum {string} */
+        TeamSharedStatus: "unverified" | "team_shared" | "dao_shared" | "official_site_linked";
+        RevenueSubject: {
+            subject_id: string;
+            subject_kind: components["schemas"]["RevenueSubjectKind"];
+            splitter_kind: components["schemas"]["RevenueSplitterKind"];
+            token_address: components["schemas"]["Address"];
+            splitter_address: components["schemas"]["Address"];
+            ingress_address: components["schemas"]["Address"] | null;
+            treasury_address: components["schemas"]["Address"];
+            factory_address: components["schemas"]["Address"] | null;
+            creator_address: components["schemas"]["Address"] | null;
+            permissionless: boolean;
+            staker_pool_bps?: number | null;
+            protocol_skim_bps_snapshot: number | null;
+            current_protocol_skim_bps: number | null;
+            protocol_fee_usdc_total: components["schemas"]["DecimalString"];
+            protocol_fee_usdc_total_raw?: number | null;
+            regent_emission_total: components["schemas"]["DecimalString"];
+            regent_emission_total_raw?: number | null;
+            regent_buyback_total: components["schemas"]["DecimalString"];
+            regent_buyback_total_raw?: number | null;
+            oracle_kind: "v4_spot_chainlink_eth_usd" | null;
+            regent_weth_pool_id: components["schemas"]["HexData"] | null;
+            team_shared_status: components["schemas"]["TeamSharedStatus"];
+        };
+        RevenueSubjectEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject: components["schemas"]["RevenueSubject"];
+        };
+        RevenueSubjectListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            token_address: components["schemas"]["Address"];
+            subjects: components["schemas"]["RevenueSubject"][];
+        };
+        ProtocolFeeSettlement: {
+            subject_id: string;
+            splitter_address: components["schemas"]["Address"];
+            treasury_address: components["schemas"]["Address"];
+            usdc_amount: components["schemas"]["DecimalString"];
+            usdc_amount_raw?: number;
+            regent_owed: components["schemas"]["DecimalString"];
+            regent_owed_raw?: number;
+            regent_bought: components["schemas"]["DecimalString"];
+            regent_bought_raw?: number;
+            regent_usd_e18?: number | null;
+            source_ref: components["schemas"]["HexData"];
+            transaction_hash?: components["schemas"]["HexData"] | null;
+            block_number?: number | null;
+            log_index?: number | null;
+        };
+        ProtocolFeeSettlementListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject_id: string;
+            settlements: components["schemas"]["ProtocolFeeSettlement"][];
+        };
+        RegentEmission: {
+            subject_id: string;
+            recipient: components["schemas"]["Address"];
+            amount: components["schemas"]["DecimalString"];
+            amount_raw?: number;
+            source_ref: components["schemas"]["HexData"];
+            transaction_hash?: components["schemas"]["HexData"] | null;
+            block_number?: number | null;
+            log_index?: number | null;
+        };
+        RegentEmissionListEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject_id: string;
+            emissions: components["schemas"]["RegentEmission"][];
+        };
+        SubjectStakingEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            subject_id: string;
+            staking: {
+                [key: string]: unknown;
+            };
+        };
         Subject: {
             subject_id: string;
+            subject_kind?: components["schemas"]["RevenueSubjectKind"] | null;
+            splitter_kind?: components["schemas"]["RevenueSplitterKind"] | null;
+            treasury_address?: components["schemas"]["Address"] | null;
+            factory_address?: components["schemas"]["Address"] | null;
+            creator_address?: components["schemas"]["Address"] | null;
+            permissionless?: boolean | null;
+            staker_pool_bps?: number | null;
+            protocol_skim_bps_snapshot?: number | null;
+            current_protocol_skim_bps?: number | null;
+            protocol_fee_usdc_total?: components["schemas"]["DecimalString"] | null;
+            regent_emission_total?: components["schemas"]["DecimalString"] | null;
+            regent_buyback_total?: components["schemas"]["DecimalString"] | null;
+            oracle_kind?: "v4_spot_chainlink_eth_usd" | null;
+            regent_weth_pool_id?: components["schemas"]["HexData"] | null;
+            team_shared_status?: components["schemas"]["TeamSharedStatus"] | null;
             chain_id: number;
             chain_label?: string | null;
             token_address: components["schemas"]["Address"];
@@ -2753,7 +3078,7 @@ export interface components {
             [key: string]: unknown;
         };
         /** @enum {string} */
-        HoldingAction: "unstake" | "stake" | "claim_usdc" | "claim_emissions" | "claim_and_stake_emissions" | "sweep_ingress";
+        HoldingAction: "unstake" | "stake" | "claim_usdc" | "sweep_ingress";
         HoldingRow: {
             auction_id: string;
             subject_id: string | null;
@@ -2765,7 +3090,6 @@ export interface components {
             unstaked_token_balance?: components["schemas"]["DecimalString"] | null;
             staked_token_balance?: components["schemas"]["DecimalString"] | null;
             claimable_usdc?: components["schemas"]["DecimalString"] | null;
-            claimable_emissions?: components["schemas"]["DecimalString"] | null;
             ingress_accounts?: {
                 [key: string]: unknown;
             }[];
@@ -2850,6 +3174,7 @@ export interface components {
         AuctionId: string;
         BidId: string;
         SubjectId: string;
+        TokenAddress: components["schemas"]["Address"];
         SessionId: string;
         /** @description Canonical contract scope. Job-scoped settlement actions use `strategy`, `auction`, `revenue_splitter`, `fee_registry`, `fee_vault`, `hook`, and `vesting`. Launch treasury fee pulls use `revenue_splitter`, not `fee_vault`. */
         Resource: string;
@@ -2931,7 +3256,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Missing or invalid internal shared secret */
+            /** @description Missing or invalid internal request signature */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -2966,7 +3291,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Missing or invalid internal shared secret */
+            /** @description Missing or invalid internal request signature */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -3012,7 +3337,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Missing or invalid internal shared secret */
+            /** @description Missing or invalid internal request signature */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -3058,7 +3383,7 @@ export interface operations {
                     };
                 };
             };
-            /** @description Missing or invalid internal shared secret */
+            /** @description Missing or invalid internal request signature */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -3106,7 +3431,7 @@ export interface operations {
                     "application/json": components["schemas"]["OkEnvelope"];
                 };
             };
-            /** @description Missing or invalid internal shared secret */
+            /** @description Missing or invalid internal request signature */
             401: {
                 headers: {
                     [name: string]: unknown;
@@ -4591,6 +4916,124 @@ export interface operations {
             };
         };
     };
+    prepareExistingTokenRevenueSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExistingTokenRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing-token subject action prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedRevenueSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    confirmExistingTokenRevenueSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing-token subject confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectEnvelope"];
+                };
+            };
+        };
+    };
+    prepareDeferredAutolaunch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeferredAutolaunchRequest"];
+            };
+        };
+        responses: {
+            /** @description DeferredAutolaunch action prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedRevenueSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    confirmDeferredAutolaunch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description DeferredAutolaunch confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectEnvelope"];
+                };
+            };
+        };
+    };
+    listSubjectsByToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: components["parameters"]["TokenAddress"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Revenue subjects for token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectListEnvelope"];
+                };
+            };
+        };
+    };
     getSubjectIngress: {
         parameters: {
             query?: never;
@@ -4609,6 +5052,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SubjectIngressEnvelope"];
+                };
+            };
+        };
+    };
+    getSubjectStaking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Subject staking */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubjectStakingEnvelope"];
+                };
+            };
+        };
+    };
+    listSubjectProtocolFeeSettlements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Protocol fee settlement history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProtocolFeeSettlementListEnvelope"];
+                };
+            };
+        };
+    };
+    listSubjectRegentEmissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description REGENT emission history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentEmissionListEnvelope"];
                 };
             };
         };
@@ -4681,58 +5190,6 @@ export interface operations {
         };
         responses: {
             /** @description Claim prepared */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
-                };
-            };
-        };
-    };
-    claimSubjectEmissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["SubjectId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["EmptyRequest"];
-            };
-        };
-        responses: {
-            /** @description Emissions claim prepared */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
-                };
-            };
-        };
-    };
-    claimAndStakeSubjectEmissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["SubjectId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["EmptyRequest"];
-            };
-        };
-        responses: {
-            /** @description Emissions compound prepared */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -5136,6 +5593,124 @@ export interface operations {
             };
         };
     };
+    agentPrepareExistingTokenRevenueSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ExistingTokenRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing-token subject action prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedRevenueSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    agentConfirmExistingTokenRevenueSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description Existing-token subject confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectEnvelope"];
+                };
+            };
+        };
+    };
+    agentPrepareDeferredAutolaunch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DeferredAutolaunchRequest"];
+            };
+        };
+        responses: {
+            /** @description DeferredAutolaunch action prepared */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PreparedRevenueSubjectActionEnvelope"];
+                };
+            };
+        };
+    };
+    agentConfirmDeferredAutolaunch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConfirmRevenueSubjectRequest"];
+            };
+        };
+        responses: {
+            /** @description DeferredAutolaunch confirmed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectEnvelope"];
+                };
+            };
+        };
+    };
+    agentListSubjectsByToken: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                token: components["parameters"]["TokenAddress"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Revenue subjects for token */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RevenueSubjectListEnvelope"];
+                };
+            };
+        };
+    };
     agentGetSubjectIngress: {
         parameters: {
             query?: never;
@@ -5154,6 +5729,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SubjectIngressEnvelope"];
+                };
+            };
+        };
+    };
+    agentGetSubjectStaking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Subject staking */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubjectStakingEnvelope"];
+                };
+            };
+        };
+    };
+    agentListSubjectProtocolFeeSettlements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Protocol fee settlement history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProtocolFeeSettlementListEnvelope"];
+                };
+            };
+        };
+    };
+    agentListSubjectRegentEmissions: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["SubjectId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description REGENT emission history */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentEmissionListEnvelope"];
                 };
             };
         };
@@ -5252,58 +5893,6 @@ export interface operations {
         };
         responses: {
             /** @description Claim prepared */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
-                };
-            };
-        };
-    };
-    agentClaimSubjectEmissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["SubjectId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["EmptyRequest"];
-            };
-        };
-        responses: {
-            /** @description Emissions claim prepared */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PreparedSubjectActionEnvelope"];
-                };
-            };
-        };
-    };
-    agentClaimAndStakeSubjectEmissions: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: components["parameters"]["SubjectId"];
-            };
-            cookie?: never;
-        };
-        requestBody?: {
-            content: {
-                "application/json": components["schemas"]["EmptyRequest"];
-            };
-        };
-        responses: {
-            /** @description Emissions compound prepared */
             200: {
                 headers: {
                     [name: string]: unknown;

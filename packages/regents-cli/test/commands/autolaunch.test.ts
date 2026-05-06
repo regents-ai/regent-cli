@@ -706,6 +706,136 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
+  it("uses the current subject revenue read routes", async () => {
+    const configPath = createConfigPath();
+    fetchMock
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true, token_address: "0xabc", subjects: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true, subject_id: "subject_123", staking: {} }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      )
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ ok: true, subject_id: "subject_123", settlements: [] }),
+          {
+            status: 200,
+            headers: { "content-type": "application/json" },
+          },
+        ),
+      )
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ ok: true, subject_id: "subject_123", emissions: [] }), {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        }),
+      );
+
+    const byToken = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "subjects",
+        "by-token",
+        "--token",
+        "0xabc",
+        "--config",
+        configPath,
+      ]),
+    );
+    const staking = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "subjects",
+        "staking",
+        "subject_123",
+        "--config",
+        configPath,
+      ]),
+    );
+    const settlements = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "subjects",
+        "protocol-fee-settlements",
+        "subject_123",
+        "--config",
+        configPath,
+      ]),
+    );
+    const emissions = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "subjects",
+        "regent-emissions",
+        "subject_123",
+        "--config",
+        configPath,
+      ]),
+    );
+
+    expect(byToken.result, byToken.stderr).toBe(0);
+    expect(staking.result, staking.stderr).toBe(0);
+    expect(settlements.result, settlements.stderr).toBe(0);
+    expect(emissions.result, emissions.stderr).toBe(0);
+    expect(fetchMock.mock.calls.map((call) => call[0])).toEqual([
+      `${expectedBaseUrl}/v1/agent/subjects/by-token/0xabc`,
+      `${expectedBaseUrl}/v1/agent/subjects/subject_123/staking`,
+      `${expectedBaseUrl}/v1/agent/subjects/subject_123/protocol-fee-settlements`,
+      `${expectedBaseUrl}/v1/agent/subjects/subject_123/regent-emissions`,
+    ]);
+  });
+
+  it("prepares an existing-token subject with the current subject contract route", async () => {
+    const configPath = createConfigPath();
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          prepared: preparedSubjectAction("0x12345678"),
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "subjects",
+        "create-existing-token",
+        "--stake-token",
+        "0x1111111111111111111111111111111111111111",
+        "--treasury",
+        "0x2222222222222222222222222222222222222222",
+        "--staker-pool-bps",
+        "2500",
+        "--label",
+        "Sentinel Research Agent",
+        "--config",
+        configPath,
+      ]),
+    );
+
+    expect(output.result, output.stderr).toBe(0);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/agent/subjects/existing-token/prepare`,
+    );
+    expect(JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body))).toEqual({
+      stake_token: "0x1111111111111111111111111111111111111111",
+      treasury: "0x2222222222222222222222222222222222222222",
+      staker_pool_bps: 2500,
+      label: "Sentinel Research Agent",
+    });
+  });
+
   it("submits a subject claim from the nested prepared action", async () => {
     const configPath = createConfigPath();
     process.env.REGENT_WALLET_PRIVATE_KEY =

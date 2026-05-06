@@ -1,6 +1,7 @@
 import {
   getBooleanFlag,
   getFlag,
+  parseIntegerFlag,
   requireArg,
   type ParsedCliArgs,
 } from "../../parse.js";
@@ -61,6 +62,143 @@ const prepareOrSubmitWrite = async (
 const requireHoldingSubjectId = (args: ParsedCliArgs): string =>
   requirePositional(args, 3, "subject-id");
 
+const parseNonNegativeIntegerFlag = (
+  args: ParsedCliArgs,
+  name: string,
+): number => {
+  const value = requireArg(getFlag(args, name), name);
+  const parsed = Number(value);
+
+  if (!Number.isInteger(parsed) || parsed < 0 || String(parsed) !== value) {
+    throw new Error(`invalid integer for --${name}`);
+  }
+
+  return parsed;
+};
+
+const putOptionalStringFlag = (
+  body: Record<string, unknown>,
+  key: string,
+  args: ParsedCliArgs,
+  flagName: string,
+): void => {
+  const value = getFlag(args, flagName);
+  if (value !== undefined) {
+    body[key] = value;
+  }
+};
+
+const putOptionalIntegerFlag = (
+  body: Record<string, unknown>,
+  key: string,
+  args: ParsedCliArgs,
+  flagName: string,
+): void => {
+  const value = parseIntegerFlag(args, flagName);
+  if (value !== undefined) {
+    body[key] = value;
+  }
+};
+
+const prepareOrSubmitSubjectCreation = async (
+  preparePath: string,
+  confirmPath: string,
+  body: Record<string, unknown>,
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> => {
+  const prepared = await requestJson("POST", preparePath, {
+    body,
+    requireAgentAuth: true,
+    configPath,
+  });
+
+  if (!getBooleanFlag(args, "submit")) {
+    printJson(prepared);
+    return;
+  }
+
+  const preparedAction = preparedActionFromEnvelope(prepared);
+  const txRequest = txRequestFromWalletAction(preparedAction.wallet_action);
+
+  if (!txRequest) {
+    throw new Error("This Autolaunch action did not include a transaction to submit.");
+  }
+
+  const txHash = await submitPreparedTxRequest(txRequest, configPath);
+  printJson(
+    await requestJson("POST", confirmPath, {
+      body: { tx_hash: txHash },
+      requireAgentAuth: true,
+      configPath,
+    }),
+  );
+};
+
+export async function runAutolaunchSubjectCreateExistingToken(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  const body: Record<string, unknown> = {
+    stake_token: requireArg(getFlag(args, "stake-token"), "stake-token"),
+    treasury: requireArg(getFlag(args, "treasury"), "treasury"),
+    staker_pool_bps: parseNonNegativeIntegerFlag(args, "staker-pool-bps"),
+    label: requireArg(getFlag(args, "label"), "label"),
+  };
+
+  putOptionalStringFlag(body, "salt", args, "salt");
+
+  await prepareOrSubmitSubjectCreation(
+    "/v1/agent/subjects/existing-token/prepare",
+    "/v1/agent/subjects/existing-token/confirm",
+    body,
+    args,
+    configPath,
+  );
+}
+
+export async function runAutolaunchSubjectCreateDeferredAutolaunch(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  const body: Record<string, unknown> = {
+    token_name: requireArg(getFlag(args, "token-name"), "token-name"),
+    token_symbol: requireArg(getFlag(args, "token-symbol"), "token-symbol"),
+    total_supply: requireArg(getFlag(args, "total-supply"), "total-supply"),
+    treasury: requireArg(getFlag(args, "treasury"), "treasury"),
+    token_factory: requireArg(getFlag(args, "token-factory"), "token-factory"),
+    subject_label: requireArg(getFlag(args, "subject-label"), "subject-label"),
+  };
+
+  putOptionalStringFlag(body, "token_factory_data", args, "token-factory-data");
+  putOptionalStringFlag(body, "token_factory_salt", args, "token-factory-salt");
+  putOptionalIntegerFlag(body, "identity_chain_id", args, "identity-chain-id");
+  putOptionalStringFlag(body, "identity_registry", args, "identity-registry");
+  putOptionalIntegerFlag(body, "identity_agent_id", args, "identity-agent-id");
+
+  await prepareOrSubmitSubjectCreation(
+    "/v1/agent/subjects/deferred-autolaunch/prepare",
+    "/v1/agent/subjects/deferred-autolaunch/confirm",
+    body,
+    args,
+    configPath,
+  );
+}
+
+export async function runAutolaunchSubjectByToken(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  const token = requireArg(getFlag(args, "token"), "token");
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/subjects/by-token/${encodeURIComponent(token)}`,
+      { requireAgentAuth: true, configPath },
+    ),
+  );
+}
+
 export async function runAutolaunchSubjectGet(
   args: ParsedCliArgs,
   configPath?: string,
@@ -83,6 +221,20 @@ export async function runAutolaunchSubjectIngress(
     await requestJson(
       "GET",
       `/v1/agent/subjects/${encodeURIComponent(subjectId)}/ingress`,
+      { requireAgentAuth: true, configPath },
+    ),
+  );
+}
+
+export async function runAutolaunchSubjectStaking(
+  args: ParsedCliArgs,
+  configPath?: string,
+): Promise<void> {
+  const subjectId = requirePositional(args, 3, "subject-id");
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/subjects/${encodeURIComponent(subjectId)}/staking`,
       { requireAgentAuth: true, configPath },
     ),
   );
@@ -133,31 +285,31 @@ export async function runAutolaunchSubjectClaimUsdc(
   );
 }
 
-export async function runAutolaunchSubjectClaimEmissions(
+export async function runAutolaunchSubjectProtocolFeeSettlements(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
   const subjectId = requirePositional(args, 3, "subject-id");
-  await prepareOrSubmitWrite(
-    "POST",
-    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
-    {},
-    args,
-    configPath,
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/subjects/${encodeURIComponent(subjectId)}/protocol-fee-settlements`,
+      { requireAgentAuth: true, configPath },
+    ),
   );
 }
 
-export async function runAutolaunchSubjectClaimAndStakeEmissions(
+export async function runAutolaunchSubjectRegentEmissions(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
   const subjectId = requirePositional(args, 3, "subject-id");
-  await prepareOrSubmitWrite(
-    "POST",
-    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
-    {},
-    args,
-    configPath,
+  printJson(
+    await requestJson(
+      "GET",
+      `/v1/agent/subjects/${encodeURIComponent(subjectId)}/regent-emissions`,
+      { requireAgentAuth: true, configPath },
+    ),
   );
 }
 
@@ -216,34 +368,6 @@ export async function runAutolaunchHoldingsClaimUsdc(
   await prepareOrSubmitWrite(
     "POST",
     `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-usdc`,
-    {},
-    args,
-    configPath,
-  );
-}
-
-export async function runAutolaunchHoldingsClaimEmissions(
-  args: ParsedCliArgs,
-  configPath?: string,
-): Promise<void> {
-  const subjectId = requireHoldingSubjectId(args);
-  await prepareOrSubmitWrite(
-    "POST",
-    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-emissions`,
-    {},
-    args,
-    configPath,
-  );
-}
-
-export async function runAutolaunchHoldingsClaimAndStakeEmissions(
-  args: ParsedCliArgs,
-  configPath?: string,
-): Promise<void> {
-  const subjectId = requireHoldingSubjectId(args);
-  await prepareOrSubmitWrite(
-    "POST",
-    `/v1/agent/subjects/${encodeURIComponent(subjectId)}/claim-and-stake-emissions`,
     {},
     args,
     configPath,
