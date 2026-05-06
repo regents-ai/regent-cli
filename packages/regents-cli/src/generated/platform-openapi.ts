@@ -2874,6 +2874,12 @@ export interface components {
                 block_number?: number | null;
             };
             risk_copy: string;
+            approval?: {
+                token: string;
+                spender: string;
+                amount: string;
+                data: string;
+            };
         };
         RegentStakingState: {
             chain_id: number;
@@ -2883,12 +2889,15 @@ export interface components {
             stake_token_address: string;
             usdc_address: string;
             treasury_recipient: string;
-            staker_share_bps: number;
+            revenue_share_supply_denominator_raw: string;
+            revenue_share_supply_denominator: string;
             paused: boolean;
             total_staked_raw: string;
             total_staked: string;
-            total_recognized_rewards_usdc_raw: string;
-            total_recognized_rewards_usdc: string;
+            total_usdc_received_raw: string;
+            total_usdc_received: string;
+            direct_deposit_usdc_raw: string;
+            direct_deposit_usdc: string;
             treasury_residual_usdc_raw: string;
             treasury_residual_usdc: string;
             materialized_outstanding_raw: string;
@@ -2907,6 +2916,8 @@ export interface components {
             wallet_claimable_usdc?: string | null;
             wallet_claimable_regent_raw?: string | null;
             wallet_claimable_regent?: string | null;
+            wallet_funded_claimable_regent_raw?: string | null;
+            wallet_funded_claimable_regent?: string | null;
         };
         RegentStakingOverviewResponse: components["schemas"]["RegentStakingState"] & {
             ok: boolean;
