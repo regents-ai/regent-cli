@@ -4,6 +4,36 @@ All notable changes to `@regentslabs/cli` should be recorded here.
 
 ## Unreleased
 
+## 0.5.0 - 2026-05-06
+
+### Added
+
+- Added `regents agent-context`, a JSON command surface that exposes shipped commands, command groups, command metadata, examples, output behavior, and safe local profile/config summaries for agents.
+- Added global `--no-input` handling through a shared prompt boundary so automated runs fail with actionable errors instead of waiting for terminal input.
+- Added the Feynman bridge: `regents feynman ...` launches the installed Feynman research shell while keeping Feynman's own setup and state.
+- Added Techtree benchmark capsule, run, reliability, repeat, materialize, submit, and scoreboard command coverage.
+- Added workspace release checks, workspace manifest validation, packed-install checks, and wallet-action schema validation.
+
+### Changed
+
+- Hard-cut read-style commands to conventional names, including `config get`, `agent profile get`, `runtime get`, `work get`, `regent-staking get`, `xmtp policy get`, and Autolaunch `get` commands.
+- Expanded generated CLI command metadata so contracts, help, route checks, command docs, and `agent-context` use the same command source.
+- Updated Techtree defaults and tests for Base mainnet-oriented publishing and identity flows.
+- Updated Autolaunch subject and holdings commands around canonical prepared wallet actions.
+- Improved terminal panel wrapping for narrow terminal widths while keeping JSON output plain for automation.
+
+### Fixed
+
+- Fixed release checks so banned command verbs, missing examples, missing JSON declarations, missing route coverage, and unbounded list/search-style commands fail in contract validation.
+- Fixed Techtree benchmark transaction preparation to use typed chain data and canonical wallet-action shapes.
+- Fixed staking and Autolaunch transaction paths to use the current prepared transaction envelope.
+- Refreshed Platform, Autolaunch, Techtree, and Regent services generated bindings from the current contracts.
+
+### Removed
+
+- Removed prompt-only staking receiver confirmation; prepared wallet actions plus `--submit` are now the explicit value movement boundary.
+- Removed old public command names and stale command docs from the shipped CLI surface.
+
 ## 0.4.0 - 2026-04-29
 
 ### Added
