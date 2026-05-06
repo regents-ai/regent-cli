@@ -636,7 +636,7 @@ export function authChecks(): DoctorCheckDefinition[] {
             return {
               status: "fail",
               message:
-                "Authenticated HTTP envelope does not satisfy the SIWA sidecar-sensitive header and binding contract",
+                "Authenticated HTTP envelope does not satisfy the shared SIWA header and binding contract",
               details: {
                 missingHeaders: missing,
                 missingCoveredComponents,

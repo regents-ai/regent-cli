@@ -15,19 +15,19 @@ const TEST_WALLET = "0x70997970C51812dc3A010C7d01b50e0d17dc79C8" as const;
 const TEST_REGISTRY = "0x2222222222222222222222222222222222222222" as const;
 
 describe("techtree authenticated probe", () => {
-  it("normalizes backend and sidecar denial details", async () => {
+  it("normalizes backend and shared SIWA denial details", async () => {
     const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), "regent-doctor-probe-"));
     const stateStore = new StateStore(path.join(tempDir, "runtime-state.json"));
     stateStore.write({
       agent: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "99",
       },
       siwa: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         nonce: "doctor-nonce",
         keyId: TEST_WALLET.toLowerCase(),
         receipt: "doctor-receipt",
@@ -49,15 +49,15 @@ describe("techtree authenticated probe", () => {
       walletSecretSource: null,
       techtree: {
         getOpportunities: async () => {
-          throw new TechtreeApiError("sidecar denied envelope", {
+          throw new TechtreeApiError("shared SIWA denied envelope", {
             code: "auth_denied",
             status: 401,
             payload: {
               error: {
                 code: "auth_denied",
-                message: "sidecar denied envelope",
+                message: "shared SIWA denied envelope",
                 details: {
-                  sidecar: {
+                  siwa: {
                     code: "receipt_binding_mismatch",
                     message: "x-key-id does not match SIWA receipt",
                   },
@@ -89,9 +89,9 @@ describe("techtree authenticated probe", () => {
           status: 401,
           backend: expect.objectContaining({
             code: "auth_denied",
-            message: "sidecar denied envelope",
+            message: "shared SIWA denied envelope",
           }),
-          sidecar: expect.objectContaining({
+          siwa: expect.objectContaining({
             code: "receipt_binding_mismatch",
           }),
         }),

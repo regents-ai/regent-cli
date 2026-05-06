@@ -18,7 +18,7 @@ describe("config loading", () => {
     const configPath = path.join(tempDir, "regent.config.json");
     const config = loadConfig(configPath);
 
-    expect(config.auth.defaultChainId).toBe(84532);
+    expect(config.auth.defaultChainId).toBe(8453);
     expect(config.auth.audience).toBe("techtree");
     expect(config.runtime.stateDir).toBe(path.join(tempDir, "state"));
     expect(config.runtime.socketPath).toBe(path.join(tempDir, "run", "regent.sock"));

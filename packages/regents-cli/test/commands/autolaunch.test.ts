@@ -1084,7 +1084,7 @@ describe("autolaunch CLI command group", () => {
             data: {
               agents: [
                 {
-                  chainId: "84532",
+                  chainId: "8453",
                   agentId: "88",
                   owner: "0x00000000000000000000000000000000000000aa",
                   operators: [],
@@ -1118,7 +1118,7 @@ describe("autolaunch CLI command group", () => {
         "identities",
         "list",
         "--chain",
-        "base-sepolia",
+        "base-mainnet",
         "--owner",
         "0x00000000000000000000000000000000000000aa",
       ]),
@@ -1132,9 +1132,9 @@ describe("autolaunch CLI command group", () => {
       ),
     ).toMatchObject({
       ok: true,
-      chain_id: 84532,
+      chain_id: 8453,
       owner_address: "0x00000000000000000000000000000000000000aa",
-      launchable: [{ agent_id: "84532:88" }],
+      launchable: [{ agent_id: "8453:88" }],
     });
   });
 
@@ -1214,7 +1214,7 @@ describe("autolaunch CLI command group", () => {
   it("mints an ERC-8004 identity through the techtree namespace", async () => {
     process.env.AUTOLAUNCH_AGENT_PRIVATE_KEY =
       "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-    process.env.BASE_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+    process.env.BASE_MAINNET_RPC_URL = "https://rpc.base.example";
     writeContractMock.mockResolvedValue("0xbeef");
     waitForReceiptMock.mockResolvedValue({
       status: "success",
@@ -1227,7 +1227,7 @@ describe("autolaunch CLI command group", () => {
         "identities",
         "mint",
         "--chain",
-        "base-sepolia",
+        "base-mainnet",
       ]),
     );
 
@@ -1239,8 +1239,8 @@ describe("autolaunch CLI command group", () => {
       ),
     ).toMatchObject({
       ok: true,
-      chain_id: 84532,
-      agent_id: "84532:42",
+      chain_id: 8453,
+      agent_id: "8453:42",
       owner_address: "0x00000000000000000000000000000000000000aa",
       agent_uri: null,
     });

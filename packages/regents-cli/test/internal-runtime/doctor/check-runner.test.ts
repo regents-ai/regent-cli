@@ -74,7 +74,7 @@ describe("doctor check runner", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         techtree: {
@@ -92,7 +92,7 @@ describe("doctor check runner", () => {
     stateStore.write({
       agent: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "99",
       },
@@ -117,7 +117,7 @@ describe("doctor check runner", () => {
           code: "siwa_nonce_ok",
           data: {
             walletAddress: TEST_WALLET,
-            chainId: 84532,
+            chainId: 8453,
             nonce: "doctor-nonce",
             issuedAt: "2026-01-01T00:00:00.000Z",
             expiresAt: "2999-01-01T00:00:00.000Z",

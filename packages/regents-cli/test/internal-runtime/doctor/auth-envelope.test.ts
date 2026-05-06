@@ -36,13 +36,13 @@ describe("auth envelope doctor check", () => {
       stateStore.write({
         agent: {
           walletAddress: TEST_WALLET,
-          chainId: 84532,
+          chainId: 8453,
           registryAddress: TEST_REGISTRY,
           tokenId: "99",
         },
         siwa: {
           walletAddress: TEST_WALLET,
-          chainId: 84532,
+          chainId: 8453,
           nonce: "doctor-nonce",
           keyId: TEST_WALLET,
           receipt: "doctor-receipt",
@@ -61,7 +61,7 @@ describe("auth envelope doctor check", () => {
         },
         auth: {
           audience: "techtree",
-          defaultChainId: 84532,
+          defaultChainId: 8453,
         },
         services: {
           siwa: {

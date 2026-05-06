@@ -42,7 +42,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
       auth: {
         baseUrl,
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
         requestTimeoutMs: 10_000,
       },
       techtree: {
@@ -96,7 +96,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
 
     const nonceResponse = await client.siwaNonce({
       wallet_address: wallet.address,
-      chain_id: 84532,
+      chain_id: 8453,
       registry_address: registryAddress,
       token_id: tokenId,
       audience: "techtree",
@@ -106,7 +106,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
       domain: "regent.cx",
       uri: "https://regent.cx/login",
       walletAddress: wallet.address,
-      chainId: 84532,
+      chainId: 8453,
       registryAddress,
       tokenId,
       nonce: nonceResponse.data.nonce,
@@ -116,7 +116,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
 
     const verifyResponse = await client.siwaVerify({
       wallet_address: wallet.address,
-      chain_id: 84532,
+      chain_id: 8453,
       audience: "techtree",
       nonce: nonceResponse.data.nonce,
       message,
@@ -139,7 +139,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
     stateStore.patch({
       agent: {
         walletAddress: wallet.address,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress,
         tokenId,
       },

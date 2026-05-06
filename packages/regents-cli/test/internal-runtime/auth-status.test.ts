@@ -30,7 +30,7 @@ describe("handleAuthSiwaStatus", () => {
         },
         auth: {
           audience: "techtree",
-          defaultChainId: 84532,
+          defaultChainId: 8453,
         },
         services: {
           siwa: {
@@ -61,7 +61,7 @@ describe("handleAuthSiwaStatus", () => {
 
       sessionStore.setSiwaSession({
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         nonce: "nonce",
         keyId: TEST_WALLET,
         receipt: "receipt",
@@ -74,7 +74,7 @@ describe("handleAuthSiwaStatus", () => {
       stateStore.patch({
         agent: {
           walletAddress: TEST_WALLET,
-          chainId: 84532,
+          chainId: 8453,
           registryAddress: TEST_REGISTRY,
           tokenId: "99",
           label: "Coinbase wallet",
@@ -84,7 +84,7 @@ describe("handleAuthSiwaStatus", () => {
       writeIdentityReceipt({
         version: 1,
         regent_base_url: "https://regent.example",
-        network: "base-sepolia",
+        network: "base",
         provider: "coinbase-cdp",
         address: OTHER_WALLET,
         agent_id: 99,

@@ -18,7 +18,6 @@ vi.mock("viem/accounts", () => ({
 
 vi.mock("viem/chains", () => ({
   base: { id: 8453, name: "Base" },
-  baseSepolia: { id: 84532, name: "Base Sepolia" },
 }));
 
 vi.mock("viem", () => ({

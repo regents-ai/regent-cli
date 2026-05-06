@@ -344,7 +344,7 @@ const createHarness = async (): Promise<ClientHarness> => {
     },
     auth: {
       audience: "techtree",
-      defaultChainId: 84532,
+      defaultChainId: 8453,
     },
     services: {
       siwa: { baseUrl, requestTimeoutMs: 1_000 },
@@ -362,7 +362,7 @@ const createHarness = async (): Promise<ClientHarness> => {
   const sessionStore = new SessionStore(stateStore);
   sessionStore.setSiwaSession({
     walletAddress: TEST_WALLET,
-    chainId: 84532,
+    chainId: 8453,
     nonce: "nonce",
     keyId: TEST_WALLET.toLowerCase(),
     receipt: "receipt-valid.test",
@@ -374,7 +374,7 @@ const createHarness = async (): Promise<ClientHarness> => {
   stateStore.patch({
     agent: {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: TEST_REGISTRY,
       tokenId: "99",
     },
@@ -546,7 +546,7 @@ describe("Techtree chatbox client routes", () => {
       expect(request.headers["signature-input"]).toBeTruthy();
       expect(request.headers["signature"]).toBeTruthy();
       expect(request.headers["x-agent-wallet-address"]).toBe(TEST_WALLET);
-      expect(request.headers["x-agent-chain-id"]).toBe("84532");
+      expect(request.headers["x-agent-chain-id"]).toBe("8453");
       expect(request.headers["x-agent-registry-address"]).toBe(TEST_REGISTRY);
       expect(request.headers["x-agent-token-id"]).toBe("99");
     }

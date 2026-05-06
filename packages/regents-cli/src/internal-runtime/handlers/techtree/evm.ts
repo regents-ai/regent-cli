@@ -6,7 +6,7 @@ import {
   type Hex,
 } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
-import { base, baseSepolia } from "viem/chains";
+import { base } from "viem/chains";
 
 import type { PaidPayloadSummary } from "../../../internal-types/index.js";
 import { assertSuccessfulReceipt } from "../../base-contract-client.js";
@@ -87,11 +87,9 @@ const parseUsdcAmount = (value: unknown): bigint => {
 
 const rpcUrlForChain = (chainId: number): string => {
   const resolved =
-    chainId === 84532
-      ? process.env.BASE_SEPOLIA_RPC_URL ?? process.env.ANVIL_RPC_URL
-      : chainId === 8453
-        ? process.env.BASE_MAINNET_RPC_URL ?? process.env.BASE_RPC_URL
-        : undefined;
+    chainId === 8453
+      ? process.env.BASE_MAINNET_RPC_URL ?? process.env.BASE_RPC_URL
+      : undefined;
 
   if (!resolved) {
     throw new Error(`missing RPC URL for chain ${chainId}`);
@@ -102,8 +100,6 @@ const rpcUrlForChain = (chainId: number): string => {
 
 const viemChainForId = (chainId: number) => {
   switch (chainId) {
-    case 84532:
-      return baseSepolia;
     case 8453:
       return base;
     default:

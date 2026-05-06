@@ -372,7 +372,7 @@ cat > "${WORK_DIR}/replacement.json" <<EOF
   },
   "auth": {
     "audience": "techtree",
-    "defaultChainId": 84532
+    "defaultChainId": 8453
   },
   "services": {
     "siwa": {

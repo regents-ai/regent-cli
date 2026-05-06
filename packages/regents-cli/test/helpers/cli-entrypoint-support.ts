@@ -942,7 +942,7 @@ const defaultDaemonResponse = async (method: string, params?: unknown) => {
       state: defaultAgentState(),
       identity: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "99",
       },

@@ -298,7 +298,7 @@ export function defaultConfig(configPath?: string): RegentConfig {
     },
     auth: {
       audience: "techtree",
-      defaultChainId: 84532,
+      defaultChainId: 8453,
     },
     services: {
       siwa: {

@@ -51,7 +51,7 @@ describe("top-level operator status commands", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         siwa: {
@@ -86,13 +86,13 @@ describe("top-level operator status commands", () => {
     process.env.CDP_WALLET_SECRET = originalWalletSecret;
   });
 
-  it("does not mark identity ready in status when the saved receipt belongs to a different network", async () => {
+  it("does not mark identity ready in status when the saved receipt belongs to a different wallet", async () => {
     writeReceipt(tempDir, {
       version: 1,
       regent_base_url: "https://regent.example",
       network: "base",
       provider: "coinbase-cdp",
-      address: TEST_WALLET,
+      address: "0x1111111111111111111111111111111111111111",
       agent_id: 99,
       agent_registry: "0x2222222222222222222222222222222222222222",
       signer_type: "evm_personal_sign",
@@ -125,13 +125,13 @@ describe("top-level operator status commands", () => {
     });
   });
 
-  it("does not show a stale identity in whoami when the saved receipt belongs to a different network", async () => {
+  it("does not show a stale identity in whoami when the saved receipt belongs to a different wallet", async () => {
     writeReceipt(tempDir, {
       version: 1,
       regent_base_url: "https://regent.example",
       network: "base",
       provider: "coinbase-cdp",
-      address: TEST_WALLET,
+      address: "0x1111111111111111111111111111111111111111",
       agent_id: 99,
       agent_registry: "0x2222222222222222222222222222222222222222",
       signer_type: "evm_personal_sign",
@@ -157,7 +157,7 @@ describe("top-level operator status commands", () => {
         address: TEST_WALLET,
       },
       identity: null,
-      chain_id: 84532,
+      chain_id: 8453,
     });
   });
 
@@ -165,7 +165,7 @@ describe("top-level operator status commands", () => {
     writeReceipt(tempDir, {
       version: 1,
       regent_base_url: "https://regent.example",
-      network: "base-sepolia",
+      network: "base",
       provider: "coinbase-cdp",
       address: TEST_WALLET,
       agent_id: 99,

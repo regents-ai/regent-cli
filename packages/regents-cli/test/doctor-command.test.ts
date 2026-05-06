@@ -56,7 +56,7 @@ describeNetwork.sequential("CLI doctor command", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         siwa: {
@@ -124,14 +124,14 @@ describeNetwork.sequential("CLI doctor command", () => {
         "ensure",
         "--json",
         "--network",
-        "base-sepolia",
+        "base",
         "--config",
         configPath,
       ]),
     );
     await expect(
       callJsonRpc(socketPath, "auth.siwa.login", {
-        chainId: 84532,
+        chainId: 8453,
         audience: "techtree",
       }),
     ).resolves.toMatchObject({

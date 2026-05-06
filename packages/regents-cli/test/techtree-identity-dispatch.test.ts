@@ -29,7 +29,7 @@ describe("Techtree identity command dispatch", () => {
   it("routes techtree identities list through the Techtree command surface", async () => {
     const { runCliEntrypoint } = await import("../src/index.js");
 
-    await expect(runCliEntrypoint(["techtree", "identities", "list", "--chain", "sepolia"])).resolves.toBe(0);
+    await expect(runCliEntrypoint(["techtree", "identities", "list", "--chain", "base-mainnet"])).resolves.toBe(0);
     expect(runTechtreeIdentitiesListMock).toHaveBeenCalledTimes(1);
     expect(runTechtreeIdentitiesMintMock).not.toHaveBeenCalled();
   });
@@ -37,7 +37,7 @@ describe("Techtree identity command dispatch", () => {
   it("routes techtree identities mint through the Techtree command surface", async () => {
     const { runCliEntrypoint } = await import("../src/index.js");
 
-    await expect(runCliEntrypoint(["techtree", "identities", "mint", "--chain", "sepolia"])).resolves.toBe(0);
+    await expect(runCliEntrypoint(["techtree", "identities", "mint", "--chain", "base-mainnet"])).resolves.toBe(0);
     expect(runTechtreeIdentitiesMintMock).toHaveBeenCalledTimes(1);
     expect(runTechtreeIdentitiesListMock).not.toHaveBeenCalled();
   });

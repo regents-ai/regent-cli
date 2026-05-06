@@ -2158,7 +2158,7 @@ export interface components {
     schemas: {
         Address: string;
         /** @enum {integer} */
-        TechtreeIdentityChainId: 84532 | 8453;
+        TechtreeIdentityChainId: 8453;
         TransactionHash: string;
         LooseObject: {
             [key: string]: unknown;

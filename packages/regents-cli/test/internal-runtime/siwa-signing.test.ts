@@ -21,7 +21,7 @@ describe("siwa message construction", () => {
       domain: "regent.cx",
       uri: "https://regent.cx/login",
       walletAddress: "0x1111111111111111111111111111111111111111",
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: "0x2222222222222222222222222222222222222222",
       tokenId: "99",
       nonce: "12345678deadbeef",
@@ -39,8 +39,8 @@ describe("siwa message construction", () => {
         "URI: https://regent.cx/login",
         "Version: 1",
         "Agent ID: 99",
-        "Agent Registry: eip155:84532:0x2222222222222222222222222222222222222222",
-        "Chain ID: 84532",
+        "Agent Registry: eip155:8453:0x2222222222222222222222222222222222222222",
+        "Chain ID: 8453",
         "Nonce: 12345678deadbeef",
         "Issued At: 2026-03-10T00:00:00.000Z",
       ].join("\n"),
@@ -74,7 +74,7 @@ describe("http signing", () => {
         "x-key-id": "0xabc",
         "x-timestamp": "1700000000",
         "x-agent-wallet-address": "0x1111111111111111111111111111111111111111",
-        "x-agent-chain-id": "84532",
+        "x-agent-chain-id": "8453",
         "x-agent-registry-address": "0x2222222222222222222222222222222222222222",
         "x-agent-token-id": "99",
         "signature-input":
@@ -90,7 +90,7 @@ describe("http signing", () => {
         '"x-key-id": 0xabc',
         '"x-timestamp": 1700000000',
         '"x-agent-wallet-address": 0x1111111111111111111111111111111111111111',
-        '"x-agent-chain-id": 84532',
+        '"x-agent-chain-id": 8453',
         '"x-agent-registry-address": 0x2222222222222222222222222222222222222222',
         '"x-agent-token-id": 99',
         '"@signature-params": ("@method" "@path" "x-siwa-receipt" "x-key-id" "x-timestamp" "x-agent-wallet-address" "x-agent-chain-id" "x-agent-registry-address" "x-agent-token-id");created=1700000000;expires=1700000120;nonce="sig-nonce-fixed";keyid="0xabc"',
@@ -107,7 +107,7 @@ describe("http signing", () => {
         "x-key-id": "0xabc",
         "x-timestamp": "1700000000",
         "x-agent-wallet-address": "0x1111111111111111111111111111111111111111",
-        "x-agent-chain-id": "84532",
+        "x-agent-chain-id": "8453",
         "x-agent-registry-address": "0x2222222222222222222222222222222222222222",
         "x-agent-token-id": "99",
         "signature-input":
@@ -118,7 +118,7 @@ describe("http signing", () => {
     expect(signingMessage).toContain('"@path": /v1/agent/agents?launchable=true');
   });
 
-  it("parses the signature-input parameters used by sidecar verification", () => {
+  it("parses the signature-input parameters used by shared SIWA verification", () => {
     const parsed = parseSignatureInputHeader(
       'sig1=("@method" "@path" "x-siwa-receipt" "x-key-id" "x-timestamp" "x-agent-wallet-address" "x-agent-chain-id" "x-agent-registry-address" "x-agent-token-id");created=1700000000;expires=1700000120;nonce="sig-nonce-fixed";keyid="0xabc"',
     );
@@ -150,7 +150,7 @@ describe("http signing", () => {
       method: "POST",
       path: "/v1/tree/nodes",
       walletAddress: "0x1111111111111111111111111111111111111111",
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: "0x2222222222222222222222222222222222222222",
       tokenId: "99",
       receipt: "receipt-token",
@@ -167,7 +167,7 @@ describe("http signing", () => {
   it("builds a stable protected auth debug snapshot", async () => {
     const session: SiwaSession = {
       walletAddress: "0x1111111111111111111111111111111111111111",
-      chainId: 84532,
+      chainId: 8453,
       nonce: "nonce-fixed",
       keyId: "0x1111111111111111111111111111111111111111",
       receipt: "receipt-token",
@@ -178,7 +178,7 @@ describe("http signing", () => {
     };
     const agentIdentity: LocalAgentIdentity = {
       walletAddress: "0x1111111111111111111111111111111111111111",
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: "0x2222222222222222222222222222222222222222",
       tokenId: "99",
     };
@@ -218,7 +218,7 @@ describe("http signing", () => {
         "x-siwa-receipt": "receipt-token",
         "x-key-id": "0x1111111111111111111111111111111111111111",
         "x-agent-wallet-address": "0x1111111111111111111111111111111111111111",
-        "x-agent-chain-id": "84532",
+        "x-agent-chain-id": "8453",
         "x-agent-registry-address": "0x2222222222222222222222222222222222222222",
         "x-agent-token-id": "99",
       },

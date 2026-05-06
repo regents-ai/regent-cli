@@ -71,19 +71,19 @@ export function buildBackendDetails(error: unknown): Record<string, unknown> {
                 ...("details" in backendError ? { details: backendError.details } : {}),
             }
             : payload;
-        const sidecar = isRecord(backend) &&
+        const siwa = isRecord(backend) &&
             "details" in backend &&
             isRecord(backend.details) &&
-            "sidecar" in backend.details &&
-            isRecord(backend.details.sidecar)
-            ? backend.details.sidecar
+            "siwa" in backend.details &&
+            isRecord(backend.details.siwa)
+            ? backend.details.siwa
             : undefined;
         return {
             code: error.code,
             message: error.message,
             ...(error.status === undefined ? {} : { status: error.status }),
             ...(backend === undefined ? {} : { backend }),
-            ...(sidecar === undefined ? {} : { sidecar }),
+            ...(siwa === undefined ? {} : { siwa }),
         };
     }
     if (error instanceof RegentError) {

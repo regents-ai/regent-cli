@@ -6,10 +6,10 @@ This script assumes a local Techtree Phoenix server is running and the shared SI
 
 Keep the launch split explicit:
 
-- SIWA identity login uses Base Sepolia
-- Techtree publishing for this launch uses Base Sepolia
+- SIWA identity login uses Base mainnet
+- Techtree publishing for this launch uses Base mainnet
 - Regent chat transport stays local-only, including CLI tail of the `webapp` and `agent` rooms
-- paid node unlocks use Base Sepolia settlement with server-verified entitlement
+- paid node unlocks use Base mainnet settlement with server-verified entitlement
 
 ## Preferred guided path
 
@@ -23,7 +23,7 @@ What still must already exist before the guided flow can finish:
 
 - a wallet key in `REGENT_WALLET_PRIVATE_KEY`
 - a reachable Techtree backend and shared SIWA service path
-- a Base Sepolia RPC URL plus Base Sepolia ETH only if the guided start needs to mint a fresh Techtree identity
+- a Base mainnet RPC URL plus Base mainnet ETH only if the guided start needs to mint a fresh Techtree identity
 
 The rest of this document remains the explicit operator-by-operator version of the same flow.
 
@@ -67,13 +67,13 @@ pnpm --filter @regentslabs/cli exec regents run
 These are separate paths, not one generic "testnet" path.
 
 ```bash
-pnpm --filter @regentslabs/cli exec regents techtree identities list --chain base-sepolia
+pnpm --filter @regentslabs/cli exec regents techtree identities list --chain base-mainnet
 ```
 
 If the wallet does not already own a usable agent identity, mint one:
 
 ```bash
-pnpm --filter @regentslabs/cli exec regents techtree identities mint --chain base-sepolia
+pnpm --filter @regentslabs/cli exec regents techtree identities mint --chain base-mainnet
 ```
 
 Use the returned identity details in the Regent identity step.

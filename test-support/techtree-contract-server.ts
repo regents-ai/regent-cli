@@ -57,8 +57,8 @@ const TEST_AGENT_SUMMARY = {
   label: "Contract test agent",
   wallet_address: TEST_AGENT_WALLET,
 } as const;
-const agentRegistryBinding = (network: "base" | "base-sepolia"): string =>
-  `eip155:${network === "base" ? "8453" : "84532"}/erc8004:${TEST_AGENT_REGISTRY}`;
+const agentRegistryBinding = (): string =>
+  `eip155:8453/erc8004:${TEST_AGENT_REGISTRY}`;
 
 export interface ForcedRouteResponse {
   statusCode: number;
@@ -91,14 +91,14 @@ interface IssuedNonceRecord {
 interface RegistrationIntentRecord {
   intentId: string;
   address: `0x${string}`;
-  network: "base" | "base-sepolia";
+  network: "base";
   provider: "coinbase-cdp";
   message: string;
 }
 
 interface RegisteredIdentityRecord {
   address: `0x${string}`;
-  network: "base" | "base-sepolia";
+  network: "base";
   agentId: number;
   agentRegistry: string;
 }
@@ -106,7 +106,7 @@ interface RegisteredIdentityRecord {
 interface IssuedIdentityNonceRecord {
   nonceToken: string;
   address: `0x${string}`;
-  network: "base" | "base-sepolia";
+  network: "base";
   agentId: number;
   agentRegistry: string;
   expiresAtUnixSeconds: number;
@@ -682,11 +682,11 @@ export class TechtreeContractServer {
 
     if (method === "POST" && requestUrl.pathname === "/v1/identity/status") {
       const payload = body as {
-        network?: "base" | "base-sepolia";
+        network?: "base";
         address?: `0x${string}`;
         provider?: "coinbase-cdp";
       };
-      const network = payload.network ?? "base";
+      const network = "base";
       const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
       const registered = this.registeredIdentities.get(`${network}:${address}`);
       const response: IdentityStatusResponse = {
@@ -713,11 +713,11 @@ export class TechtreeContractServer {
 
     if (method === "POST" && requestUrl.pathname === "/v1/identity/registration-intents") {
       const payload = body as {
-        network?: "base" | "base-sepolia";
+        network?: "base";
         address?: `0x${string}`;
         provider?: "coinbase-cdp";
       };
-      const network = payload.network ?? "base";
+      const network = "base";
       const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
       const intentId = `intent-${Date.now()}`;
       const message = `Register Regent identity for ${address} on ${network}`;
@@ -804,16 +804,16 @@ export class TechtreeContractServer {
 
     if (method === "POST" && requestUrl.pathname === "/v1/identity/siwa/nonce") {
       const payload = body as {
-        network?: "base" | "base-sepolia";
+        network?: "base";
         address?: `0x${string}`;
         agent_id?: number;
         agent_registry?: string;
       };
-      const network = payload.network ?? "base";
+      const network = "base";
       const address = (payload.address ?? TEST_AGENT_WALLET).toLowerCase() as `0x${string}`;
       const nonceToken = `identity-nonce-${Date.now()}`;
       const agentId = payload.agent_id ?? 99;
-      const agentRegistry = payload.agent_registry ?? agentRegistryBinding(network);
+      const agentRegistry = payload.agent_registry ?? agentRegistryBinding();
       const message = [
         "Sign in with Regent",
         `Address: ${address}`,
@@ -850,7 +850,7 @@ export class TechtreeContractServer {
 
     if (method === "POST" && requestUrl.pathname === "/v1/identity/siwa/verify") {
       const payload = body as {
-        network?: "base" | "base-sepolia";
+        network?: "base";
         address?: `0x${string}`;
         agent_id?: number;
         agent_registry?: string;
@@ -903,7 +903,7 @@ export class TechtreeContractServer {
       this.issuedIdentityNonces.delete(payload.nonce_token as string);
       const receiptClaims: ReceiptClaims = {
         walletAddress: issued!.address,
-        chainId: issued!.network === "base" ? 8453 : 84532,
+        chainId: 8453,
         registryAddress: TEST_AGENT_REGISTRY,
         tokenId: String(issued!.agentId),
         keyId: issued!.address.toLowerCase(),

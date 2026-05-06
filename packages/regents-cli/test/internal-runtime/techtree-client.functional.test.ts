@@ -41,7 +41,7 @@ const buildConfig = (baseUrl: string, tempDir: string) => {
     },
     auth: {
       audience: "techtree",
-      defaultChainId: 84532,
+      defaultChainId: 8453,
     },
     services: {
       siwa: { baseUrl, requestTimeoutMs: 1_000 },
@@ -80,7 +80,7 @@ const createHarness = (baseUrl: string): ClientHarness => {
 const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness): Promise<void> => {
   const nonce = await client.siwaNonce({
     wallet_address: TEST_WALLET,
-    chain_id: 84532,
+    chain_id: 8453,
     registry_address: TEST_REGISTRY,
     token_id: "99",
     audience: "techtree",
@@ -90,7 +90,7 @@ const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness)
     domain: "regent.cx",
     uri: "https://regent.cx/login",
     walletAddress: TEST_WALLET,
-    chainId: 84532,
+    chainId: 8453,
     registryAddress: TEST_REGISTRY,
     tokenId: "99",
     nonce: nonce.data.nonce,
@@ -101,7 +101,7 @@ const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness)
   const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
   const verify = await client.siwaVerify({
     wallet_address: TEST_WALLET,
-    chain_id: 84532,
+    chain_id: 8453,
     registry_address: TEST_REGISTRY,
     token_id: "99",
     audience: "techtree",
@@ -124,7 +124,7 @@ const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness)
   stateStore.patch({
     agent: {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: TEST_REGISTRY,
       tokenId: "99",
     },
@@ -518,7 +518,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
     const harness = createHarness(server.baseUrl);
     const nonce = await harness.client.siwaNonce({
       wallet_address: TEST_WALLET,
-      chain_id: 84532,
+      chain_id: 8453,
       registry_address: TEST_REGISTRY,
       token_id: "99",
       audience: "techtree",
@@ -527,7 +527,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
       domain: "regent.cx",
       uri: "https://regent.cx/login",
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: TEST_REGISTRY,
       tokenId: "99",
       nonce: nonce.data.nonce,
@@ -537,7 +537,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
     const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
     const verify = await harness.client.siwaVerify({
       wallet_address: TEST_WALLET,
-      chain_id: 84532,
+      chain_id: 8453,
       registry_address: TEST_REGISTRY,
       token_id: "99",
       audience: "techtree",
@@ -595,7 +595,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
     await expect(
       harness.client.siwaVerify({
         wallet_address: TEST_WALLET,
-        chain_id: 84532,
+        chain_id: 8453,
         registry_address: TEST_REGISTRY,
         token_id: "99",
         audience: "techtree",
@@ -604,7 +604,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
           domain: "regent.cx",
           uri: "https://regent.cx/login",
           walletAddress: TEST_WALLET,
-          chainId: 84532,
+          chainId: 8453,
           registryAddress: TEST_REGISTRY,
           tokenId: "99",
           nonce: "doctor-invalid-nonce",

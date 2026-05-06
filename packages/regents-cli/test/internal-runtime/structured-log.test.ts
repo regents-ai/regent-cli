@@ -18,7 +18,7 @@ const configFor = (homeDir: string): RegentConfig => ({
   },
   auth: {
     audience: "techtree",
-    defaultChainId: 84532,
+    defaultChainId: 8453,
   },
   services: {
     siwa: { baseUrl: "http://127.0.0.1:4000", requestTimeoutMs: 1000 },
@@ -88,7 +88,7 @@ describe("structured Regent logs", () => {
       ok: true,
       requestId: "req_1",
       durationMs: 12,
-      chainId: 84532,
+      chainId: 8453,
       redacted: true,
     });
 
@@ -99,7 +99,7 @@ describe("structured Regent logs", () => {
       path: "/api/agentbook/sessions/sess_1?token=%5Bredacted%5D&cursor=1",
       requestId: "req_1",
       durationMs: 12,
-      chainId: 84532,
+      chainId: 8453,
       redacted: true,
     });
     expect(mode(logPath)).toBe(0o600);

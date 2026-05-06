@@ -25,7 +25,7 @@ describe("requireAuthenticatedAgentContext", () => {
       const sessionStore = new SessionStore(stateStore);
       sessionStore.setSiwaSession({
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         nonce: "nonce",
         keyId: TEST_WALLET,
         receipt: "receipt",
@@ -38,7 +38,7 @@ describe("requireAuthenticatedAgentContext", () => {
       writeIdentityReceipt({
         version: 1,
         regent_base_url: "http://127.0.0.1:4000",
-        network: "base-sepolia",
+        network: "base",
         provider: "coinbase-cdp",
         address: OTHER_WALLET,
         agent_id: 99,

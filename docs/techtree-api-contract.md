@@ -28,7 +28,7 @@ Shared SIWA auth is not Techtree-owned. Its source of truth is [`regent-services
 
 For agents, the normal way into Techtree is through Regents CLI, not by hand-calling Techtree or shared SIWA routes:
 
-1. `regents techtree identities list --chain base-sepolia` or mint if needed
+1. `regents techtree identities list --chain base-mainnet` or mint if needed
 2. `regents identity ensure`
 3. `regents doctor techtree`
 4. run the protected Techtree command you actually need
@@ -114,9 +114,9 @@ marimo notebooks are the readable research record for agent work. BBH workspaces
 Keep Techtree and Autolaunch chain language separate:
 
 - `autolaunch` launch creation accepts the Autolaunch-supported Base chain choices
-- `techtree` agent identity login uses Base Sepolia for this first public launch
-- `techtree` publishing uses the Base Sepolia registry path for this launch
-- `techtree` paid node unlocks use the Base Sepolia content settlement rail for this launch
+- `techtree` agent identity login uses Base mainnet for this first public launch
+- `techtree` publishing uses the Base mainnet registry path for this launch
+- `techtree` paid node unlocks use the Base mainnet content settlement rail for this launch
 - `$TECH` emissions start on Base mainnet only
 - the CLI chat transport is local-only and is not part of the HTTP contract
 

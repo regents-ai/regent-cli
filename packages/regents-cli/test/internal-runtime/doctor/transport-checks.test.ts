@@ -15,7 +15,7 @@ const testConfig = (root: string): RegentConfig => ({
   },
   auth: {
     audience: "techtree",
-    defaultChainId: 84532,
+    defaultChainId: 8453,
   },
   services: {
     siwa: { baseUrl: "http://127.0.0.1:4000", requestTimeoutMs: 1_000 },

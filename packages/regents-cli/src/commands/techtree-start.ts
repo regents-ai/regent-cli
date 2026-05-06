@@ -94,12 +94,12 @@ const ensureRuntimeDirs = (config: RegentConfig, configPath: string): void => {
   }
 };
 
-const withDefaultBaseSepoliaChain = (args: ParsedCliArgs): ParsedCliArgs => {
+const withDefaultBaseMainnetChain = (args: ParsedCliArgs): ParsedCliArgs => {
   if (getFlag(args, "chain") || getFlag(args, "chain-id")) {
     return args;
   }
 
-  return parseCliArgs([...args.raw, "--chain", "base-sepolia"]);
+  return parseCliArgs([...args.raw, "--chain", "base-mainnet"]);
 };
 
 const spawnDetachedRuntime = async (configPath?: string): Promise<void> => {
@@ -168,7 +168,7 @@ const wizardHeader = (configPath: string): string =>
     `${tone("config", CLI_PALETTE.secondary)} ${tone(configPath, CLI_PALETTE.primary, true)}`,
     "",
     `${tone("checks", CLI_PALETTE.accent, true)} local config, wallet, runtime, identity, and readiness`,
-    `${tone("prep", CLI_PALETTE.accent, true)} Base Sepolia RPC plus Base Sepolia ETH only matter if this start needs to mint a new agent identity`,
+    `${tone("prep", CLI_PALETTE.accent, true)} Base mainnet RPC plus Base ETH only matter if this start needs to mint a new agent identity`,
     `${tone("prep", CLI_PALETTE.accent, true)} Techtree services must already be reachable for local testing`,
   ], {
     borderColor: CLI_PALETTE.chrome,
@@ -298,7 +298,7 @@ const ensureIdentity = async (
   args: ParsedCliArgs,
   configPath: string,
 ): Promise<{ registryAddress: string; tokenId: string } | null> => {
-  const identityArgs = withDefaultBaseSepoliaChain(args);
+  const identityArgs = withDefaultBaseMainnetChain(args);
   const existing = await startWizardDeps.listIdentities(identityArgs);
   const chosenExisting = await chooseIdentity(existing, args);
   if (chosenExisting) {
@@ -309,11 +309,15 @@ const ensureIdentity = async (
     return chosenExisting;
   }
 
-  const rpcReady = Boolean(getFlag(identityArgs, "rpc-url") || process.env.BASE_SEPOLIA_RPC_URL);
+  const rpcReady = Boolean(
+    getFlag(identityArgs, "rpc-url") ||
+      process.env.BASE_MAINNET_RPC_URL ||
+      process.env.BASE_RPC_URL,
+  );
   if (!rpcReady) {
     startWizardDeps.printText(blockerPanel("identity", "No Techtree agent identity was found.", [
-      "To mint one from this guided start, set BASE_SEPOLIA_RPC_URL first.",
-      "Minting is a real Base Sepolia transaction, so the wallet also needs Base Sepolia ETH.",
+      "To mint one from this guided start, set BASE_MAINNET_RPC_URL first.",
+      "Minting is a real Base mainnet transaction, so the wallet also needs Base ETH.",
       "",
       `Rerun: ${configRerunCommand(configPath, ["--mint"])}`,
     ]));
@@ -327,16 +331,16 @@ const ensureIdentity = async (
     if (!prompts.inputAllowed) {
       startWizardDeps.printText(blockerPanel("identity", "No Techtree agent identity was found.", [
         "This guided start can mint one, but only with explicit confirmation.",
-        "Rerun with `--mint` after confirming the wallet has Base Sepolia ETH.",
+        "Rerun with `--mint` after confirming the wallet has Base ETH.",
       ]));
       return null;
     }
 
     shouldMint = await prompts.confirm(
-      "No Techtree identity is ready. Mint a new Base Sepolia ERC-8004 identity now so the guided start can continue?",
+      "No Techtree identity is ready. Mint a new Base mainnet ERC-8004 identity now so the guided start can continue?",
       {
         unavailableMessage:
-          "No Techtree agent identity was found. Pass --mint to mint one after confirming the wallet has Base Sepolia ETH.",
+          "No Techtree agent identity was found. Pass --mint to mint one after confirming the wallet has Base ETH.",
       },
     );
   }
@@ -357,8 +361,8 @@ const ensureIdentity = async (
       error instanceof Error ? error.message : String(error),
       "",
       "Common causes:",
-      "• missing Base Sepolia ETH",
-      "• a bad or rate-limited Base Sepolia RPC URL",
+      "• missing Base ETH",
+      "• a bad or rate-limited Base mainnet RPC URL",
       "• the wallet key not matching the intended funding account",
     ]));
     return null;
@@ -368,7 +372,7 @@ const ensureIdentity = async (
   if (!tokenId) {
     startWizardDeps.printText(blockerPanel("identity", "Identity minting finished, but the new token id could not be read.", [
       `transaction ${minted.tx_hash}`,
-      "Re-run `regents techtree start --mint`, or inspect the identity manually with `regents techtree identities list --chain base-sepolia`.",
+      "Re-run `regents techtree start --mint`, or inspect the identity manually with `regents techtree identities list --chain base-mainnet`.",
     ]));
     return null;
   }

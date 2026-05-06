@@ -45,7 +45,7 @@ describe("config commands", () => {
     expect(printed.runtime.logLevel).toBe("info");
     expect(printed.auth).toEqual({
       audience: "techtree",
-      defaultChainId: 84532,
+      defaultChainId: 8453,
     });
     expect(printed.services.techtree).toEqual({
       baseUrl: "http://127.0.0.1:4100",

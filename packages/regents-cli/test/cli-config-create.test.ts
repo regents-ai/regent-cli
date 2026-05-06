@@ -90,7 +90,7 @@ describe("CLI config and create flows", () => {
         },
         auth: {
           audience: "techtree",
-          defaultChainId: 84532,
+          defaultChainId: 8453,
         },
         services: {
           siwa: {
@@ -182,7 +182,7 @@ describe("CLI config and create flows", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         siwa: {

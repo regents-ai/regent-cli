@@ -36,7 +36,7 @@ const createClient = (baseUrl: string): { client: TechtreeClient; stateStore: St
     },
     auth: {
       audience: "techtree",
-      defaultChainId: 84532,
+      defaultChainId: 8453,
     },
     services: {
       siwa: { baseUrl, requestTimeoutMs: 1_000 },
@@ -63,7 +63,7 @@ const createClient = (baseUrl: string): { client: TechtreeClient; stateStore: St
 
   sessionStore.setSiwaSession({
     walletAddress: TEST_WALLET,
-    chainId: 84532,
+    chainId: 8453,
     nonce: "nonce-test",
     keyId: "key-test",
     receipt: "receipt-test",
@@ -75,7 +75,7 @@ const createClient = (baseUrl: string): { client: TechtreeClient; stateStore: St
   stateStore.patch({
     agent: {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       registryAddress: TEST_REGISTRY,
       tokenId: "99",
     },

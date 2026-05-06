@@ -10,7 +10,7 @@ const buildProbeFailureDetails = (route: string, error: unknown): Record<string,
         ...(typeof normalized.message === "string" ? { message: normalized.message } : {}),
         ...(typeof normalized.status === "number" ? { status: normalized.status } : {}),
         ...(normalized.backend && typeof normalized.backend === "object" ? { backend: normalized.backend } : {}),
-        ...(normalized.sidecar && typeof normalized.sidecar === "object" ? { sidecar: normalized.sidecar } : {}),
+        ...(normalized.siwa && typeof normalized.siwa === "object" ? { siwa: normalized.siwa } : {}),
         raw: normalized,
     };
 };
@@ -120,7 +120,7 @@ export function techtreeChecks(): DoctorCheckDefinition[] {
                         status: "fail",
                         message: "Authenticated Techtree probe failed",
                         details,
-                        remediation: "Inspect auth headers and SIWA sidecar configuration",
+                        remediation: "Inspect auth headers and shared SIWA configuration",
                     };
                 }
             },

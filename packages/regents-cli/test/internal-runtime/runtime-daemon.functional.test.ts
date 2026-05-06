@@ -136,7 +136,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         siwa: {
@@ -165,7 +165,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
     writeIdentityReceipt({
       version: 1,
       regent_base_url: server.baseUrl,
-      network: "base-sepolia",
+      network: "base",
       provider: "coinbase-cdp",
       address: TEST_WALLET,
       agent_id: 99,
@@ -201,7 +201,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
 
     const login = await callJsonRpc(socketPath, "auth.siwa.login", {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       audience: "techtree",
     });
     expect(login.data.receipt.startsWith("receipt-valid.")).toBe(true);
@@ -212,7 +212,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
       missingIdentityFields: [],
       agentIdentity: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "99",
       },
@@ -479,7 +479,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
 
     await callJsonRpc(socketPath, "auth.siwa.login", {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       audience: "techtree",
     });
 
@@ -553,7 +553,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
 
     await callJsonRpc(socketPath, "auth.siwa.login", {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       audience: "techtree",
     });
 
@@ -567,7 +567,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
       }),
       agentIdentity: {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "99",
         label: "Coinbase wallet",
@@ -591,7 +591,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
     await expect(
       callJsonRpc(socketPath, "auth.siwa.login", {
         walletAddress: TEST_WALLET,
-        chainId: 84532,
+        chainId: 8453,
         audience: "unknown-app",
       }),
     ).rejects.toMatchObject({
@@ -607,7 +607,7 @@ describeNetwork.sequential("RegentRuntime daemon functional coverage", () => {
 
     await callJsonRpc(socketPath, "auth.siwa.login", {
       walletAddress: TEST_WALLET,
-      chainId: 84532,
+      chainId: 8453,
       audience: "techtree",
     });
 

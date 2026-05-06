@@ -59,7 +59,7 @@ describe("techtree start wizard", () => {
       },
       auth: {
         audience: "techtree",
-        defaultChainId: 84532,
+        defaultChainId: 8453,
       },
       services: {
         techtree: {
@@ -82,7 +82,7 @@ describe("techtree start wizard", () => {
     });
     startWizardDeps.listIdentities = vi.fn().mockResolvedValue({
       ok: true,
-      chain_id: 84532,
+      chain_id: 8453,
       owner_address: "0xabc",
       registry_address: TEST_REGISTRY,
       launchable: [],
@@ -92,12 +92,12 @@ describe("techtree start wizard", () => {
     });
     startWizardDeps.mintIdentity = vi.fn().mockResolvedValue({
       ok: true,
-      chain_id: 84532,
+      chain_id: 8453,
       owner_address: "0xabc",
       registry_address: TEST_REGISTRY,
       tx_hash: "0xfeed",
       block_number: "12",
-      agent_id: "84532:2236",
+      agent_id: "8453:2236",
       agent_uri: null,
     });
     startWizardDeps.authStatus = vi.fn().mockResolvedValue({
@@ -122,7 +122,7 @@ describe("techtree start wizard", () => {
 
   afterEach(() => {
     Object.assign(startWizardDeps, originalDeps);
-    delete process.env.BASE_SEPOLIA_RPC_URL;
+    delete process.env.BASE_MAINNET_RPC_URL;
   });
 
   it("stops clearly when the wallet is missing", async () => {
@@ -143,7 +143,7 @@ describe("techtree start wizard", () => {
     expect(output.stdout).toContain("doctor surface");
   });
 
-  it("stops and asks for Base Sepolia RPC before minting a missing identity", async () => {
+  it("stops and asks for Base mainnet RPC before minting a missing identity", async () => {
     startWizardDeps.callJsonRpc = vi
       .fn()
       .mockRejectedValueOnce(new Error("socket missing"))
@@ -160,12 +160,12 @@ describe("techtree start wizard", () => {
       }),
     );
     expect(output.stdout).toContain("No Techtree agent identity was found");
-    expect(output.stdout).toContain("BASE_SEPOLIA_RPC_URL");
+    expect(output.stdout).toContain("BASE_MAINNET_RPC_URL");
     expect(startWizardDeps.mintIdentity).not.toHaveBeenCalled();
   });
 
   it("mints, logs in, and prints the BBH next step when the path is ready", async () => {
-    process.env.BASE_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+    process.env.BASE_MAINNET_RPC_URL = "https://rpc.base.example";
     startWizardDeps.callJsonRpc = vi
       .fn()
       .mockRejectedValueOnce(new Error("socket missing"))
@@ -200,7 +200,7 @@ describe("techtree start wizard", () => {
   });
 
   it("does not prompt for minting when input is disabled", async () => {
-    process.env.BASE_SEPOLIA_RPC_URL = "https://rpc.sepolia.example";
+    process.env.BASE_MAINNET_RPC_URL = "https://rpc.base.example";
     startWizardDeps.callJsonRpc = vi
       .fn()
       .mockRejectedValueOnce(new Error("socket missing"))
@@ -227,13 +227,13 @@ describe("techtree start wizard", () => {
       .mockResolvedValueOnce({ ok: true });
     startWizardDeps.listIdentities = vi.fn().mockResolvedValue({
       ok: true,
-      chain_id: 84532,
+      chain_id: 8453,
       owner_address: "0xabc",
       registry_address: TEST_REGISTRY,
       launchable: [
         {
-          agent_id: "84532:2236",
-          chain_id: 84532,
+          agent_id: "8453:2236",
+          chain_id: 8453,
           token_id: "2236",
           owner_address: "0xabc",
           operator_addresses: [],
@@ -254,10 +254,10 @@ describe("techtree start wizard", () => {
     });
     startWizardDeps.authStatus = vi.fn().mockResolvedValue({
       authenticated: true,
-      session: { walletAddress: "0xabc", chainId: 84532, nonce: "1", keyId: "k", receipt: "r", receiptExpiresAt: "2099-01-01T00:00:00.000Z", audience: "techtree" },
+      session: { walletAddress: "0xabc", chainId: 8453, nonce: "1", keyId: "k", receipt: "r", receiptExpiresAt: "2099-01-01T00:00:00.000Z", audience: "techtree" },
       agentIdentity: {
         walletAddress: "0xabc",
-        chainId: 84532,
+        chainId: 8453,
         registryAddress: TEST_REGISTRY,
         tokenId: "2236",
       },

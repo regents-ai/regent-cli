@@ -39,7 +39,7 @@ describe("reporting CLI commands", () => {
         {
           version: 1,
           regent_base_url: "http://127.0.0.1:4000",
-          network: "base-sepolia",
+          network: "base",
           provider: "coinbase-cdp",
           address: TEST_WALLET,
           agent_id: 99,
@@ -62,14 +62,14 @@ describe("reporting CLI commands", () => {
         {
           agent: {
             walletAddress: TEST_WALLET,
-            chainId: 84532,
+            chainId: 8453,
             registryAddress: TEST_REGISTRY,
             tokenId: "99",
             label: "Hermes operator",
           },
           siwa: {
             walletAddress: TEST_WALLET,
-            chainId: 84532,
+            chainId: 8453,
             nonce: "report-login-nonce",
             keyId: TEST_WALLET.toLowerCase(),
             receipt: "report-receipt",
@@ -122,7 +122,7 @@ describe("reporting CLI commands", () => {
             status: "pending",
             reporting_agent: {
               wallet_address: TEST_WALLET,
-              chain_id: 84532,
+              chain_id: 8453,
               registry_address: TEST_REGISTRY,
               token_id: "99",
               label: "Coinbase wallet",
@@ -154,7 +154,7 @@ describe("reporting CLI commands", () => {
       details: "any more details here",
       reporting_agent: {
         wallet_address: TEST_WALLET,
-        chain_id: 84532,
+        chain_id: 8453,
         registry_address: TEST_REGISTRY,
         token_id: "99",
         label: "Coinbase wallet",
@@ -180,7 +180,7 @@ describe("reporting CLI commands", () => {
             contact: "@xyz on telegram",
             reporting_agent: {
               wallet_address: TEST_WALLET,
-              chain_id: 84532,
+              chain_id: 8453,
               registry_address: TEST_REGISTRY,
               token_id: "99",
               label: "Coinbase wallet",
@@ -215,7 +215,7 @@ describe("reporting CLI commands", () => {
       contact: "@xyz on telegram",
       reporting_agent: {
         wallet_address: TEST_WALLET,
-        chain_id: 84532,
+        chain_id: 8453,
         registry_address: TEST_REGISTRY,
         token_id: "99",
         label: "Coinbase wallet",

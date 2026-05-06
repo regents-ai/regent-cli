@@ -39,7 +39,6 @@ vi.mock("viem/accounts", () => ({
 
 vi.mock("viem/chains", () => ({
   base: { id: 8453, name: "Base" },
-  baseSepolia: { id: 84532, name: "Base Sepolia" },
   mainnet: { id: 1, name: "Ethereum" },
 }));
 
@@ -73,7 +72,7 @@ describe("regent-staking CLI command group", () => {
     resource: "regent_staking",
     resource_id: "0x3333333333333333333333333333333333333333",
     action: "claim",
-    chain_id: 84532,
+    chain_id: 8453,
     to: "0x3333333333333333333333333333333333333333",
     value: "0",
     data,
@@ -102,7 +101,7 @@ describe("regent-staking CLI command group", () => {
         {
           version: 1,
           regent_base_url: "http://127.0.0.1:4000",
-          network: "base-sepolia",
+          network: "base",
           provider: "coinbase-cdp",
           address: testWallet,
           agent_id: 99,
@@ -125,13 +124,13 @@ describe("regent-staking CLI command group", () => {
         {
           agent: {
             walletAddress: testWallet,
-            chainId: 84532,
+            chainId: 8453,
             registryAddress: testRegistry,
             tokenId: "99",
           },
           siwa: {
             walletAddress: testWallet,
-            chainId: 84532,
+            chainId: 8453,
             nonce: "staking-nonce",
             keyId: testWallet.toLowerCase(),
             receipt: "staking-receipt",
@@ -162,7 +161,7 @@ describe("regent-staking CLI command group", () => {
     process.env.REGENT_WALLET_PRIVATE_KEY =
       "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
     process.env.AUTOLAUNCH_BASE_URL = "http://127.0.0.1:4010";
-    process.env.BASE_SEPOLIA_RPC_URL = "https://base-sepolia.example";
+    process.env.BASE_MAINNET_RPC_URL = "https://base.example";
     fetchMock.mockReset();
     sendTransactionMock.mockReset();
     waitForReceiptMock.mockReset();
