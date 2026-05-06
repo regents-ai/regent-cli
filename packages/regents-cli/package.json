@@ -12,8 +12,10 @@
   },
   "files": [
     "dist",
+    "skills",
     "README.md",
-    "LICENSE"
+    "LICENSE",
+    "postinstall.cjs"
   ],
   "publishConfig": {
     "access": "public"
@@ -41,6 +43,7 @@
     "zod": "^4.1.11"
   },
   "scripts": {
+    "postinstall": "node postinstall.cjs",
     "build": "rm -rf dist tsconfig.tsbuildinfo && tsc -p tsconfig.json",
     "prepack": "pnpm build",
     "typecheck": "tsc -p tsconfig.json --noEmit",

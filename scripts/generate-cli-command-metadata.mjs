@@ -53,7 +53,7 @@ const metadataWithoutExamples = (metadata) => {
     return undefined;
   }
 
-  const { examples: _examples, ...rest } = metadata;
+  const { examples: _examples, commands: _commands, ...rest } = metadata;
   return compactObject(rest);
 };
 
@@ -84,11 +84,11 @@ const readAgentMetadata = (agentMetadata, normalizedCommand) => {
   }
 
   const commandOverrides = commandSpecificMapValue(agentMetadata.commands, normalizedCommand);
+  const { commands: _commands, ...defaults } = agentMetadata;
   if (!commandOverrides) {
-    return compactObject(agentMetadata);
+    return compactObject(defaults);
   }
 
-  const { commands: _commands, ...defaults } = agentMetadata;
   return compactObject({ ...defaults, ...commandOverrides });
 };
 

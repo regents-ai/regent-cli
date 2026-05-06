@@ -184,7 +184,8 @@ const agentMetadataForCommand = (contract, group, command) => {
       return { ...defaults, ...commandMetadata };
     }
 
-    return group.agent_metadata;
+    const { commands: _commands, ...defaults } = group.agent_metadata;
+    return defaults;
   }
 
   if (contract?.["x-regent-agent-defaults"] && typeof contract["x-regent-agent-defaults"] === "object") {

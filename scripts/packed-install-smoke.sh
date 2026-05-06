@@ -3,6 +3,8 @@ set -euo pipefail
 
 export NODE_NO_WARNINGS=1
 
+trap 'rc=$?; echo "packed install smoke failed at line ${LINENO}: ${BASH_COMMAND}" >&2; exit "${rc}"' ERR
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 ROOT=$(cd -- "${SCRIPT_DIR}/.." && pwd)
 PACK_DIR="$(mktemp -d "/tmp/regent-pack.XXXXXX")"
@@ -13,6 +15,7 @@ CONFIG_PATH="${WORK_DIR}/regent.config.json"
 NOTEBOOK_PATH="${WORK_DIR}/publish.py"
 RUNTIME_LOG="${WORK_DIR}/runtime.log"
 SERVER_LOG="${WORK_DIR}/mock-server.log"
+INSTALL_LOG="${WORK_DIR}/install.log"
 
 TEST_PRIVATE_KEY="0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
 TEST_WALLET="0x70997970C51812dc3A010C7d01b50e0d17dc79C8"
@@ -24,14 +27,41 @@ RUNTIME_PID=""
 SERVER_PID=""
 ORIGINAL_PATH="${PATH}"
 
+terminate_tree() {
+  local pid="$1"
+  local child
+
+  if [[ -z "${pid}" ]] || ! kill -0 "${pid}" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  for child in $(pgrep -P "${pid}" 2>/dev/null || true); do
+    terminate_tree "${child}"
+  done
+
+  kill "${pid}" >/dev/null 2>&1 || true
+
+  for _ in {1..20}; do
+    if ! kill -0 "${pid}" >/dev/null 2>&1; then
+      return 0
+    fi
+    sleep 0.1
+  done
+
+  for child in $(pgrep -P "${pid}" 2>/dev/null || true); do
+    terminate_tree "${child}"
+  done
+  kill -9 "${pid}" >/dev/null 2>&1 || true
+}
+
 cleanup() {
   if [[ -n "${RUNTIME_PID}" ]] && kill -0 "${RUNTIME_PID}" >/dev/null 2>&1; then
-    kill "${RUNTIME_PID}" >/dev/null 2>&1 || true
+    terminate_tree "${RUNTIME_PID}"
     wait "${RUNTIME_PID}" >/dev/null 2>&1 || true
   fi
 
   if [[ -n "${SERVER_PID}" ]] && kill -0 "${SERVER_PID}" >/dev/null 2>&1; then
-    kill "${SERVER_PID}" >/dev/null 2>&1 || true
+    terminate_tree "${SERVER_PID}"
     wait "${SERVER_PID}" >/dev/null 2>&1 || true
   fi
 
@@ -57,7 +87,7 @@ pack_workspace_package() {
   local package_dir="$1"
   (
     cd "${package_dir}"
-    npm pack --ignore-scripts --pack-destination "${PACK_DIR}" >/dev/null
+    env -i PATH="${PATH}" HOME="${HOME:-}" TMPDIR="${TMPDIR:-/tmp}" npm pack --ignore-scripts --silent --pack-destination "${PACK_DIR}" >/dev/null
   )
 }
 
@@ -115,7 +145,10 @@ cat > "${WORK_DIR}/package.json" <<'EOF'
 }
 EOF
 
-pnpm --dir "${WORK_DIR}" add "${PACK_DIR}"/regentslabs-cli-*.tgz >/dev/null
+if ! pnpm --dir "${WORK_DIR}" add --allow-build=@regentslabs/cli "${PACK_DIR}"/regentslabs-cli-*.tgz >"${INSTALL_LOG}" 2>&1; then
+  cat "${INSTALL_LOG}" >&2
+  exit 1
+fi
 
 cat > "${WORK_DIR}/mock-techtree.mjs" <<'EOF'
 import http from "node:http";

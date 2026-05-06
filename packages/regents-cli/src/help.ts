@@ -55,9 +55,18 @@ const commandDetailsByCommand = CLI_COMMAND_DETAILS_BY_COMMAND as unknown as Rea
 >;
 
 const globalNextStep =
-  "For Autolaunch, run `regents auth login --audience autolaunch`, then `regents identity ensure`.";
+  "Install the Regents agent skills with `regents setup skills`, then run `regents status`.";
 
 const commandHelp: Record<string, HelpEntry> = {
+  "setup skills": {
+    summary: "Install the Regents agent skills for supported agent clients.",
+    usage: "regents setup skills [--project]",
+    flags: ["--project", "--json", "--no-input"],
+    examples: ["regents setup skills", "regents setup skills --project"],
+    auth: "No saved sign-in is needed.",
+    output: "Shows which Regents skills were installed and where they came from.",
+    nextStep: "Open your agent client and use the Regents, Platform, Autolaunch, and Techtree skills.",
+  },
   feynman: {
     summary: "Open the Feynman research shell from Regents CLI.",
     usage: "regents feynman [feynman command or prompt]",
@@ -390,6 +399,13 @@ const commandHelp: Record<string, HelpEntry> = {
 };
 
 const groupHelp: Record<string, HelpGroup> = {
+  setup: {
+    summary: "Install local support files for agents and first-run use.",
+    auth: "No saved sign-in is needed.",
+    output: "Shows what was installed and the next action.",
+    commands: (CLI_COMMANDS_BY_TOP_LEVEL_GROUP as Readonly<Record<string, readonly string[]>>).setup ?? [],
+    nextStep: "Start with `regents setup skills`.",
+  },
   autolaunch: {
     summary: "Launch and manage Agent account projects from the terminal.",
     auth: "Most commands need `regents auth login --audience autolaunch` and `regents identity ensure`.",
@@ -486,6 +502,10 @@ const helpGroupForCommand = (command: string): HelpGroup | null => {
 
   if (command.startsWith("agent ")) {
     return groupHelp.agent;
+  }
+
+  if (command.startsWith("setup ")) {
+    return groupHelp.setup;
   }
 
   if (command === "feynman") {
@@ -725,14 +745,14 @@ export function renderScopedHelp(positionals: readonly string[], configPath: str
       usage: "regents <command> [flags]",
       flags: ["--config <path>", "--help", "--json where supported", "--no-input"],
       examples: [
+        "regents setup skills",
         "regents auth login --audience autolaunch",
         "regents identity ensure",
         "regents autolaunch agents list --launchable",
-        "regents feynman doctor",
       ],
       auth: "Protected commands use a saved Agent account.",
       output: "Human output uses panels and status lines. `--json` prints raw JSON.",
-      nextStep: `${globalNextStep} Default config: ${configPath}`,
+      nextStep: `Default config: ${configPath}. ${globalNextStep}`,
     });
   }
 

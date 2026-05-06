@@ -43,15 +43,30 @@ command_groups:
       input_mode: args-and-flags
       examples:
         - regents status
+        - regents setup skills
         - regents agent-context
         - regents config get
         - regents agent profile get
+      commands:
+        setup skills:
+          category: local-setup
+          prompt_behavior: never_prompt
+          json_support: supported
+          mutation_class: local-write
+          retry_behavior: safe
+          pagination: none
+          async_behavior: synchronous
+          input_mode: flags
+          examples:
+            - regents setup skills
+            - regents setup skills --project
     commands:
       - init
       - status
       - whoami
       - balance
       - agent-context
+      - setup skills
       - run
       - config get
       - config write
@@ -69,6 +84,15 @@ command_groups:
           type: boolean
           required: false
           description: Include the saved Platform account projection when a Platform session is present.
+      setup skills:
+        - name: --project
+          type: boolean
+          required: false
+          description: Install skills into the current project instead of the global user skill set.
+        - name: --json
+          type: boolean
+          required: false
+          description: Print the installed skill summary as JSON.
   - name: wallet
     interface: runtime
     auth_mode: none

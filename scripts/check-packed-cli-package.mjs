@@ -29,13 +29,25 @@ if (!Array.isArray(payload) || payload.length !== 1 || !Array.isArray(payload[0]
 }
 
 const tarballFiles = payload[0].files.map((entry) => entry.path).sort();
-const requiredFiles = ["LICENSE", "README.md", "package.json", "dist/index.js"];
+const requiredFiles = [
+  "LICENSE",
+  "README.md",
+  "package.json",
+  "postinstall.cjs",
+  "dist/index.js",
+  "skills/regents/SKILL.md",
+  "skills/regents-platform/SKILL.md",
+  "skills/regents-autolaunch/SKILL.md",
+  "skills/regents-techtree/SKILL.md",
+];
 const unexpectedFiles = tarballFiles.filter(
   (file) =>
     file !== "LICENSE" &&
     file !== "README.md" &&
     file !== "package.json" &&
-    !file.startsWith("dist/"),
+    file !== "postinstall.cjs" &&
+    !file.startsWith("dist/") &&
+    !file.startsWith("skills/"),
 );
 
 const missingFiles = requiredFiles.filter((file) => !tarballFiles.includes(file));
@@ -55,5 +67,5 @@ if (unexpectedFiles.length > 0 || missingFiles.length > 0) {
 }
 
 process.stdout.write(
-  `Packed CLI package contents verified (${tarballFiles.length} files): LICENSE, README.md, package.json, and dist/** only.\n`,
+  `Packed CLI package contents verified (${tarballFiles.length} files): LICENSE, README.md, package.json, postinstall.cjs, dist/**, and skills/**.\n`,
 );

@@ -19,6 +19,7 @@ import {
   runOperatorWhoami,
 } from "../commands/operator.js";
 import { runRuntime } from "../commands/run.js";
+import { runSetupSkills } from "../commands/setup-skills.js";
 import { route, type CliRoute } from "./shared.js";
 
 export const coreRoutes: readonly CliRoute[] = [
@@ -28,6 +29,10 @@ export const coreRoutes: readonly CliRoute[] = [
   route("balance", async ({ parsedArgs, configPath }) => runOperatorBalance(parsedArgs, configPath)),
   route("agent-context", async ({ configPath }) => {
     await runAgentContext(configPath);
+    return 0;
+  }),
+  route("setup skills", async ({ parsedArgs }) => {
+    await runSetupSkills(parsedArgs);
     return 0;
   }),
   route("search", async ({ parsedArgs, configPath }) => runOperatorSearch(parsedArgs, configPath), { variadicTail: true }),

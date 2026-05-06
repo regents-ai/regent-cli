@@ -5,12 +5,12 @@ import { runCliEntrypoint } from "../src/index.js";
 import { captureOutput } from "../../../test-support/test-helpers.js";
 
 describe("scoped CLI help", () => {
-  it("renders global help with Feynman as a top-level path", async () => {
+  it("renders global help with agent skills as a first-run path", async () => {
     const output = await captureOutput(() => runCliEntrypoint(["--help"]));
 
     expect(output.result).toBe(0);
     expect(output.stdout).toContain("REGENT CLI HELP");
-    expect(output.stdout).toContain("regents feynman doctor");
+    expect(output.stdout).toContain("regents setup skills");
   });
 
   it("renders Autolaunch group help without running a command", async () => {
@@ -31,6 +31,15 @@ describe("scoped CLI help", () => {
     expect(output.stdout).toContain("AUTOLAUNCH JOBS WATCH HELP");
     expect(output.stdout).toContain("regents autolaunch jobs watch <job-id>");
     expect(output.stdout).toContain("--interval <seconds>");
+  });
+
+  it("renders setup skills help", async () => {
+    const output = await captureOutput(() => runCliEntrypoint(["setup", "skills", "--help"]));
+
+    expect(output.result).toBe(0);
+    expect(output.stdout).toContain("SETUP SKILLS HELP");
+    expect(output.stdout).toContain("regents setup skills [--project]");
+    expect(output.stdout).toContain("--project");
   });
 
   it("renders command-level help when a required value is omitted", async () => {
