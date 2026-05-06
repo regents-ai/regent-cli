@@ -30,6 +30,7 @@ import {
   runAutolaunchIngressSetDefault,
   runAutolaunchIngressSetLabel,
   runAutolaunchJobsWatch,
+  runAutolaunchPair,
   runAutolaunchLaunchCreate,
   runAutolaunchLaunchFinalize,
   runAutolaunchLaunchMonitor,
@@ -150,6 +151,10 @@ export const autolaunchRoutes: readonly CliRoute[] = [
   }),
   route("autolaunch identities mint", async ({ parsedArgs }) => {
     await runAutolaunchIdentitiesMint(parsedArgs);
+    return 0;
+  }),
+  route("autolaunch pair", async ({ parsedArgs, configPath }) => {
+    await runAutolaunchPair(parsedArgs, configPath);
     return 0;
   }),
   route("autolaunch prelaunch wizard", async ({ parsedArgs, configPath }) => {

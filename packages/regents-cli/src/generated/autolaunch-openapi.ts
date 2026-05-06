@@ -468,6 +468,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/app/agent-pairings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createAgentPairingSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/agent-pairings/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["completeAgentPairingSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/app/agent-pairings/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAgentPairingSession"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/app/prelaunch/plans": {
         parameters: {
             query?: never;
@@ -2185,6 +2233,7 @@ export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
         Address: string;
+        PairingCode: string;
         /** @description Wallet address or ENS name that resolves to a wallet address. */
         AddressOrEnsName: string;
         /** @enum {integer} */
@@ -2217,6 +2266,47 @@ export interface components {
         };
         LooseObject: {
             [key: string]: unknown;
+        };
+        /** @enum {string} */
+        AgentPairingStatus: "pending" | "completed" | "expired";
+        AgentPairingAgent: {
+            agent_id: string;
+            agent_wallet_address: components["schemas"]["Address"];
+            agent_chain_id: components["schemas"]["AutolaunchChainId"];
+            agent_registry_address: components["schemas"]["Address"];
+            agent_token_id: string;
+            agent_label?: string | null;
+            connected_at: components["schemas"]["DateTime"];
+        };
+        AgentPairingSession: {
+            session_id: string;
+            status: components["schemas"]["AgentPairingStatus"];
+            pairing_code?: components["schemas"]["PairingCode"] | null;
+            challenge_nonce: string;
+            challenge_message: string;
+            expires_at: components["schemas"]["DateTime"];
+            completed_at?: components["schemas"]["DateTime"] | null;
+            inserted_at: components["schemas"]["DateTime"];
+            updated_at: components["schemas"]["DateTime"];
+            agent: components["schemas"]["AgentPairingAgent"] | null;
+        };
+        AgentPairingSessionEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            session: components["schemas"]["AgentPairingSession"];
+        };
+        AgentPairingCompleteRequest: {
+            pairing_code: components["schemas"]["PairingCode"];
+            challenge_message: string;
+            agent_wallet_address: components["schemas"]["Address"];
+            agent_chain_id: components["schemas"]["AutolaunchChainId"];
+            agent_registry_address: components["schemas"]["Address"];
+            agent_token_id: string;
+            agent_label?: string | null;
+            /** @enum {string} */
+            signature_type: "evm_personal_sign";
+            signature: components["schemas"]["HexData"];
+            signed_at: components["schemas"]["DateTime"];
         };
         ErrorEnvelope: {
             /** @enum {boolean} */
@@ -3176,6 +3266,7 @@ export interface components {
         SubjectId: string;
         TokenAddress: components["schemas"]["Address"];
         SessionId: string;
+        AgentPairingSessionId: string;
         /** @description Canonical contract scope. Job-scoped settlement actions use `strategy`, `auction`, `revenue_splitter`, `fee_registry`, `fee_vault`, `hook`, and `vesting`. Launch treasury fee pulls use `revenue_splitter`, not `fee_vault`. */
         Resource: string;
         /** @description Canonical contract action. Settlement actions include `migrate`, `recover_failed_auction`, `sweep_currency`, `sweep_unsold_tokens`, `accept_ownership`, `sweep_token`, `release`, and `pull_treasury_share`. */
@@ -4143,6 +4234,130 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["LooseObject"];
+                };
+            };
+        };
+    };
+    createAgentPairingSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["EmptyRequest"];
+            };
+        };
+        responses: {
+            /** @description Pairing session created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentPairingSessionEnvelope"];
+                };
+            };
+            /** @description Missing signed-in browser session */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    completeAgentPairingSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgentPairingCompleteRequest"];
+            };
+        };
+        responses: {
+            /** @description Pairing completed */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentPairingSessionEnvelope"];
+                };
+            };
+            /** @description Pairing code not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Pairing cannot be completed */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Pairing evidence invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    getAgentPairingSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["AgentPairingSessionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Pairing session status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AgentPairingSessionEnvelope"];
+                };
+            };
+            /** @description Missing signed-in browser session */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Pairing session not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };

@@ -26,8 +26,9 @@ const {
   getSafeAddressFromDeploymentTxMock: vi.fn(),
 }));
 
-const { buildAgentAuthHeadersMock, requireAgentAuthStateMock } = vi.hoisted(() => ({
+const { buildAgentAuthHeadersMock, loadAgentAuthStateMock, requireAgentAuthStateMock } = vi.hoisted(() => ({
   buildAgentAuthHeadersMock: vi.fn(),
+  loadAgentAuthStateMock: vi.fn(),
   requireAgentAuthStateMock: vi.fn(),
 }));
 
@@ -47,6 +48,7 @@ vi.mock("node:readline/promises", () => ({
 
 vi.mock("../../src/commands/agent-auth.js", () => ({
   buildAgentAuthHeaders: buildAgentAuthHeadersMock,
+  loadAgentAuthState: loadAgentAuthStateMock,
   requireAgentAuthState: requireAgentAuthStateMock,
 }));
 
@@ -193,6 +195,7 @@ describe("autolaunch CLI command group", () => {
     delete process.env.AUTOLAUNCH_IDENTITY_REGISTRY_ADDRESS;
     fetchMock.mockReset();
     buildAgentAuthHeadersMock.mockReset();
+    loadAgentAuthStateMock.mockReset();
     requireAgentAuthStateMock.mockReset();
     questionMock.mockReset();
     closePromptMock.mockReset();
@@ -257,6 +260,15 @@ describe("autolaunch CLI command group", () => {
         tokenId: "42",
       },
     });
+    loadAgentAuthStateMock.mockReturnValue({
+      identity: {
+        walletAddress: expectedAgentWallet,
+        chainId: 84532,
+        registryAddress: "0x3333333333333333333333333333333333333333",
+        tokenId: "42",
+        label: "Atlas Agent",
+      },
+    });
     safeInitMock.mockResolvedValue({
       getAddress: vi
         .fn()
@@ -280,6 +292,123 @@ describe("autolaunch CLI command group", () => {
         fs.rmSync(dir, { recursive: true, force: true });
       }
     }
+  });
+
+  it("pairs the local agent with an Autolaunch browser profile", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          session: {
+            session_id: "pair_123",
+            status: "completed",
+            pairing_code: null,
+            agent: {
+              agent_id: "84532:42",
+              agent_wallet_address: expectedAgentWallet,
+              agent_chain_id: 84532,
+              agent_registry_address: "0x3333333333333333333333333333333333333333",
+              agent_token_id: "42",
+              agent_label: "Atlas Agent",
+              connected_at: "2026-05-06T14:30:00Z",
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "pair",
+        "--code",
+        "AL-ABC234-DEF56789",
+        "--config",
+        configPath,
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(
+      `${expectedBaseUrl}/v1/app/agent-pairings/complete`,
+    );
+    const [, requestInit] = fetchMock.mock.calls[0] ?? [];
+    const headers = requestInit?.headers as Headers;
+    expect(headers.get("x-siwa-receipt")).toBeNull();
+    expect(JSON.parse(String(requestInit?.body))).toMatchObject({
+      pairing_code: "AL-ABC234-DEF56789",
+      challenge_message: "Autolaunch agent pairing\n\nPairing: AL-ABC234\nNonce: ABC234",
+      agent_wallet_address: expectedAgentWallet,
+      agent_chain_id: 84532,
+      agent_registry_address: "0x3333333333333333333333333333333333333333",
+      agent_token_id: "42",
+      agent_label: "Atlas Agent",
+      signature_type: "evm_personal_sign",
+      signature: "0xsigned",
+    });
+    expect(output.stdout).toContain("AUTOLAUNCH PAIRING COMPLETE");
+    expect(output.stdout).toContain("completed");
+    expect(output.stdout).toContain("pair_123");
+    expect(output.stdout).toContain("Atlas Agent (84532:42)");
+    expect(output.stdout).toContain("0x0000...00aa");
+    expect(output.stdout).toContain("No private keys were shared and no funds moved.");
+  });
+
+  it("can print the Autolaunch pairing response as JSON", async () => {
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    fetchMock.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          ok: true,
+          session: {
+            session_id: "pair_456",
+            status: "completed",
+            pairing_code: null,
+            agent: {
+              agent_id: "84532:42",
+              agent_wallet_address: expectedAgentWallet,
+              agent_chain_id: 84532,
+              agent_registry_address: "0x3333333333333333333333333333333333333333",
+              agent_token_id: "42",
+              agent_label: "Atlas Agent",
+              connected_at: "2026-05-06T14:30:00Z",
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "content-type": "application/json" },
+        },
+      ),
+    );
+
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "pair",
+        "--code",
+        "AL-ABC234-DEF56789",
+        "--json",
+        "--config",
+        configPath,
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    expect(parsePrintedJson<{ session: { session_id: string } }>(output.stdout)).toMatchObject({
+      session: { session_id: "pair_456" },
+    });
+    expect(output.stdout).not.toContain("AUTOLAUNCH PAIRING COMPLETE");
   });
 
   it("lists active auctions via regents autolaunch", async () => {

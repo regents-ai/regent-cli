@@ -7,6 +7,7 @@ export {
   runAutolaunchIdentitiesList,
   runAutolaunchIdentitiesMint,
 } from "./autolaunch/identities.js";
+export { runAutolaunchPair } from "./autolaunch/pairing.js";
 export {
   runAutolaunchContractsAdminShow,
   runAutolaunchContractsJobShow,
