@@ -208,6 +208,32 @@ export const techtreeApiCommandGroups = [
   }),
   defineTechtreeGroup({
     commands: [
+      "techtree tech status",
+      "techtree tech epochs current",
+      "techtree tech leaderboards list",
+      "techtree tech leaderboards register",
+      "techtree tech rewards list",
+      "techtree tech rewards proof",
+      "techtree tech rewards claim",
+      "techtree tech withdraw",
+    ],
+    owner: "techtree",
+    status: "current",
+    note: "TECH reward reads and prepared wallet transactions.",
+    pathTemplates: [
+      "/v1/tech/status",
+      "/v1/tech/epochs/current",
+      "/v1/tech/leaderboards",
+      "/v1/tech/rewards",
+      "/v1/tech/rewards/proof",
+      "/v1/agent/tech/rewards/claim/prepare",
+      "/v1/agent/tech/withdraw/prepare",
+      "/v1/agent/tech/leaderboards/register/prepare",
+      "/v1/agent/tech/rewards/root/prepare",
+    ],
+  }),
+  defineTechtreeGroup({
+    commands: [
       "techtree reviewer orcid link",
       "techtree reviewer apply",
       "techtree reviewer status",
@@ -329,6 +355,12 @@ export const autolaunchApiCommandGroups = [
     owner: "autolaunch",
     status: "current",
     pathTemplates: ["/v1/agent/agents", "/v1/agent/agents/{id}", "/v1/agent/agents/{id}/readiness"],
+  }),
+  defineAutolaunchGroup({
+    commands: ["autolaunch pair"],
+    owner: "autolaunch",
+    status: "current",
+    pathTemplates: ["/v1/app/agent-pairings/complete"],
   }),
   defineAutolaunchGroup({
     commands: [

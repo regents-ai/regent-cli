@@ -4,13 +4,14 @@ Regents CLI publishes the `regents` command. It is how agents and operators work
 
 For Techtree, Regents CLI is the agent interface: it prepares local research folders, runs benchmark and review loops, syncs evidence to Techtree, and publishes verified records through the supported Base contract paths.
 
-If you do not have a Regent agent yet, start at [regents.sh](https://regents.sh). Use the web app for account setup, names, billing, and hosted company work. Use the CLI when the work belongs in a terminal, local runtime, or agent session.
+Techtree does not require a hosted Regent company. A hosted Regent is optional. Use Techtree for research, publishing, collaboration, and leaderboards from a local agent or terminal session. Use the web app when you want account setup, names, billing, or hosted company work.
 
 ## Install
 
 ```bash
 pnpm add -g @regentslabs/cli
 regents --help
+regents setup skills
 ```
 
 For development in this repository:
@@ -41,6 +42,62 @@ regents doctor
 
 `regents status` gives the fastest local readiness view. `regents techtree start` is the guided entry point before deeper Techtree work. `regents search <query>` searches Techtree from the top level.
 
+## Agent Skills
+
+Four skills ship in this repo under `packages/regents-cli/skills/`:
+
+| Skill | What it does |
+| --- | --- |
+| `regents` | Umbrella setup, sign-in, safety rules, and routing to product skills |
+| `regents-platform` | Platform company work, worker setup, local loops, and runtime checks |
+| `regents-autolaunch` | Agent launches, prelaunch checks, launch jobs, subjects, auctions, and holdings |
+| `regents-techtree` | Techtree research, notebooks, BBH, Science Tasks, Autoskill, publishing, and review |
+
+Install them with the CLI:
+
+```bash
+regents setup skills
+```
+
+Use project-local installation when you want the skills copied into the current repository:
+
+```bash
+regents setup skills --project
+```
+
+## Platform Local Agent Work
+
+Use this flow when Platform should assign company work to a local OpenClaw worker. Platform stores the work, but the local machine decides what to run and what to report back.
+
+```text
+Platform stores work
+      |
+      v
+local worker checks for assigned work
+      |
+      v
+local OpenClaw or Regents CLI does the work
+      |
+      v
+local worker reports updates, artifacts, and completion back to Platform
+```
+
+Set up the local worker:
+
+```bash
+regents auth login --audience platform
+regents identity ensure
+regents agent connect openclaw --company-id <company-id> --role executor
+```
+
+The `connect` command prints the worker id and writes the local OpenClaw skill. Start the local worker when you want this machine to check for assigned work:
+
+```bash
+regents work local-loop --company-id <company-id> --worker-id <worker-id>
+```
+
+Use `--once` for a single check while testing. This does not open remote shell access to the machine; work runs only through the local command you start.
+
 ## Techtree Research Loop
 
 Use Regents CLI to move research work through the same loop Techtree shows publicly:
@@ -50,6 +107,12 @@ Use Regents CLI to move research work through the same loop Techtree shows publi
 3. Capture the evidence in marimo notebooks, verdicts, logs, and review files.
 4. Check the result with Hypotest replay for BBH or Harbor review for Science Tasks.
 5. Publish what held up through Techtree and the supported Base contract paths.
+
+A hosted Regent company is not required for this loop. It is useful when someone wants a hosted operating surface, but Techtree research can start with local work and a Techtree identity.
+
+Token association is optional too. Research can be shared without attaching a token. If a Techtree artifact, skill, benchmark, or other body of work can earn stablecoin income, it can later become an Autolaunch candidate so the work can raise around that economic surface.
+
+TECH rewards are separate from Autolaunch. Agents that earn TECH can claim rewards through Techtree. When locked TECH is withdrawn, the current Techtree reward path sends 90% as liquid TECH and routes the required 10% exit sale into REGENT for the agent's chosen recipient.
 
 ### Science Tasks
 

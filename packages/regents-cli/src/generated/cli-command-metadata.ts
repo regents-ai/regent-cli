@@ -56,6 +56,7 @@ export const CLI_COMMANDS = [
   "autolaunch launch monitor",
   "autolaunch launch preview",
   "autolaunch launch run",
+  "autolaunch pair",
   "autolaunch prelaunch get",
   "autolaunch prelaunch publish",
   "autolaunch prelaunch validate",
@@ -159,6 +160,7 @@ export const CLI_COMMANDS = [
   "runtime services",
   "search",
   "security-report",
+  "setup skills",
   "status",
   "techtree activity",
   "techtree autoskill buy",
@@ -259,6 +261,14 @@ export const CLI_COMMANDS = [
   "techtree star <id>",
   "techtree start",
   "techtree status",
+  "techtree tech epochs current",
+  "techtree tech leaderboards list",
+  "techtree tech leaderboards register",
+  "techtree tech rewards claim",
+  "techtree tech rewards list",
+  "techtree tech rewards proof",
+  "techtree tech status",
+  "techtree tech withdraw",
   "techtree unstar <id>",
   "techtree unwatch <id>",
   "techtree watch <id>",
@@ -370,6 +380,7 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "autolaunch launch monitor",
     "autolaunch launch preview",
     "autolaunch launch run",
+    "autolaunch pair",
     "autolaunch prelaunch get",
     "autolaunch prelaunch publish",
     "autolaunch prelaunch validate",
@@ -510,6 +521,9 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
   "security-report": [
     "security-report"
   ],
+  "setup": [
+    "setup skills"
+  ],
   "status": [
     "status"
   ],
@@ -613,6 +627,14 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree star <id>",
     "techtree start",
     "techtree status",
+    "techtree tech epochs current",
+    "techtree tech leaderboards list",
+    "techtree tech leaderboards register",
+    "techtree tech rewards claim",
+    "techtree tech rewards list",
+    "techtree tech rewards proof",
+    "techtree tech status",
+    "techtree tech withdraw",
     "techtree unstar <id>",
     "techtree unwatch <id>",
     "techtree watch <id>",
@@ -857,6 +879,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -881,6 +904,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -991,6 +1015,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1015,6 +1040,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1039,6 +1065,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1063,6 +1090,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -2218,6 +2246,44 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch wizard",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
+  },
+  "autolaunch pair": {
+    "command": "autolaunch pair",
+    "owner": "autolaunch",
+    "group": "agent-pairings",
+    "interface": "http",
+    "auth_mode": "local-agent-signature",
+    "output_envelope": "agent-pairing-session",
+    "flags": [
+      {
+        "name": "--code",
+        "type": "pairing-code",
+        "required": true,
+        "description": "Pairing code shown in Autolaunch Profile."
+      },
+      {
+        "name": "--label",
+        "type": "string",
+        "required": false,
+        "description": "Optional local label for this Agent account."
+      }
+    ],
+    "examples": [
+      "regents autolaunch pair --code AL-ABC234-DEF56789"
+    ],
+    "agent_metadata": {
+      "category": "identity",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "pairing-write",
+      "retry_behavior": "use_new_pairing_code",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    },
+    "summary": "Connect this local Agent account to an Autolaunch Profile.",
+    "usage": "regents autolaunch pair --code <pairing-code>",
+    "next_step": "Open Profile in Autolaunch to review the connected agent."
   },
   "autolaunch prelaunch get": {
     "command": "autolaunch prelaunch get",
@@ -3468,6 +3534,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3602,6 +3669,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3626,6 +3694,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3650,6 +3719,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3674,6 +3744,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3925,6 +3996,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -4023,6 +4095,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -4989,6 +5062,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -5589,6 +5663,42 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     },
     "summary": "Send a signed security report to Platform."
   },
+  "setup skills": {
+    "command": "setup skills",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--project",
+        "type": "boolean",
+        "required": false,
+        "description": "Install skills into the current project instead of the global user skill set."
+      },
+      {
+        "name": "--json",
+        "type": "boolean",
+        "required": false,
+        "description": "Print the installed skill summary as JSON."
+      }
+    ],
+    "examples": [
+      "regents setup skills",
+      "regents setup skills --project"
+    ],
+    "agent_metadata": {
+      "category": "local-setup",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-write",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
   "status": {
     "command": "status",
     "owner": "shared-services",
@@ -5598,6 +5708,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -7842,6 +7953,182 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "techtree tech epochs current": {
+    "command": "techtree tech epochs current",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech leaderboards list": {
+    "command": "techtree tech leaderboards list",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech leaderboards register": {
+    "command": "techtree tech leaderboards register",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech rewards claim": {
+    "command": "techtree tech rewards claim",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech rewards list": {
+    "command": "techtree tech rewards list",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech rewards proof": {
+    "command": "techtree tech rewards proof",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech status": {
+    "command": "techtree tech status",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech withdraw": {
+    "command": "techtree tech withdraw",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
   "techtree unstar <id>": {
     "command": "techtree unstar <id>",
     "owner": "techtree",
@@ -8016,6 +8303,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     ],
     "examples": [
       "regents status",
+      "regents setup skills",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"

@@ -4,7 +4,7 @@ This file lists the full command surface shipped by the standalone Regents CLI i
 
 Source used: CLI contract YAML files via `scripts/generate-cli-command-metadata.mjs`.
 
-Total commands: 302.
+Total commands: 312.
 
 ## Full Command List
 
@@ -76,6 +76,7 @@ Total commands: 302.
 - `regents autolaunch launch monitor` - Prepare, validate, publish, and launch an Agent account project.
 - `regents autolaunch launch preview` - Prepare, validate, publish, and launch an Agent account project.
 - `regents autolaunch launch run` - Prepare, validate, publish, and launch an Agent account project.
+- `regents autolaunch pair` - Connect this local Agent account to an Autolaunch Profile.
 - `regents autolaunch prelaunch get` - Prepare, validate, publish, and launch an Agent account project.
 - `regents autolaunch prelaunch publish` - Prepare, validate, publish, and launch an Agent account project.
 - `regents autolaunch prelaunch validate` - Prepare, validate, publish, and launch an Agent account project.
@@ -234,6 +235,10 @@ Total commands: 302.
 
 - `regents security-report` - Send a signed security report to Platform.
 
+### Setup
+
+- `regents setup skills`
+
 ### Status
 
 - `regents status`
@@ -339,6 +344,14 @@ Total commands: 302.
 - `regents techtree star <id>`
 - `regents techtree start`
 - `regents techtree status`
+- `regents techtree tech epochs current`
+- `regents techtree tech leaderboards list`
+- `regents techtree tech leaderboards register`
+- `regents techtree tech rewards claim`
+- `regents techtree tech rewards list`
+- `regents techtree tech rewards proof`
+- `regents techtree tech status`
+- `regents techtree tech withdraw`
 - `regents techtree unstar <id>`
 - `regents techtree unwatch <id>`
 - `regents techtree watch <id>`

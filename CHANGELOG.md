@@ -4,6 +4,12 @@ All notable changes to `@regentslabs/cli` should be recorded here.
 
 ## Unreleased
 
+### Added
+
+- Added bundled Regents agent skills for Regents, Platform, Autolaunch, and Techtree.
+- Added `regents setup skills` to install those skills through the Agent Skills installer.
+- Added a package install note that points users to `regents setup skills`.
+
 ## 0.5.0 - 2026-05-06
 
 ### Added
