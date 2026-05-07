@@ -744,6 +744,102 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/agent-platform/mobile/regent/staking": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getMobileRegentStaking"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agent-platform/mobile/regent/staking/stake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["stakeMobileRegentStaking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agent-platform/mobile/regent/staking/unstake": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["unstakeMobileRegentStaking"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agent-platform/mobile/regent/staking/claim-usdc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["claimMobileRegentStakingUsdc"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agent-platform/mobile/regent/staking/claim-regent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["claimMobileRegentStakingRegent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/agent-platform/mobile/regent/staking/claim-and-restake-regent": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["claimAndRestakeMobileRegentStakingRegent"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/agent-platform/formation": {
         parameters: {
             query?: never;
@@ -2852,6 +2948,18 @@ export interface components {
             amount: string;
             receiver?: string;
         };
+        MobileRegentStakingWalletRequest: {
+            wallet_address: string;
+        };
+        MobileRegentStakingAmountRequest: {
+            wallet_address: string;
+            amount: string;
+        };
+        MobileRegentStakingStakeRequest: {
+            wallet_address: string;
+            amount: string;
+            receiver?: string;
+        };
         WalletAction: {
             action_id: string;
             /** @enum {string} */
@@ -4578,6 +4686,166 @@ export interface operations {
         requestBody?: never;
         responses: {
             /** @description Prepared wallet action for claiming and restaking REGENT rewards */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingWalletActionResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    getMobileRegentStaking: {
+        parameters: {
+            query: {
+                wallet_address: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Regent staking overview scoped to the mobile wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingAccountResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    stakeMobileRegentStaking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileRegentStakingStakeRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared wallet action for staking REGENT from the mobile wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingWalletActionResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    unstakeMobileRegentStaking: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileRegentStakingAmountRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared wallet action for unstaking REGENT from the mobile wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingWalletActionResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    claimMobileRegentStakingUsdc: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileRegentStakingWalletRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared wallet action for claiming USDC rewards to the mobile wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingWalletActionResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    claimMobileRegentStakingRegent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileRegentStakingWalletRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared wallet action for claiming REGENT rewards to the mobile wallet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RegentStakingWalletActionResponse"];
+                };
+            };
+            400: components["responses"]["StatusMessage400"];
+            401: components["responses"]["StatusMessage401"];
+            503: components["responses"]["StatusMessage503"];
+        };
+    };
+    claimAndRestakeMobileRegentStakingRegent: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MobileRegentStakingWalletRequest"];
+            };
+        };
+        responses: {
+            /** @description Prepared wallet action for claiming and restaking REGENT rewards from the mobile wallet */
             200: {
                 headers: {
                     [name: string]: unknown;
