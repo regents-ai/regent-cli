@@ -28,6 +28,7 @@ import {
 } from "../../printer.js";
 import { createPromptBoundary, type PromptBoundary } from "../../terminal/prompts.js";
 import { requireAgentAuthState } from "../agent-auth.js";
+import { printAgentSafeExplainer } from "./safe-explainer.js";
 import {
   parsePollingIntervalSeconds,
   requestJson,
@@ -43,6 +44,33 @@ interface LocalPlanRecord {
 
 const PRELAUNCH_DIR = "autolaunch-plans";
 const AUTOLAUNCH_CHAIN_ID = 84_532;
+
+const wizardChainChoice = (args: ParsedCliArgs): string => {
+  const explicitChainId = normalizeText(getFlag(args, "chain-id"));
+  if (explicitChainId) {
+    return explicitChainId;
+  }
+
+  return normalizeText(getFlag(args, "chain"))?.toLowerCase() ?? "base-sepolia";
+};
+
+const requireBaseSepoliaPrelaunchWizard = (args: ParsedCliArgs): void => {
+  const chain = wizardChainChoice(args);
+
+  if (chain === "base-sepolia" || chain === "84532") {
+    return;
+  }
+
+  if (chain === "base" || chain === "base-mainnet" || chain === "8453") {
+    throw new Error(
+      "Autolaunch prelaunch wizard currently supports Base Sepolia only. Use --chain base-sepolia.",
+    );
+  }
+
+  throw new Error(
+    "Autolaunch supports only Base and Base Sepolia. Use --chain base-sepolia for the prelaunch wizard.",
+  );
+};
 
 const normalizeText = (value: string | undefined): string | undefined => {
   if (!value) {
@@ -295,6 +323,9 @@ const createOrUpdateRemotePlan = async (
     "Minimum USDC raise",
     "<amount>",
   );
+  if (!normalizeText(getFlag(args, "agent-safe-address"))) {
+    printAgentSafeExplainer();
+  }
   const agentSafe =
     normalizeText(getFlag(args, "agent-safe-address")) ??
     (prompts.inputAllowed
@@ -471,6 +502,7 @@ export async function runAutolaunchPrelaunchWizard(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
+  requireBaseSepoliaPrelaunchWizard(args);
   const plan = await createOrUpdateRemotePlan(args, configPath);
   const validation = await requestJson(
     "POST",

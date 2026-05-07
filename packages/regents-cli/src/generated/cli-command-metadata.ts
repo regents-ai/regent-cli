@@ -2094,6 +2094,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2109,7 +2110,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch launch create": {
@@ -2121,6 +2122,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2136,7 +2138,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch launch finalize": {
@@ -2148,6 +2150,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2163,7 +2166,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch launch monitor": {
@@ -2175,6 +2178,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2190,7 +2194,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch launch preview": {
@@ -2202,6 +2206,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2217,7 +2222,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch launch run": {
@@ -2229,6 +2234,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2244,7 +2250,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch pair": {
@@ -2294,6 +2300,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2309,7 +2316,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch prelaunch publish": {
@@ -2321,6 +2328,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2336,7 +2344,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch prelaunch validate": {
@@ -2348,6 +2356,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2363,7 +2372,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch prelaunch wizard": {
@@ -2374,7 +2383,26 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_mode": "agent-siwa",
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
+    "flags": [
+      {
+        "name": "--chain",
+        "type": "enum",
+        "required": false,
+        "enum": [
+          "base-sepolia"
+        ],
+        "default": "base-sepolia",
+        "description": "Chain for the prelaunch wizard. Base Sepolia is the only enabled wizard chain for now."
+      },
+      {
+        "name": "--agent-safe-address",
+        "type": "evm-address",
+        "required": true,
+        "description": "Agent Safe address. This is the shared control wallet for the launch; use a well-protected 2-of-3 Safe."
+      }
+    ],
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -2390,7 +2418,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch registry get": {
@@ -2500,8 +2528,23 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "interface": "local",
     "auth_mode": "none",
     "output_envelope": "loose-object",
+    "flags": [
+      {
+        "name": "--backup-signer-address",
+        "type": "evm-address",
+        "required": true,
+        "description": "Backup signer wallet for the 2-of-3 Agent Safe."
+      },
+      {
+        "name": "--website-wallet-address",
+        "type": "evm-address",
+        "required": false,
+        "description": "Website wallet for the 2-of-3 Agent Safe."
+      }
+    ],
     "examples": [
-      "regents autolaunch safe wizard"
+      "regents autolaunch safe wizard",
+      "regents autolaunch safe create --backup-signer-address <wallet>"
     ],
     "agent_metadata": {
       "category": "wallet-setup",
@@ -2512,7 +2555,10 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "pagination": "none",
       "async_behavior": "synchronous",
       "input_mode": "interactive"
-    }
+    },
+    "summary": "Prepare the Agent Safe used to protect an Autolaunch launch.",
+    "usage": "regents autolaunch safe <wizard|create>",
+    "next_step": "Use the Safe address in `regents autolaunch prelaunch wizard`."
   },
   "autolaunch safe wizard": {
     "command": "autolaunch safe wizard",
@@ -2521,8 +2567,35 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "interface": "local",
     "auth_mode": "none",
     "output_envelope": "loose-object",
+    "flags": [
+      {
+        "name": "--agent-safe-address",
+        "type": "evm-address",
+        "required": false,
+        "description": "Existing Agent Safe address. The Agent Safe is the shared control wallet for launch ownership actions."
+      },
+      {
+        "name": "--backup-signer-address",
+        "type": "evm-address",
+        "required": true,
+        "description": "Backup signer wallet for the 2-of-3 Agent Safe."
+      },
+      {
+        "name": "--website-wallet-address",
+        "type": "evm-address",
+        "required": false,
+        "description": "Website wallet for the 2-of-3 Agent Safe."
+      },
+      {
+        "name": "--wait-for-website-wallet",
+        "type": "boolean",
+        "required": false,
+        "description": "Mark the website wallet as not ready yet."
+      }
+    ],
     "examples": [
-      "regents autolaunch safe wizard"
+      "regents autolaunch safe wizard",
+      "regents autolaunch safe create --backup-signer-address <wallet>"
     ],
     "agent_metadata": {
       "category": "wallet-setup",
@@ -2533,7 +2606,10 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "pagination": "none",
       "async_behavior": "synchronous",
       "input_mode": "interactive"
-    }
+    },
+    "summary": "Prepare the Agent Safe used to protect an Autolaunch launch.",
+    "usage": "regents autolaunch safe <wizard|create>",
+    "next_step": "Use the Safe address in `regents autolaunch prelaunch wizard`."
   },
   "autolaunch splitter accept-ownership": {
     "command": "autolaunch splitter accept-ownership",
@@ -3399,6 +3475,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -3414,7 +3491,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch vesting execute-beneficiary-rotation": {
@@ -3426,6 +3503,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -3441,7 +3519,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch vesting propose-beneficiary-rotation": {
@@ -3453,6 +3531,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -3468,7 +3547,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch vesting release": {
@@ -3480,6 +3559,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -3495,7 +3575,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "autolaunch vesting status": {
@@ -3507,6 +3587,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_audience": "autolaunch",
     "output_envelope": "launch-envelopes",
     "examples": [
+      "regents autolaunch prelaunch wizard --chain base-sepolia",
       "regents autolaunch prelaunch get --plan <id>",
       "regents autolaunch prelaunch validate --plan <id>",
       "regents autolaunch jobs watch <job_id>"
@@ -3522,7 +3603,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "mixed"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
-    "usage": "regents autolaunch prelaunch wizard",
+    "usage": "regents autolaunch prelaunch <command>",
     "next_step": "Use `regents autolaunch jobs watch <job-id>`."
   },
   "balance": {

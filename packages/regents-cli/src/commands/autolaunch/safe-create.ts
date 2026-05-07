@@ -13,6 +13,7 @@ import {
   resolveBackupSigner,
   resolveWebsiteSigner,
 } from "./safe-shared.js";
+import { printAgentSafeExplainer } from "./safe-explainer.js";
 
 const BASE_SEPOLIA_RPC_ENV = "BASE_SEPOLIA_RPC_URL";
 
@@ -62,6 +63,7 @@ export async function runAutolaunchSafeCreate(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
+  printAgentSafeExplainer();
   const agentSigner = await resolveAgentSigner(configPath);
   const websiteSigner = await resolveWebsiteSigner(args);
   const backupSigner = await resolveBackupSigner(args);

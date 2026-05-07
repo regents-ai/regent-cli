@@ -1,5 +1,6 @@
 import type { ParsedCliArgs } from "../../parse.js";
 import { printJson } from "../../printer.js";
+import { printAgentSafeExplainer } from "./safe-explainer.js";
 import {
   WEBSITE_WALLET_ENV,
   type SafeWizardSigner,
@@ -93,6 +94,7 @@ export async function runAutolaunchSafeWizard(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
+  printAgentSafeExplainer();
   const agent = await resolveAgentSigner(configPath);
   const website = await resolveWebsiteSigner(args);
   const backup = await resolveBackupSigner(args);

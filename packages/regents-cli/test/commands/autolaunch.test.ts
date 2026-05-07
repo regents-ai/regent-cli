@@ -101,6 +101,7 @@ vi.mock("@safe-global/protocol-kit", () => ({
 describe("autolaunch CLI command group", () => {
   const expectedBaseUrl = "http://127.0.0.1:4010";
   const originalEnv = { ...process.env };
+  const originalStdoutIsTTY = process.stdout.isTTY;
   const fetchMock = vi.fn<typeof fetch>();
   const tempDirs: string[] = [];
   const expectedAgentWallet = "0x00000000000000000000000000000000000000aa";
@@ -140,6 +141,23 @@ describe("autolaunch CLI command group", () => {
     writeInitialConfig(configPath);
     return configPath;
   };
+
+  const setStdoutTty = (value: boolean | undefined): void => {
+    Object.defineProperty(process.stdout, "isTTY", {
+      configurable: true,
+      value,
+    });
+  };
+
+  const useHumanTerminal = (): void => {
+    setStdoutTty(true);
+    delete process.env.NO_COLOR;
+    process.env.TERM = "xterm-256color";
+  };
+
+  const stripAnsi = (value: string): string => value.replace(/\x1b\[[0-9;]*m/g, "");
+  const collapsePanelText = (value: string): string =>
+    value.replace(/[│╭╮╰╯─]/gu, " ").replace(/\s+/g, " ").trim();
 
   const assertLaunchRequestBody = (
     body: unknown,
@@ -286,6 +304,7 @@ describe("autolaunch CLI command group", () => {
   afterEach(() => {
     vi.unstubAllGlobals();
     process.env = { ...originalEnv };
+    setStdoutTty(originalStdoutIsTTY);
     while (tempDirs.length > 0) {
       const dir = tempDirs.pop();
       if (dir) {
@@ -1547,6 +1566,64 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
+  it("stops the prelaunch wizard on Base mainnet with Base Sepolia guidance", async () => {
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "prelaunch",
+        "wizard",
+        "--chain",
+        "base",
+        "--agent",
+        "8453:42",
+        "--name",
+        "Atlas Coin",
+        "--symbol",
+        "ATLAS",
+        "--minimum-raise-usdc",
+        "10000",
+        "--agent-safe-address",
+        "0x1111111111111111111111111111111111111111",
+      ]),
+    );
+
+    expect(output.result).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(questionMock).not.toHaveBeenCalled();
+    expect(output.stderr).toContain(
+      "Autolaunch prelaunch wizard currently supports Base Sepolia only. Use --chain base-sepolia.",
+    );
+  });
+
+  it("stops the prelaunch wizard on unsupported chains with Base chain guidance", async () => {
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "prelaunch",
+        "wizard",
+        "--chain",
+        "optimism",
+        "--agent",
+        "10:42",
+        "--name",
+        "Atlas Coin",
+        "--symbol",
+        "ATLAS",
+        "--minimum-raise-usdc",
+        "10000",
+        "--agent-safe-address",
+        "0x1111111111111111111111111111111111111111",
+      ]),
+    );
+
+    expect(output.result).toBe(1);
+    expect(fetchMock).not.toHaveBeenCalled();
+    expect(questionMock).not.toHaveBeenCalled();
+    expect(output.stderr).toContain(
+      "Autolaunch supports only Base and Base Sepolia. Use --chain base-sepolia for the prelaunch wizard.",
+    );
+  });
+
   it("rejects non-positive interval values for autolaunch jobs watch", async () => {
     const output = await captureOutput(() =>
       runCliEntrypoint([
@@ -1858,6 +1935,35 @@ describe("autolaunch CLI command group", () => {
         },
       },
     });
+  });
+
+  it("explains the Agent Safe in human Safe setup output", async () => {
+    useHumanTerminal();
+    const configPath = createConfigPath();
+    process.env.REGENT_WALLET_PRIVATE_KEY =
+      "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+    process.env.AUTOLAUNCH_WALLET_ADDRESS =
+      "0x2222222222222222222222222222222222222222";
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "safe",
+        "wizard",
+        "--config",
+        configPath,
+        "--backup-signer-address",
+        "0x3333333333333333333333333333333333333333",
+        "--agent-safe-address",
+        "0x4444444444444444444444444444444444444444",
+      ]),
+    );
+
+    expect(output.result).toBe(0);
+    const humanOutput = collapsePanelText(stripAnsi(output.stdout));
+    expect(humanOutput).toContain("AGENT SAFE");
+    expect(humanOutput).toContain("shared control wallet");
+    expect(humanOutput).toContain("2-of-3 Safe");
+    expect(humanOutput).toContain("hardware wallet is best for mainnet");
   });
 
   it("creates a Safe on Base Sepolia through the autolaunch CLI", async () => {

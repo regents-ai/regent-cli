@@ -85,8 +85,8 @@ Total commands: 312.
 - `regents autolaunch registry link-identity`
 - `regents autolaunch registry rotate-safe`
 - `regents autolaunch registry set-subject-manager`
-- `regents autolaunch safe create`
-- `regents autolaunch safe wizard`
+- `regents autolaunch safe create` - Prepare the Agent Safe used to protect an Autolaunch launch.
+- `regents autolaunch safe wizard` - Prepare the Agent Safe used to protect an Autolaunch launch.
 - `regents autolaunch splitter accept-ownership`
 - `regents autolaunch splitter activate-eligible-revenue-share`
 - `regents autolaunch splitter cancel-eligible-revenue-share`
