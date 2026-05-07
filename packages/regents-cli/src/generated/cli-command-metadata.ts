@@ -2107,7 +2107,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2135,7 +2136,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2163,7 +2165,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2191,7 +2194,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2219,7 +2223,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2247,7 +2252,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2313,7 +2319,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2341,7 +2348,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2369,7 +2377,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2415,7 +2424,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -2554,7 +2564,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "manual",
       "pagination": "none",
       "async_behavior": "synchronous",
-      "input_mode": "interactive"
+      "input_mode": "interactive",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare the Agent Safe used to protect an Autolaunch launch.",
     "usage": "regents autolaunch safe <wizard|create>",
@@ -2605,7 +2616,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "manual",
       "pagination": "none",
       "async_behavior": "synchronous",
-      "input_mode": "interactive"
+      "input_mode": "interactive",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare the Agent Safe used to protect an Autolaunch launch.",
     "usage": "regents autolaunch safe <wizard|create>",
@@ -3488,7 +3500,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -3516,7 +3529,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -3544,7 +3558,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -3572,7 +3587,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",
@@ -3600,7 +3616,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_status_and_prepare_only",
       "pagination": "bounded",
       "async_behavior": "job_or_polling",
-      "input_mode": "mixed"
+      "input_mode": "mixed",
+      "safety_notice": "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form"
     },
     "summary": "Prepare, validate, publish, and launch an Agent account project.",
     "usage": "regents autolaunch prelaunch <command>",

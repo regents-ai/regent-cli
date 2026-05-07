@@ -28,6 +28,7 @@ import {
 } from "../../printer.js";
 import { createPromptBoundary, type PromptBoundary } from "../../terminal/prompts.js";
 import { requireAgentAuthState } from "../agent-auth.js";
+import { printAlphaFundsWarning } from "./alpha-warning.js";
 import { printAgentSafeExplainer } from "./safe-explainer.js";
 import {
   parsePollingIntervalSeconds,
@@ -503,6 +504,7 @@ export async function runAutolaunchPrelaunchWizard(
   configPath?: string,
 ): Promise<void> {
   requireBaseSepoliaPrelaunchWizard(args);
+  printAlphaFundsWarning();
   const plan = await createOrUpdateRemotePlan(args, configPath);
   const validation = await requestJson(
     "POST",

@@ -1,5 +1,6 @@
 import type { ParsedCliArgs } from "../../parse.js";
 import { printJson } from "../../printer.js";
+import { printAlphaFundsWarning } from "./alpha-warning.js";
 import { printAgentSafeExplainer } from "./safe-explainer.js";
 import {
   WEBSITE_WALLET_ENV,
@@ -94,6 +95,7 @@ export async function runAutolaunchSafeWizard(
   args: ParsedCliArgs,
   configPath?: string,
 ): Promise<void> {
+  printAlphaFundsWarning();
   printAgentSafeExplainer();
   const agent = await resolveAgentSigner(configPath);
   const website = await resolveWebsiteSigner(args);

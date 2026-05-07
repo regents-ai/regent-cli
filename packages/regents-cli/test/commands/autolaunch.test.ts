@@ -1624,6 +1624,26 @@ describe("autolaunch CLI command group", () => {
     );
   });
 
+  it("shows the alpha funds warning at the start of the prelaunch wizard", async () => {
+    useHumanTerminal();
+    const output = await captureOutput(() =>
+      runCliEntrypoint([
+        "autolaunch",
+        "prelaunch",
+        "wizard",
+        "--no-input",
+      ]),
+    );
+
+    expect(output.result).toBe(1);
+    const humanOutput = collapsePanelText(stripAnsi(output.stdout));
+    expect(humanOutput).toContain("ALPHA TESTING");
+    expect(humanOutput).toContain(
+      "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form",
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
   it("rejects non-positive interval values for autolaunch jobs watch", async () => {
     const output = await captureOutput(() =>
       runCliEntrypoint([
@@ -1960,6 +1980,10 @@ describe("autolaunch CLI command group", () => {
 
     expect(output.result).toBe(0);
     const humanOutput = collapsePanelText(stripAnsi(output.stdout));
+    expect(humanOutput).toContain("ALPHA TESTING");
+    expect(humanOutput).toContain(
+      "Regents apps and the CLI are in ALPHA testing and funds are not guaranteed safe in any shape or form",
+    );
     expect(humanOutput).toContain("AGENT SAFE");
     expect(humanOutput).toContain("shared control wallet");
     expect(humanOutput).toContain("2-of-3 Safe");
