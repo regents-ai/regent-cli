@@ -1,10 +1,20 @@
 import { CliUsageError } from "../cli-usage-error.js";
-import { RegentError } from "../internal-runtime/index.js";
+import { JsonRpcError, RegentError } from "../internal-runtime/index.js";
 
 import { renderPanel } from "./panel.js";
 import { CLI_PALETTE, escapeTerminalText, isHumanTerminal, tone } from "./palette.js";
 
-const renderErrorPanel = (message: string, code?: string, details: readonly string[] = []): string =>
+const renderNextLines = (nextSteps: readonly string[] | undefined): string[] => {
+  const steps = nextSteps && nextSteps.length > 0 ? nextSteps : ["regents --help"];
+  return steps.map((step) => `${tone("next", CLI_PALETTE.secondary)} ${tone(escapeTerminalText(step), CLI_PALETTE.emphasis, true)}`);
+};
+
+const renderErrorPanel = (
+  message: string,
+  code?: string,
+  details: readonly string[] = [],
+  nextSteps?: readonly string[],
+): string =>
   renderPanel(
     "◆ REGENT ERROR",
     [
@@ -13,7 +23,7 @@ const renderErrorPanel = (message: string, code?: string, details: readonly stri
         : []),
       `${tone("message", CLI_PALETTE.secondary)} ${tone(escapeTerminalText(message), CLI_PALETTE.primary, true)}`,
       ...details,
-      `${tone("next", CLI_PALETTE.secondary)} ${tone("regents --help", CLI_PALETTE.emphasis, true)}`,
+      ...renderNextLines(nextSteps),
     ],
     { borderColor: CLI_PALETTE.error, titleColor: CLI_PALETTE.title },
   );
@@ -29,6 +39,13 @@ const errorPayload = (
     ...(details ?? {}),
   },
 });
+
+const jsonRpcDetails = (error: JsonRpcError): string[] => {
+  const socketPath = error.details?.socket_path;
+  return typeof socketPath === "string"
+    ? [`${tone("runtime", CLI_PALETTE.secondary)} ${tone(escapeTerminalText(socketPath), CLI_PALETTE.primary, true)}`]
+    : [];
+};
 
 export function printError(error: unknown): void {
   if (error instanceof CliUsageError) {
@@ -51,6 +68,21 @@ export function printError(error: unknown): void {
 
     if (isHumanTerminal()) {
       process.stderr.write(`${renderErrorPanel(error.message, error.code, details)}\n`);
+      return;
+    }
+
+    process.stderr.write(`${JSON.stringify(errorPayload(error.message, error.code, payloadDetails), null, 2)}\n`);
+    return;
+  }
+
+  if (error instanceof JsonRpcError) {
+    const payloadDetails = {
+      ...(error.details ?? {}),
+      ...(error.nextSteps && error.nextSteps.length > 0 ? { next_steps: error.nextSteps } : {}),
+    };
+
+    if (isHumanTerminal()) {
+      process.stderr.write(`${renderErrorPanel(error.message, error.code, jsonRpcDetails(error), error.nextSteps)}\n`);
       return;
     }
 

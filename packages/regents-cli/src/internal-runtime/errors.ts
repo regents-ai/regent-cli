@@ -43,10 +43,23 @@ export class TechtreeApiError extends RegentError {
 
 export class JsonRpcError extends RegentError {
   readonly rpcCode?: number;
+  readonly details?: Record<string, unknown>;
+  readonly nextSteps?: readonly string[];
 
-  constructor(message: string, options?: { code?: string; rpcCode?: number; cause?: unknown }) {
+  constructor(
+    message: string,
+    options?: {
+      code?: string;
+      rpcCode?: number;
+      cause?: unknown;
+      details?: Record<string, unknown>;
+      nextSteps?: readonly string[];
+    },
+  ) {
     super(options?.code ?? "jsonrpc_error", message, options?.cause);
     this.rpcCode = options?.rpcCode;
+    this.details = options?.details;
+    this.nextSteps = options?.nextSteps;
   }
 }
 

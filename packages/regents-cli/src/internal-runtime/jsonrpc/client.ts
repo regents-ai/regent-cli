@@ -92,7 +92,16 @@ export async function callJsonRpc<TMethod extends RegentRpcMethod>(
     socket.once("error", (error) => {
       settle(() => {
         cleanup();
-        reject(new JsonRpcError(`unable to connect to daemon at ${socketPath}`, { cause: error }));
+        reject(
+          new JsonRpcError("Regent local runtime is not running.", {
+            code: "runtime_unavailable",
+            cause: error,
+            details: {
+              socket_path: socketPath,
+            },
+            nextSteps: ["Run `regents run` in another terminal.", "Retry this command."],
+          }),
+        );
       });
     });
 

@@ -87,7 +87,8 @@ const commandHelp: Record<string, HelpEntry> = {
     examples: ["regents auth login --audience autolaunch"],
     auth: "No saved sign-in is needed.",
     output: "Shows the saved account and when it expires.",
-    nextStep: "Run `regents identity ensure` before protected commands.",
+    nextStep:
+      "If Regent says the local runtime is not running, start it with `regents run` in another terminal. Then run `regents identity ensure`.",
   },
   "identity ensure": {
     summary: "Create or refresh the saved Agent account on this machine.",
@@ -746,6 +747,7 @@ export function renderScopedHelp(positionals: readonly string[], configPath: str
       flags: ["--config <path>", "--help", "--json where supported", "--no-input"],
       examples: [
         "regents setup skills",
+        "regents run",
         "regents auth login --audience autolaunch",
         "regents identity ensure",
         "regents autolaunch agents list --launchable",

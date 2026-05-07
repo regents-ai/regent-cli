@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { captureOutput } from "../../../test-support/test-helpers.js";
 
 import { renderScopedHelp } from "../src/help.js";
+import { JsonRpcError } from "../src/internal-runtime/index.js";
 import { printError, printJson, renderUsageScreen, setRawJsonOutput } from "../src/printer.js";
 
 const originalNoColor = process.env.NO_COLOR;
@@ -164,6 +165,31 @@ describe("printer surface", () => {
     expect(output.stderr).toContain("REGENT ERROR");
     expect(output.stderr).toContain("operator shell failed");
     expect(output.stderr).toContain("╭");
+  });
+
+  it("prints a direct next step when the local runtime is not running", async () => {
+    setStdoutTty(false);
+
+    const output = await captureOutput(async () => {
+      printError(
+        new JsonRpcError("Regent local runtime is not running.", {
+          code: "runtime_unavailable",
+          details: {
+            socket_path: "/tmp/regent/run/regent.sock",
+          },
+          nextSteps: ["Run `regents run` in another terminal.", "Retry this command."],
+        }),
+      );
+    });
+
+    expect(JSON.parse(output.stderr)).toEqual({
+      error: {
+        code: "runtime_unavailable",
+        message: "Regent local runtime is not running.",
+        socket_path: "/tmp/regent/run/regent.sock",
+        next_steps: ["Run `regents run` in another terminal.", "Retry this command."],
+      },
+    });
   });
 
   it("escapes terminal control characters in human summaries", async () => {
