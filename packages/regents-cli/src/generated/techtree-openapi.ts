@@ -3042,7 +3042,7 @@ export interface components {
             agent_reward_vault: components["schemas"]["Address"];
             emission_controller: components["schemas"]["Address"];
             leaderboard_registry: components["schemas"]["Address"];
-            exit_swap: components["schemas"]["Address"];
+            exit_fee_splitter: components["schemas"]["Address"];
         };
         TechStatusResponse: {
             data: {
@@ -3153,8 +3153,7 @@ export interface components {
             agent_id: string;
             amount: string;
             tech_recipient: components["schemas"]["Address"];
-            regent_recipient: components["schemas"]["Address"];
-            min_regent_out: string;
+            min_usdc_out: string;
             deadline: number;
         };
         TechLeaderboardRegisterPrepareRequest: {

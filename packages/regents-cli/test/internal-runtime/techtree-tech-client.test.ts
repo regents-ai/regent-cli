@@ -28,8 +28,7 @@ describe("TECH Techtree client", () => {
       agent_id: "42",
       amount: "1000000000000000000",
       tech_recipient: "0x1111111111111111111111111111111111111111",
-      regent_recipient: "0x2222222222222222222222222222222222222222",
-      min_regent_out: "1",
+      min_usdc_out: "1",
       deadline: 1_900_000_000,
     });
     await tech.prepareLeaderboardRegistration({
@@ -55,8 +54,7 @@ describe("TECH Techtree client", () => {
           agent_id: "42",
           amount: "1000000000000000000",
           tech_recipient: "0x1111111111111111111111111111111111111111",
-          regent_recipient: "0x2222222222222222222222222222222222222222",
-          min_regent_out: "1",
+          min_usdc_out: "1",
           deadline: 1_900_000_000,
         },
       },

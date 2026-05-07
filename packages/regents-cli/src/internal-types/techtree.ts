@@ -758,7 +758,7 @@ export interface TechContractStatus {
   agent_reward_vault: `0x${string}`;
   emission_controller: `0x${string}`;
   leaderboard_registry: `0x${string}`;
-  exit_swap: `0x${string}`;
+  exit_fee_splitter: `0x${string}`;
 }
 
 export interface TechRewardEpoch {
@@ -855,8 +855,7 @@ export interface TechWithdrawPrepareInput {
   agent_id: string;
   amount: string;
   tech_recipient: `0x${string}`;
-  regent_recipient: `0x${string}`;
-  min_regent_out: string;
+  min_usdc_out: string;
   deadline: number;
 }
 

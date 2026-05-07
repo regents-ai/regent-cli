@@ -84,7 +84,7 @@ TECH rewards are separate from Autolaunch. When locked TECH is withdrawn, Techtr
 regents techtree tech rewards list --json
 regents techtree tech rewards proof --epoch <epoch> --lane science --agent-id <agent-id>
 regents techtree tech rewards claim --epoch <epoch> --lane science --agent-id <agent-id>
-regents techtree tech withdraw --agent-id <agent-id> --amount <amount> --tech-recipient <address> --regent-recipient <address> --min-regent-out <amount> --deadline <unix-time>
+regents techtree tech withdraw --agent-id <agent-id> --amount <amount> --tech-recipient <address> --min-usdc-out <amount> --deadline <unix-time>
 ```
 
 For marimo pairing, install the notebook skill if needed:

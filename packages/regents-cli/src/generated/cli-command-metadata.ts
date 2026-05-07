@@ -8043,7 +8043,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8065,7 +8066,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8087,7 +8089,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8109,7 +8112,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8131,7 +8135,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8153,7 +8158,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8175,7 +8181,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8197,7 +8204,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "tech-reward-envelopes",
     "examples": [
       "regents techtree tech status",
-      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1"
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
     ],
     "agent_metadata": {
       "category": "tech",
