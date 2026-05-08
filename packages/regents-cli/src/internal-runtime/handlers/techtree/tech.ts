@@ -1,10 +1,15 @@
 import type {
   TechEpochResponse,
+  TechLeaderboardConfirmInput,
+  TechLeaderboardConfirmResponse,
   TechLeaderboardListResponse,
   TechLeaderboardRegisterPrepareInput,
   TechPreparedTransactionResponse,
   TechRewardClaimPrepareInput,
   TechRewardProofResponse,
+  TechRewardRootConfirmInput,
+  TechRewardRootConfirmResponse,
+  TechRewardRootPrepareInput,
   TechRewardsResponse,
   TechStatusResponse,
   TechWithdrawPrepareInput,
@@ -33,6 +38,13 @@ export async function handleTechtreeTechLeaderboardsRegister(
   return ctx.techtree.prepareTechLeaderboardRegistration(params);
 }
 
+export async function handleTechtreeTechLeaderboardsConfirm(
+  ctx: RuntimeContext,
+  params: TechLeaderboardConfirmInput,
+): Promise<TechLeaderboardConfirmResponse> {
+  return ctx.techtree.confirmTechLeaderboardRegistration(params);
+}
+
 export async function handleTechtreeTechRewardsList(
   ctx: RuntimeContext,
   params?: { epoch?: number; lane?: string; limit?: number },
@@ -52,6 +64,20 @@ export async function handleTechtreeTechRewardsClaim(
   params: TechRewardClaimPrepareInput,
 ): Promise<TechPreparedTransactionResponse> {
   return ctx.techtree.prepareTechRewardClaim(params);
+}
+
+export async function handleTechtreeTechRewardsRootPrepare(
+  ctx: RuntimeContext,
+  params: TechRewardRootPrepareInput,
+): Promise<TechPreparedTransactionResponse> {
+  return ctx.techtree.prepareTechRewardRoot(params);
+}
+
+export async function handleTechtreeTechRewardsRootConfirm(
+  ctx: RuntimeContext,
+  params: TechRewardRootConfirmInput,
+): Promise<TechRewardRootConfirmResponse> {
+  return ctx.techtree.confirmTechRewardRoot(params);
 }
 
 export async function handleTechtreeTechWithdraw(

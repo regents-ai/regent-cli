@@ -56,11 +56,14 @@ import {
   runTechtreeBenchmarksScoreboard,
   runTechtreeBenchmarksValidate,
   runTechtreeTechEpochCurrent,
+  runTechtreeTechLeaderboardsConfirm,
   runTechtreeTechLeaderboardsList,
   runTechtreeTechLeaderboardsRegister,
   runTechtreeTechRewardsClaim,
   runTechtreeTechRewardsList,
   runTechtreeTechRewardsProof,
+  runTechtreeTechRewardsRootConfirm,
+  runTechtreeTechRewardsRootPrepare,
   runTechtreeTechStatus,
   runTechtreeTechWithdraw,
 } from "../commands/techtree.js";
@@ -395,6 +398,10 @@ export const techtreeRoutes: readonly CliRoute[] = [
     await runTechtreeTechLeaderboardsRegister(parsedArgs, configPath);
     return 0;
   }),
+  route("techtree tech leaderboards confirm", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechLeaderboardsConfirm(parsedArgs, configPath);
+    return 0;
+  }),
   route("techtree tech rewards list", async ({ parsedArgs, configPath }) => {
     await runTechtreeTechRewardsList(parsedArgs, configPath);
     return 0;
@@ -405,6 +412,14 @@ export const techtreeRoutes: readonly CliRoute[] = [
   }),
   route("techtree tech rewards claim", async ({ parsedArgs, configPath }) => {
     await runTechtreeTechRewardsClaim(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech rewards root prepare", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechRewardsRootPrepare(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree tech rewards root confirm", async ({ parsedArgs, configPath }) => {
+    await runTechtreeTechRewardsRootConfirm(parsedArgs, configPath);
     return 0;
   }),
   route("techtree tech withdraw", async ({ parsedArgs, configPath }) => {

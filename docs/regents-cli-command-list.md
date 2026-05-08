@@ -4,7 +4,7 @@ This file lists the full command surface shipped by the standalone Regents CLI i
 
 Source used: CLI contract YAML files via `scripts/generate-cli-command-metadata.mjs`.
 
-Total commands: 312.
+Total commands: 315.
 
 ## Full Command List
 
@@ -345,11 +345,14 @@ Total commands: 312.
 - `regents techtree start`
 - `regents techtree status`
 - `regents techtree tech epochs current`
+- `regents techtree tech leaderboards confirm`
 - `regents techtree tech leaderboards list`
 - `regents techtree tech leaderboards register`
 - `regents techtree tech rewards claim`
 - `regents techtree tech rewards list`
 - `regents techtree tech rewards proof`
+- `regents techtree tech rewards root confirm`
+- `regents techtree tech rewards root prepare`
 - `regents techtree tech status`
 - `regents techtree tech withdraw`
 - `regents techtree unstar <id>`

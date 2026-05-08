@@ -60,6 +60,18 @@ command_groups:
           examples:
             - regents setup skills
             - regents setup skills --project
+        run:
+          category: local-control
+          prompt_behavior: never_prompt
+          json_support: supported
+          mutation_class: local-process
+          retry_behavior: start_once_keep_running
+          pagination: none
+          async_behavior: long_running
+          input_mode: flags
+          examples:
+            - regents run
+            - regents run --json
     commands:
       - init
       - status
@@ -93,6 +105,11 @@ command_groups:
           type: boolean
           required: false
           description: Print the installed skill summary as JSON.
+      run:
+        - name: --json
+          type: boolean
+          required: false
+          description: Print the local runtime summary as JSON.
   - name: wallet
     interface: runtime
     auth_mode: none

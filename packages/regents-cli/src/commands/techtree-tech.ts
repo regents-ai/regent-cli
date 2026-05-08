@@ -1,3 +1,5 @@
+import fs from "node:fs";
+
 import { CliUsageError } from "../cli-usage-error.js";
 import { daemonCall } from "../daemon-client.js";
 import {
@@ -9,13 +11,79 @@ import {
   type ParsedCliArgs,
 } from "../parse.js";
 import { printJson } from "../printer.js";
-import type { TechRewardLane } from "../internal-types/index.js";
+import type { TechRewardLane, TechRewardRootPrepareInput } from "../internal-types/index.js";
+
+const readAtPathValue = (value: string): string => {
+  if (!value.startsWith("@")) {
+    return value;
+  }
+
+  return fs.readFileSync(value.slice(1), "utf8");
+};
+
+const readJsonObjectFlag = (args: ParsedCliArgs, name: string): Record<string, unknown> => {
+  const raw = readAtPathValue(requireArg(getFlag(args, name), `--${name}`));
+
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      throw new Error();
+    }
+
+    return parsed as Record<string, unknown>;
+  } catch {
+    throw new CliUsageError({
+      code: "invalid_flag_value",
+      message: `--${name} must be a JSON object or @path to one.`,
+    });
+  }
+};
 
 const requireIntegerFlag = (args: ParsedCliArgs, name: string): number =>
   parsePositiveInteger(
     requireArg(getFlag(args, name), `--${name}`),
     `invalid integer for --${name}`,
   );
+
+const parseNonNegativeInteger = (value: string, errorMessage: string): number => {
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 0 || String(parsed) !== value) {
+    throw new CliUsageError({
+      code: "invalid_flag_value",
+      message: errorMessage,
+    });
+  }
+
+  return parsed;
+};
+
+const requireNonNegativeIntegerFlag = (args: ParsedCliArgs, name: string): number =>
+  parseNonNegativeInteger(
+    requireArg(getFlag(args, name), `--${name}`),
+    `invalid integer for --${name}`,
+  );
+
+const parseNonNegativeIntegerFlag = (
+  args: ParsedCliArgs,
+  name: string,
+): number | undefined => {
+  const value = getFlag(args, name);
+  return value === undefined
+    ? undefined
+    : parseNonNegativeInteger(value, `invalid integer for --${name}`);
+};
+
+const requireBasisPointsFlag = (args: ParsedCliArgs, name: string): number => {
+  const value = requireNonNegativeIntegerFlag(args, name);
+  if (value > 10_000) {
+    throw new CliUsageError({
+      code: "invalid_flag_value",
+      message: `--${name} must be between 0 and 10000.`,
+    });
+  }
+
+  return value;
+};
 
 const requireRewardLane = (args: ParsedCliArgs): TechRewardLane => {
   const lane = requireArg(getFlag(args, "lane"), "--lane");
@@ -53,6 +121,18 @@ const requireBytes32Flag = (args: ParsedCliArgs, name: string): `0x${string}` =>
   });
 };
 
+const requireTxHashFlag = (args: ParsedCliArgs, name: string): `0x${string}` => {
+  const value = requireArg(getFlag(args, name), `--${name}`);
+  if (/^0x[a-fA-F0-9]{64}$/u.test(value)) {
+    return value as `0x${string}`;
+  }
+
+  throw new CliUsageError({
+    code: "invalid_flag_value",
+    message: `--${name} must be a transaction hash.`,
+  });
+};
+
 export async function runTechtreeTechStatus(_args: ParsedCliArgs, configPath?: string): Promise<void> {
   printJson(await daemonCall("techtree.tech.status", undefined, configPath));
 }
@@ -82,12 +162,25 @@ export async function runTechtreeTechLeaderboardsRegister(args: ParsedCliArgs, c
         leaderboard_id: requireArg(getFlag(args, "leaderboard-id"), "--leaderboard-id"),
         kind: requireArg(getFlag(args, "kind"), "--kind"),
         title: requireArg(getFlag(args, "title"), "--title"),
-        weight_bps: requireIntegerFlag(args, "weight-bps"),
-        starts_epoch: parseIntegerFlag(args, "starts-epoch"),
-        ends_epoch: parseIntegerFlag(args, "ends-epoch"),
+        weight_bps: requireBasisPointsFlag(args, "weight-bps"),
+        starts_epoch: parseNonNegativeIntegerFlag(args, "starts-epoch"),
+        ends_epoch: parseNonNegativeIntegerFlag(args, "ends-epoch"),
         config_hash: requireBytes32Flag(args, "config-hash"),
         uri: requireArg(getFlag(args, "uri"), "--uri"),
         active: getBooleanFlag(args, "inactive") ? false : undefined,
+      },
+      configPath,
+    ),
+  );
+}
+
+export async function runTechtreeTechLeaderboardsConfirm(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  printJson(
+    await daemonCall(
+      "techtree.tech.leaderboards.confirm",
+      {
+        leaderboard_id: requireArg(getFlag(args, "leaderboard-id"), "--leaderboard-id"),
+        tx_hash: requireTxHashFlag(args, "tx-hash"),
       },
       configPath,
     ),
@@ -99,7 +192,7 @@ export async function runTechtreeTechRewardsList(args: ParsedCliArgs, configPath
     await daemonCall(
       "techtree.tech.rewards.list",
       {
-        epoch: parseIntegerFlag(args, "epoch"),
+        epoch: parseNonNegativeIntegerFlag(args, "epoch"),
         lane: getFlag(args, "lane"),
         limit: parseIntegerFlag(args, "limit"),
       },
@@ -113,7 +206,7 @@ export async function runTechtreeTechRewardsProof(args: ParsedCliArgs, configPat
     await daemonCall(
       "techtree.tech.rewards.proof",
       {
-        epoch: requireIntegerFlag(args, "epoch"),
+        epoch: requireNonNegativeIntegerFlag(args, "epoch"),
         lane: requireRewardLane(args),
         agent_id: requireArg(getFlag(args, "agent-id"), "--agent-id"),
       },
@@ -127,9 +220,32 @@ export async function runTechtreeTechRewardsClaim(args: ParsedCliArgs, configPat
     await daemonCall(
       "techtree.tech.rewards.claim",
       {
-        epoch: requireIntegerFlag(args, "epoch"),
+        epoch: requireNonNegativeIntegerFlag(args, "epoch"),
         lane: requireRewardLane(args),
         agent_id: requireArg(getFlag(args, "agent-id"), "--agent-id"),
+      },
+      configPath,
+    ),
+  );
+}
+
+export async function runTechtreeTechRewardsRootPrepare(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  printJson(
+    await daemonCall(
+      "techtree.tech.rewards.root.prepare",
+      readJsonObjectFlag(args, "input") as unknown as TechRewardRootPrepareInput,
+      configPath,
+    ),
+  );
+}
+
+export async function runTechtreeTechRewardsRootConfirm(args: ParsedCliArgs, configPath?: string): Promise<void> {
+  printJson(
+    await daemonCall(
+      "techtree.tech.rewards.root.confirm",
+      {
+        manifest_id: requireArg(getFlag(args, "manifest-id"), "--manifest-id"),
+        tx_hash: requireTxHashFlag(args, "tx-hash"),
       },
       configPath,
     ),

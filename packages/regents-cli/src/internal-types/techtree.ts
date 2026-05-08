@@ -759,6 +759,8 @@ export interface TechContractStatus {
   emission_controller: `0x${string}`;
   leaderboard_registry: `0x${string}`;
   exit_fee_splitter: `0x${string}`;
+  root_manager: `0x${string}`;
+  leaderboard_manager: `0x${string}`;
 }
 
 export interface TechRewardEpoch {
@@ -792,6 +794,9 @@ export interface TechLeaderboard {
   config_hash: `0x${string}`;
   uri: string;
   active: boolean;
+  publish_status: "prepared" | "posted" | "retired";
+  tx_hash?: `0x${string}` | null;
+  confirmed_at?: string | null;
 }
 
 export interface TechLeaderboardListResponse {
@@ -805,9 +810,13 @@ export interface TechRewardManifest {
   merkle_root: `0x${string}`;
   manifest_hash: `0x${string}`;
   total_allocated_amount: string;
+  status: "prepared" | "posted" | "retired";
   allocation_count?: number;
   policy_version?: string;
   leaderboard_ids?: string[];
+  tx_hash?: `0x${string}` | null;
+  confirmed_at?: string | null;
+  challenge_ends_at?: number | null;
 }
 
 export interface TechRewardsResponse {
@@ -828,20 +837,35 @@ export interface TechRewardProofResponse {
   data: TechRewardProof;
 }
 
-export interface TechUnsignedTransaction {
-  chain_id: number;
+export interface WalletActionSimulation {
+  required: boolean;
+  status: string;
+  block_number?: number | null;
+}
+
+export interface WalletAction {
+  action_id: string;
+  owner_product: "techtree";
+  resource: string;
+  resource_id: string;
+  action: string;
+  chain_id: 8453;
   to: `0x${string}`;
   value: string;
-  function_signature: string;
-  args: unknown[];
-  data?: `0x${string}` | null;
+  data: `0x${string}`;
+  expected_signer: `0x${string}`;
+  expires_at: string;
+  idempotency_key: string;
+  simulation: WalletActionSimulation;
+  risk_copy: string;
 }
 
 export interface TechPreparedTransactionResponse {
   data: {
-    transaction: TechUnsignedTransaction;
+    wallet_action: WalletAction;
     proof?: TechRewardProof;
     manifest?: TechRewardManifest;
+    leaderboard?: TechLeaderboard;
   };
 }
 
@@ -869,6 +893,44 @@ export interface TechLeaderboardRegisterPrepareInput {
   config_hash: `0x${string}`;
   uri: string;
   active?: boolean;
+}
+
+export interface TechLeaderboardConfirmInput {
+  leaderboard_id: string;
+  tx_hash: `0x${string}`;
+}
+
+export interface TechLeaderboardConfirmResponse {
+  data: {
+    leaderboard: TechLeaderboard;
+  };
+}
+
+export interface TechRewardRootAllocationInput {
+  agent_id: string;
+  wallet_address?: `0x${string}`;
+  score: string;
+  leaderboard_id?: string;
+}
+
+export interface TechRewardRootPrepareInput {
+  epoch: number;
+  lane: TechRewardLane;
+  total_budget_amount: string;
+  challenge_ends_at?: number | null;
+  leaderboard_ids?: string[];
+  allocations: TechRewardRootAllocationInput[];
+}
+
+export interface TechRewardRootConfirmInput {
+  manifest_id: string;
+  tx_hash: `0x${string}`;
+}
+
+export interface TechRewardRootConfirmResponse {
+  data: {
+    manifest: TechRewardManifest;
+  };
 }
 
 export interface NodeTagEdge {

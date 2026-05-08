@@ -1,10 +1,15 @@
 import type {
   TechEpochResponse,
+  TechLeaderboardConfirmInput,
+  TechLeaderboardConfirmResponse,
   TechLeaderboardListResponse,
   TechLeaderboardRegisterPrepareInput,
   TechPreparedTransactionResponse,
   TechRewardClaimPrepareInput,
   TechRewardProofResponse,
+  TechRewardRootConfirmInput,
+  TechRewardRootConfirmResponse,
+  TechRewardRootPrepareInput,
   TechRewardsResponse,
   TechStatusResponse,
   TechWithdrawPrepareInput,
@@ -77,6 +82,32 @@ export class TechResource {
     return this.request.authedFetchJson<TechPreparedTransactionResponse>(
       "POST",
       "/v1/agent/tech/leaderboards/register/prepare",
+      input,
+    );
+  }
+
+  confirmLeaderboardRegistration(
+    input: TechLeaderboardConfirmInput,
+  ): Promise<TechLeaderboardConfirmResponse> {
+    return this.request.authedFetchJson<TechLeaderboardConfirmResponse>(
+      "POST",
+      "/v1/agent/tech/leaderboards/register/confirm",
+      input,
+    );
+  }
+
+  prepareRewardRoot(input: TechRewardRootPrepareInput): Promise<TechPreparedTransactionResponse> {
+    return this.request.authedFetchJson<TechPreparedTransactionResponse>(
+      "POST",
+      "/v1/agent/tech/rewards/root/prepare",
+      input,
+    );
+  }
+
+  confirmRewardRoot(input: TechRewardRootConfirmInput): Promise<TechRewardRootConfirmResponse> {
+    return this.request.authedFetchJson<TechRewardRootConfirmResponse>(
+      "POST",
+      "/v1/agent/tech/rewards/root/confirm",
       input,
     );
   }

@@ -262,11 +262,14 @@ export const CLI_COMMANDS = [
   "techtree start",
   "techtree status",
   "techtree tech epochs current",
+  "techtree tech leaderboards confirm",
   "techtree tech leaderboards list",
   "techtree tech leaderboards register",
   "techtree tech rewards claim",
   "techtree tech rewards list",
   "techtree tech rewards proof",
+  "techtree tech rewards root confirm",
+  "techtree tech rewards root prepare",
   "techtree tech status",
   "techtree tech withdraw",
   "techtree unstar <id>",
@@ -628,11 +631,14 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree start",
     "techtree status",
     "techtree tech epochs current",
+    "techtree tech leaderboards confirm",
     "techtree tech leaderboards list",
     "techtree tech leaderboards register",
     "techtree tech rewards claim",
     "techtree tech rewards list",
     "techtree tech rewards proof",
+    "techtree tech rewards root confirm",
+    "techtree tech rewards root prepare",
     "techtree tech status",
     "techtree tech withdraw",
     "techtree unstar <id>",
@@ -5158,22 +5164,27 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "interface": "runtime",
     "auth_mode": "none",
     "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--json",
+        "type": "boolean",
+        "required": false,
+        "description": "Print the local runtime summary as JSON."
+      }
+    ],
     "examples": [
-      "regents status",
-      "regents setup skills",
-      "regents agent-context",
-      "regents config get",
-      "regents agent profile get"
+      "regents run",
+      "regents run --json"
     ],
     "agent_metadata": {
       "category": "local-control",
       "prompt_behavior": "never_prompt",
       "json_support": "supported",
-      "mutation_class": "local-read-or-write",
-      "retry_behavior": "safe_for_reads",
-      "pagination": "bounded",
-      "async_behavior": "synchronous",
-      "input_mode": "args-and-flags"
+      "mutation_class": "local-process",
+      "retry_behavior": "start_once_keep_running",
+      "pagination": "none",
+      "async_behavior": "long_running",
+      "input_mode": "flags"
     }
   },
   "runtime checkpoint": {
@@ -8061,7 +8072,32 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech leaderboards confirm": {
+    "command": "techtree tech leaderboards confirm",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8084,7 +8120,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8107,7 +8144,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8130,7 +8168,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8153,7 +8192,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8176,7 +8216,56 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech rewards root confirm": {
+    "command": "techtree tech rewards root confirm",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
+    ],
+    "agent_metadata": {
+      "category": "tech",
+      "prompt_behavior": "confirm_before_claim_or_withdraw",
+      "json_support": "supported",
+      "mutation_class": "prepared-wallet-transaction",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree tech rewards root prepare": {
+    "command": "techtree tech rewards root prepare",
+    "owner": "techtree",
+    "group": "tech",
+    "interface": "http",
+    "auth_mode": "mixed",
+    "output_envelope": "tech-reward-envelopes",
+    "examples": [
+      "regents techtree tech status",
+      "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8199,7 +8288,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",
@@ -8222,7 +8312,8 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "examples": [
       "regents techtree tech status",
       "regents techtree tech rewards proof --epoch 0 --lane science --agent-id 1",
-      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000"
+      "regents techtree tech withdraw --agent-id 1 --amount 1000000000000000000 --tech-recipient 0x0000000000000000000000000000000000000001 --min-usdc-out 1 --deadline 1900000000",
+      "regents techtree tech rewards root confirm --manifest-id techm_... --tx-hash 0x..."
     ],
     "agent_metadata": {
       "category": "tech",

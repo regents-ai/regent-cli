@@ -52,11 +52,14 @@ import {
   handleTechtreeBenchmarksScoreboard,
   handleTechtreeBenchmarksValidate,
   handleTechtreeTechEpochCurrent,
+  handleTechtreeTechLeaderboardsConfirm,
   handleTechtreeTechLeaderboardsList,
   handleTechtreeTechLeaderboardsRegister,
   handleTechtreeTechRewardsClaim,
   handleTechtreeTechRewardsList,
   handleTechtreeTechRewardsProof,
+  handleTechtreeTechRewardsRootConfirm,
+  handleTechtreeTechRewardsRootPrepare,
   handleTechtreeTechStatus,
   handleTechtreeTechWithdraw,
   handleTechtreeCommentCreate,
@@ -591,6 +594,11 @@ export class RegentRuntime {
           ctx,
           params as Parameters<typeof handleTechtreeTechLeaderboardsRegister>[1],
         );
+      case "techtree.tech.leaderboards.confirm":
+        return handleTechtreeTechLeaderboardsConfirm(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechLeaderboardsConfirm>[1],
+        );
       case "techtree.tech.rewards.list":
         return handleTechtreeTechRewardsList(
           ctx,
@@ -605,6 +613,16 @@ export class RegentRuntime {
         return handleTechtreeTechRewardsClaim(
           ctx,
           params as Parameters<typeof handleTechtreeTechRewardsClaim>[1],
+        );
+      case "techtree.tech.rewards.root.prepare":
+        return handleTechtreeTechRewardsRootPrepare(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechRewardsRootPrepare>[1],
+        );
+      case "techtree.tech.rewards.root.confirm":
+        return handleTechtreeTechRewardsRootConfirm(
+          ctx,
+          params as Parameters<typeof handleTechtreeTechRewardsRootConfirm>[1],
         );
       case "techtree.tech.withdraw":
         return handleTechtreeTechWithdraw(

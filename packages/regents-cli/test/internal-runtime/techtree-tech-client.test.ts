@@ -39,6 +39,20 @@ describe("TECH Techtree client", () => {
       config_hash: "0x1111111111111111111111111111111111111111111111111111111111111111",
       uri: "ipfs://leaderboard",
     });
+    await tech.confirmLeaderboardRegistration({
+      leaderboard_id: "bbh",
+      tx_hash: "0x2222222222222222222222222222222222222222222222222222222222222222",
+    });
+    await tech.prepareRewardRoot({
+      epoch: 3,
+      lane: "science",
+      total_budget_amount: "25",
+      allocations: [{ agent_id: "42", score: "1" }],
+    });
+    await tech.confirmRewardRoot({
+      manifest_id: "techm_123",
+      tx_hash: "0x3333333333333333333333333333333333333333333333333333333333333333",
+    });
 
     expect(calls).toEqual([
       { method: "GET", path: "/v1/tech/status" },
@@ -68,6 +82,32 @@ describe("TECH Techtree client", () => {
           weight_bps: 10_000,
           config_hash: "0x1111111111111111111111111111111111111111111111111111111111111111",
           uri: "ipfs://leaderboard",
+        },
+      },
+      {
+        method: "POST",
+        path: "/v1/agent/tech/leaderboards/register/confirm",
+        body: {
+          leaderboard_id: "bbh",
+          tx_hash: "0x2222222222222222222222222222222222222222222222222222222222222222",
+        },
+      },
+      {
+        method: "POST",
+        path: "/v1/agent/tech/rewards/root/prepare",
+        body: {
+          epoch: 3,
+          lane: "science",
+          total_budget_amount: "25",
+          allocations: [{ agent_id: "42", score: "1" }],
+        },
+      },
+      {
+        method: "POST",
+        path: "/v1/agent/tech/rewards/root/confirm",
+        body: {
+          manifest_id: "techm_123",
+          tx_hash: "0x3333333333333333333333333333333333333333333333333333333333333333",
         },
       },
     ]);

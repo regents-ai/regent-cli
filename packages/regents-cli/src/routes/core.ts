@@ -36,8 +36,8 @@ export const coreRoutes: readonly CliRoute[] = [
     return 0;
   }),
   route("search", async ({ parsedArgs, configPath }) => runOperatorSearch(parsedArgs, configPath), { variadicTail: true }),
-  route("run", async ({ configPath }) => {
-    await runRuntime(configPath);
+  route("run", async ({ parsedArgs, configPath }) => {
+    await runRuntime(parsedArgs, configPath);
     return 0;
   }),
   route("create init", async ({ parsedArgs }) => {

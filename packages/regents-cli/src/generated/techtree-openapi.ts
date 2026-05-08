@@ -1688,6 +1688,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/agent/tech/leaderboards/register/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["confirmTechLeaderboardRegistration"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/agent/tech/rewards/root/prepare": {
         parameters: {
             query?: never;
@@ -1698,6 +1714,22 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["prepareTechRewardRoot"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/tech/rewards/root/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["confirmTechRewardRoot"];
         delete?: never;
         options?: never;
         head?: never;
@@ -3043,6 +3075,8 @@ export interface components {
             emission_controller: components["schemas"]["Address"];
             leaderboard_registry: components["schemas"]["Address"];
             exit_fee_splitter: components["schemas"]["Address"];
+            root_manager: components["schemas"]["Address"];
+            leaderboard_manager: components["schemas"]["Address"];
         };
         TechStatusResponse: {
             data: {
@@ -3081,6 +3115,11 @@ export interface components {
             config_hash: components["schemas"]["Bytes32Hex"];
             uri: string;
             active: boolean;
+            /** @enum {string} */
+            publish_status: "prepared" | "posted" | "retired";
+            tx_hash?: components["schemas"]["TxHash"] | null;
+            /** Format: date-time */
+            confirmed_at?: string | null;
         } & {
             [key: string]: unknown;
         };
@@ -3099,6 +3138,12 @@ export interface components {
             allocation_count?: number;
             policy_version?: string;
             leaderboard_ids?: string[];
+            /** @enum {string} */
+            status: "prepared" | "posted" | "retired";
+            tx_hash?: components["schemas"]["TxHash"] | null;
+            /** Format: date-time */
+            confirmed_at?: string | null;
+            challenge_ends_at?: number | null;
         } & {
             [key: string]: unknown;
         };
@@ -3124,20 +3169,38 @@ export interface components {
             [key: string]: unknown;
         };
         Bytes32Hex: string;
-        TechUnsignedTransaction: {
+        TxHash: string;
+        WalletActionSimulation: {
+            required: boolean;
+            /** @enum {string} */
+            status: "not_required" | "pending" | "passed" | "failed";
+            block_number?: number | null;
+        };
+        WalletAction: {
+            action_id: string;
+            /** @enum {string} */
+            owner_product: "techtree";
+            resource: string;
+            resource_id: string;
+            action: string;
             /** @enum {integer} */
             chain_id: 8453;
             to: components["schemas"]["Address"];
             value: string;
-            function_signature: string;
-            args: unknown[];
-            data?: string | null;
+            data: string;
+            expected_signer: components["schemas"]["Address"];
+            /** Format: date-time */
+            expires_at: string;
+            idempotency_key: string;
+            simulation: components["schemas"]["WalletActionSimulation"];
+            risk_copy: string;
         };
         TechPreparedTransactionResponse: {
             data: {
-                transaction: components["schemas"]["TechUnsignedTransaction"];
+                wallet_action: components["schemas"]["WalletAction"];
                 proof?: components["schemas"]["TechRewardProof"];
                 manifest?: components["schemas"]["TechRewardManifest"];
+                leaderboard?: components["schemas"]["TechLeaderboard"];
             } & {
                 [key: string]: unknown;
             };
@@ -3167,6 +3230,17 @@ export interface components {
             uri: string;
             active?: boolean;
         };
+        TechLeaderboardRegisterConfirmRequest: {
+            leaderboard_id: string;
+            tx_hash: components["schemas"]["TxHash"];
+        };
+        TechLeaderboardConfirmResponse: {
+            data: {
+                leaderboard: components["schemas"]["TechLeaderboard"];
+            };
+        } & {
+            [key: string]: unknown;
+        };
         TechRewardRootAllocationInput: {
             agent_id: string;
             wallet_address?: components["schemas"]["Address"];
@@ -3180,6 +3254,17 @@ export interface components {
             challenge_ends_at?: number | null;
             leaderboard_ids?: string[];
             allocations: components["schemas"]["TechRewardRootAllocationInput"][];
+        };
+        TechRewardRootConfirmRequest: {
+            manifest_id: string;
+            tx_hash: components["schemas"]["TxHash"];
+        };
+        TechRewardRootConfirmResponse: {
+            data: {
+                manifest: components["schemas"]["TechRewardManifest"];
+            };
+        } & {
+            [key: string]: unknown;
         };
         ChatboxMessage: {
             id?: number;
@@ -6387,13 +6472,22 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared TECH reward claim transaction */
+            /** @description Prepared TECH reward claim wallet action */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+            /** @description TECH reward claim could not be prepared */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
@@ -6411,13 +6505,22 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared TECH withdrawal transaction */
+            /** @description Prepared TECH withdrawal wallet action */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+            /** @description TECH withdrawal could not be prepared */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
@@ -6435,13 +6538,73 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared TECH leaderboard registration transaction */
+            /** @description Prepared TECH leaderboard registration wallet action */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+            /** @description Signed agent is not the configured TECH leaderboard manager */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description TECH leaderboard registration could not be prepared */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    confirmTechLeaderboardRegistration: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechLeaderboardRegisterConfirmRequest"];
+            };
+        };
+        responses: {
+            /** @description Confirmed TECH leaderboard registration */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechLeaderboardConfirmResponse"];
+                };
+            };
+            /** @description Signed agent is not the configured TECH leaderboard manager */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description TECH leaderboard registration confirmation failed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };
@@ -6459,13 +6622,73 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Prepared TECH reward-root transaction */
+            /** @description Prepared TECH reward-root wallet action */
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
                     "application/json": components["schemas"]["TechPreparedTransactionResponse"];
+                };
+            };
+            /** @description Signed agent is not the configured TECH root manager */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description TECH reward-root could not be prepared */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    confirmTechRewardRoot: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TechRewardRootConfirmRequest"];
+            };
+        };
+        responses: {
+            /** @description Confirmed TECH reward root */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechRewardRootConfirmResponse"];
+                };
+            };
+            /** @description Signed agent is not the configured TECH root manager */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description TECH reward-root confirmation failed */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
         };

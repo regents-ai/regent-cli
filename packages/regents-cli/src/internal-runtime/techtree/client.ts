@@ -30,11 +30,16 @@ import type {
   BenchmarkVersionListResponse,
   BenchmarkVersionResponse,
   TechEpochResponse,
+  TechLeaderboardConfirmInput,
+  TechLeaderboardConfirmResponse,
   TechLeaderboardListResponse,
   TechLeaderboardRegisterPrepareInput,
   TechPreparedTransactionResponse,
   TechRewardClaimPrepareInput,
   TechRewardProofResponse,
+  TechRewardRootConfirmInput,
+  TechRewardRootConfirmResponse,
+  TechRewardRootPrepareInput,
   TechRewardsResponse,
   TechStatusResponse,
   TechWithdrawPrepareInput,
@@ -354,6 +359,20 @@ export class TechtreeClient {
     input: TechLeaderboardRegisterPrepareInput,
   ): Promise<TechPreparedTransactionResponse> {
     return this.tech.prepareLeaderboardRegistration(input);
+  }
+
+  confirmTechLeaderboardRegistration(
+    input: TechLeaderboardConfirmInput,
+  ): Promise<TechLeaderboardConfirmResponse> {
+    return this.tech.confirmLeaderboardRegistration(input);
+  }
+
+  prepareTechRewardRoot(input: TechRewardRootPrepareInput): Promise<TechPreparedTransactionResponse> {
+    return this.tech.prepareRewardRoot(input);
+  }
+
+  confirmTechRewardRoot(input: TechRewardRootConfirmInput): Promise<TechRewardRootConfirmResponse> {
+    return this.tech.confirmRewardRoot(input);
   }
 
   getLatestSkill(slug: string): Promise<SkillTextResponse> {

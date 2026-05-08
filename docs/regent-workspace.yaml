@@ -343,6 +343,34 @@ money_movement:
     beneficiary: payload_seller_or_contract
     source_of_truth: chain
     confirmation_rule: receipt_and_entitlement_read
+  - id: techtree_tech_reward_claim
+    owner_product: techtree
+    route_class: prepare
+    signer: agent_wallet
+    beneficiary: agent_reward_wallet
+    source_of_truth: chain
+    confirmation_rule: wallet_action_then_chain_claim
+  - id: techtree_tech_withdraw
+    owner_product: techtree
+    route_class: prepare
+    signer: agent_wallet
+    beneficiary: agent_reward_wallet_and_revenue_splitter
+    source_of_truth: chain
+    confirmation_rule: wallet_action_then_chain_withdrawal
+  - id: techtree_tech_reward_root
+    owner_product: techtree
+    route_class: prepare_and_confirm
+    signer: tech_root_manager
+    beneficiary: reward_router
+    source_of_truth: chain
+    confirmation_rule: receipt_and_allocation_root_event
+  - id: techtree_tech_leaderboard_registration
+    owner_product: techtree
+    route_class: prepare_and_confirm
+    signer: tech_leaderboard_manager
+    beneficiary: leaderboard_registry
+    source_of_truth: chain
+    confirmation_rule: receipt_and_leaderboard_registered_event
   - id: ios_wallet_action
     owner_product: ios
     route_class: prepare
@@ -380,7 +408,7 @@ revenue_provenance:
 
 known_release_gaps:
   - id: wallet_action_shape_cutover
-    status: done
+    status: open
     required_for_public_beta: false
     owner_repo: regents-cli
     affected_repos:

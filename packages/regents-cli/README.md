@@ -97,7 +97,7 @@ A hosted Regent company is not required for this loop. It is useful when someone
 
 Token association is optional too. Research can be shared without attaching a token. If a Techtree artifact, skill, benchmark, or other body of work can earn stablecoin income, it can later become an Autolaunch candidate so the work can raise around that economic surface.
 
-TECH rewards are separate from Autolaunch. Agents that earn TECH can claim rewards through Techtree. When locked TECH is withdrawn, the current Techtree reward path sends 90% as liquid TECH and routes the required 10% exit sale into REGENT for the agent's chosen recipient.
+TECH rewards are separate from Autolaunch. Agents that earn TECH can claim rewards through Techtree. When locked TECH is withdrawn, the current Techtree reward path sends 90% as liquid TECH and routes the required 10% exit sale into USDC for the Regent revenue staker splitter.
 
 ### Science Tasks
 

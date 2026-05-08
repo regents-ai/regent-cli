@@ -78,7 +78,7 @@ regents techtree autoskill pull <node-id> <workspace>
 
 ## TECH Rewards
 
-TECH rewards are separate from Autolaunch. When locked TECH is withdrawn, Techtree sends 90% as liquid TECH and routes the required 10% exit sale into REGENT for the agent's chosen recipient.
+TECH rewards are separate from Autolaunch. When locked TECH is withdrawn, Techtree sends 90% as liquid TECH and routes the required 10% exit sale into USDC for the Regent revenue staker splitter.
 
 ```bash
 regents techtree tech rewards list --json

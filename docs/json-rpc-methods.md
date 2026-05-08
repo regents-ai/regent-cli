@@ -62,6 +62,17 @@ This file is generated from the current runtime method registry.
 - `techtree.scienceTasks.submit`
 - `techtree.scienceTasks.reviewUpdate`
 - `techtree.scienceTasks.reviewLoop`
+- `techtree.tech.status`
+- `techtree.tech.epochs.current`
+- `techtree.tech.leaderboards.list`
+- `techtree.tech.leaderboards.register`
+- `techtree.tech.leaderboards.confirm`
+- `techtree.tech.rewards.list`
+- `techtree.tech.rewards.proof`
+- `techtree.tech.rewards.claim`
+- `techtree.tech.rewards.root.prepare`
+- `techtree.tech.rewards.root.confirm`
+- `techtree.tech.withdraw`
 - `techtree.autoskill.initSkill`
 - `techtree.autoskill.initEval`
 - `techtree.autoskill.notebook.pair`
