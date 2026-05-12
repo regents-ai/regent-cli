@@ -9,37 +9,37 @@ importers:
   .:
     devDependencies:
       '@types/node':
-        specifier: ^24.6.0
+        specifier: 24.12.0
         version: 24.12.0
       openapi-typescript:
-        specifier: ^7.13.0
+        specifier: 7.13.0
         version: 7.13.0(typescript@5.9.3)
       typescript:
-        specifier: ^5.9.3
+        specifier: 5.9.3
         version: 5.9.3
       vitest:
-        specifier: ^3.2.4
+        specifier: 3.2.4
         version: 3.2.4(@types/node@24.12.0)(yaml@2.8.3)
       yaml:
-        specifier: ^2.8.1
+        specifier: 2.8.3
         version: 2.8.3
 
   packages/regents-cli:
     dependencies:
       '@safe-global/protocol-kit':
-        specifier: ^7.1.0
+        specifier: 7.1.0
         version: 7.1.0(typescript@5.9.3)(zod@4.3.6)
       '@worldcoin/idkit-core':
-        specifier: ^4.0.15
+        specifier: 4.0.15
         version: 4.0.15
       viem:
-        specifier: ^2.38.2
+        specifier: 2.47.1
         version: 2.47.1(typescript@5.9.3)(zod@4.3.6)
       yaml:
-        specifier: ^2.8.1
+        specifier: 2.8.3
         version: 2.8.3
       zod:
-        specifier: ^4.1.11
+        specifier: 4.3.6
         version: 4.3.6
 
 packages:
