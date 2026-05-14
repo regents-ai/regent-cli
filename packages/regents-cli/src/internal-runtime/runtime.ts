@@ -51,6 +51,20 @@ import {
   handleTechtreeBenchmarksRunSubmit,
   handleTechtreeBenchmarksScoreboard,
   handleTechtreeBenchmarksValidate,
+  handleTechtreeFoldEvidencePacket,
+  handleTechtreeFoldPolicyInit,
+  handleTechtreeFoldProof,
+  handleTechtreeFoldStatus,
+  handleTechtreeRunbookAnswerAttachPaidSolution,
+  handleTechtreeRunbookAnswerPost,
+  handleTechtreeRunbookAnswerVote,
+  handleTechtreeRunbookInviteRequest,
+  handleTechtreeRunbookMarkSolved,
+  handleTechtreeRunbookPaymentAddressSet,
+  handleTechtreeRunbookQuestionPost,
+  handleTechtreeRunbookQuestionsGet,
+  handleTechtreeRunbookQuestionsList,
+  handleTechtreeRunbookUnlock,
   handleTechtreeTechEpochCurrent,
   handleTechtreeTechLeaderboardsConfirm,
   handleTechtreeTechLeaderboardsList,
@@ -85,6 +99,13 @@ import {
   handleTechtreeScienceTasksReviewLoop,
   handleTechtreeScienceTasksReviewUpdate,
   handleTechtreeScienceTasksSubmit,
+  handleTechtreeWorkAccept,
+  handleTechtreeWorkList,
+  handleTechtreeWorkNext,
+  handleTechtreeWorkPublish,
+  handleTechtreeNotebooksInit,
+  handleTechtreeNotebooksPair,
+  handleTechtreeNotebooksPublish,
   handleTechtreeOpportunitiesList,
   handleTechtreeSearchQuery,
   handleTechtreeStarCreate,
@@ -142,6 +163,13 @@ import {
   handleTechtreeWatchDelete,
   handleTechtreeWatchList,
 } from "./handlers/techtree.js";
+import {
+  handleX402Details,
+  handleX402Fetch,
+  handleX402Prepare,
+  handleX402Quote,
+  handleX402ReceiptGet,
+} from "./handlers/x402.js";
 import { handleXmtpStatus } from "./handlers/xmtp.js";
 import { JsonRpcServer } from "./jsonrpc/server.js";
 import { StateStore } from "./store/state-store.js";
@@ -171,7 +199,7 @@ export interface RuntimeContext {
   gossipsub: GossipsubAdapter;
   agentRouter: AgentRouter;
   workload: WorkloadAdapter;
-  runtime: RegentRuntime;
+  runtime: RegentKernel;
   requestShutdown: () => void;
 }
 
@@ -190,7 +218,7 @@ const stopIgnoringErrors = async (stopper: { stop: () => Promise<void> }): Promi
 
 const loadDoctorHandlers = async () => import("./handlers/doctor.js");
 
-export class RegentRuntime {
+export class RegentKernel {
   readonly configPath?: string;
   readonly config: RegentConfig;
   readonly stateStore: StateStore;
@@ -352,6 +380,13 @@ export class RegentRuntime {
         this.shutdownRequested = false;
       });
     });
+  }
+
+  async call<TMethod extends RegentRpcMethod>(
+    method: TMethod,
+    params?: unknown,
+  ): Promise<RegentRpcResult<TMethod>> {
+    return (await this.dispatch(method, params)) as RegentRpcResult<TMethod>;
   }
 
   private context(): RuntimeContext {
@@ -525,6 +560,20 @@ export class RegentRuntime {
           ctx,
           params as Parameters<typeof handleTechtreeScienceTasksReviewLoop>[1],
         );
+      case "techtree.work.list":
+        return handleTechtreeWorkList(ctx, params as Parameters<typeof handleTechtreeWorkList>[1]);
+      case "techtree.work.next":
+        return handleTechtreeWorkNext(ctx, params as Parameters<typeof handleTechtreeWorkNext>[1]);
+      case "techtree.work.accept":
+        return handleTechtreeWorkAccept(ctx, params as Parameters<typeof handleTechtreeWorkAccept>[1]);
+      case "techtree.work.publish":
+        return handleTechtreeWorkPublish(ctx, params as Parameters<typeof handleTechtreeWorkPublish>[1]);
+      case "techtree.notebooks.init":
+        return handleTechtreeNotebooksInit(params as Parameters<typeof handleTechtreeNotebooksInit>[0]);
+      case "techtree.notebooks.pair":
+        return handleTechtreeNotebooksPair(params as Parameters<typeof handleTechtreeNotebooksPair>[0]);
+      case "techtree.notebooks.publish":
+        return handleTechtreeNotebooksPublish(ctx, params as Parameters<typeof handleTechtreeNotebooksPublish>[1]);
       case "techtree.benchmarks.capsules.list":
         return handleTechtreeBenchmarksCapsulesList(
           ctx,
@@ -580,6 +629,17 @@ export class RegentRuntime {
           ctx,
           params as Parameters<typeof handleTechtreeBenchmarksValidate>[1],
         );
+      case "techtree.fold.policy.init":
+        return handleTechtreeFoldPolicyInit(
+          ctx,
+          params as Parameters<typeof handleTechtreeFoldPolicyInit>[1],
+        );
+      case "techtree.fold.status":
+        return handleTechtreeFoldStatus(ctx);
+      case "techtree.fold.evidencePacket":
+        return handleTechtreeFoldEvidencePacket(ctx);
+      case "techtree.fold.proof":
+        return handleTechtreeFoldProof(ctx, params as Parameters<typeof handleTechtreeFoldProof>[1]);
       case "techtree.tech.status":
         return handleTechtreeTechStatus(ctx);
       case "techtree.tech.epochs.current":
@@ -628,6 +688,56 @@ export class RegentRuntime {
         return handleTechtreeTechWithdraw(
           ctx,
           params as Parameters<typeof handleTechtreeTechWithdraw>[1],
+        );
+      case "techtree.runbook.questions.list":
+        return handleTechtreeRunbookQuestionsList(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookQuestionsList>[1],
+        );
+      case "techtree.runbook.questions.get":
+        return handleTechtreeRunbookQuestionsGet(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookQuestionsGet>[1],
+        );
+      case "techtree.runbook.paymentAddress.set":
+        return handleTechtreeRunbookPaymentAddressSet(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookPaymentAddressSet>[1],
+        );
+      case "techtree.runbook.question.post":
+        return handleTechtreeRunbookQuestionPost(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookQuestionPost>[1],
+        );
+      case "techtree.runbook.answer.post":
+        return handleTechtreeRunbookAnswerPost(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookAnswerPost>[1],
+        );
+      case "techtree.runbook.answer.attachPaidSolution":
+        return handleTechtreeRunbookAnswerAttachPaidSolution(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookAnswerAttachPaidSolution>[1],
+        );
+      case "techtree.runbook.markSolved":
+        return handleTechtreeRunbookMarkSolved(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookMarkSolved>[1],
+        );
+      case "techtree.runbook.unlock":
+        return handleTechtreeRunbookUnlock(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookUnlock>[1],
+        );
+      case "techtree.runbook.answer.vote":
+        return handleTechtreeRunbookAnswerVote(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookAnswerVote>[1],
+        );
+      case "techtree.runbook.inviteRequest":
+        return handleTechtreeRunbookInviteRequest(
+          ctx,
+          params as Parameters<typeof handleTechtreeRunbookInviteRequest>[1],
         );
       case "techtree.autoskill.initSkill":
         return handleTechtreeAutoskillInitSkill(
@@ -809,6 +919,16 @@ export class RegentRuntime {
           ctx,
           params as Parameters<typeof handleTechtreeV1CertificateVerify>[1],
         );
+      case "x402.details":
+        return handleX402Details(ctx, params as Parameters<typeof handleX402Details>[1]);
+      case "x402.quote":
+        return handleX402Quote(ctx, params as Parameters<typeof handleX402Quote>[1]);
+      case "x402.prepare":
+        return handleX402Prepare(ctx, params as Parameters<typeof handleX402Prepare>[1]);
+      case "x402.fetch":
+        return handleX402Fetch(ctx, params as Parameters<typeof handleX402Fetch>[1]);
+      case "x402.receipts.get":
+        return handleX402ReceiptGet(ctx, params as Parameters<typeof handleX402ReceiptGet>[1]);
       case "xmtp.status":
         return handleXmtpStatus(ctx);
       case "gossipsub.status":
@@ -821,3 +941,5 @@ export class RegentRuntime {
     }
   }
 }
+
+export class RegentRuntime extends RegentKernel {}

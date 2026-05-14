@@ -69,7 +69,7 @@ const requestStakingJson = async <TResponse>(
     configPath: options.configPath,
     requireAgentAuth: true,
     authAudience: "regent-services",
-    service: "siwa",
+    service: "platform",
     commandName: "regents regent-staking",
   });
 

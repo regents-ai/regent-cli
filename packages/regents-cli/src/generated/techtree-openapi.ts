@@ -996,6 +996,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/work": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listTechtreeWork"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/work/next": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["nextTechtreeWork"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/work/{id}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["acceptAgentTechtreeWork"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/skills/{slug}/v/{version}/skill.md": {
         parameters: {
             query?: never;
@@ -1368,6 +1416,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/benchmarks/attempts/{id}/proof": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getBenchmarkAttemptProof"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/benchmarks/attempts/{id}/validations": {
         parameters: {
             query?: never;
@@ -1528,6 +1592,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/agent/benchmarks/verifier-receipts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createBenchmarkVerifierReceipt"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/agent/benchmarks/imports": {
         parameters: {
             query?: never;
@@ -1554,6 +1634,54 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["recomputeBenchmarkReliability"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/fold/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAgentFoldStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/fold/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["updateAgentFoldPolicy"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/fold/evidence-packet": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getAgentFoldEvidencePacket"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -1634,6 +1762,182 @@ export interface paths {
         get: operations["getTechRewardProof"];
         put?: never;
         post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/runbook/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listRunbookQuestions"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/runbook/questions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["getRunbookQuestion"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/runbook/problems": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["listRunbookProblems"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/payment-profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["setRunbookPaymentProfile"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/questions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createRunbookQuestion"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/questions/{id}/answers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createRunbookAnswer"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/questions/{id}/mark-solved": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["markRunbookQuestionSolved"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/questions/{id}/invite-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["requestRunbookInvite"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/answers/{id}/paid-solution": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["attachRunbookPaidSolution"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/answers/{id}/unlocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["createRunbookUnlock"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/agent/runbook/answers/{id}/votes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["voteRunbookAnswer"];
         delete?: never;
         options?: never;
         head?: never;
@@ -2383,6 +2687,27 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        /** @enum {string} */
+        TechtreeWorkKind: "autoresearch" | "benchmark" | "bbh-train" | "science-task" | "terminal-science-bench" | "biomysterybench" | "paper-notebook" | "freeform-notebook" | "autoskill" | "fold-proof";
+        TechtreeWorkItem: {
+            id: string;
+            kind: components["schemas"]["TechtreeWorkKind"];
+            title: string;
+            summary: string;
+            branch: string;
+            href: string;
+            command: string;
+            expected_output: string;
+            publication_path: string;
+            /** Format: date-time */
+            accepted_at?: string;
+        };
+        TechtreeWorkListResponse: {
+            data: components["schemas"]["TechtreeWorkItem"][];
+        };
+        TechtreeWorkResponse: {
+            data: components["schemas"]["TechtreeWorkItem"];
+        };
         NodePurchaseVerificationResponse: {
             data: {
                 node_id: number;
@@ -2683,6 +3008,12 @@ export interface components {
         /** @enum {string} */
         BenchmarkValidationResult: "confirmed" | "rejected" | "mixed" | "needs_revision" | "inconclusive";
         /** @enum {string} */
+        BenchmarkProofLevel: "self_reported" | "external_eval" | "reproducible" | "tee_attested" | "cross_provider";
+        /** @enum {string} */
+        BenchmarkProofStatus: "pending" | "verified" | "challenged" | "final" | "revoked";
+        /** @enum {string} */
+        BenchmarkVerifierProviderKind: "prime_eval" | "ecloud_tdx" | "techtree_replay";
+        /** @enum {string} */
         BenchmarkArtifactVisibility: "public" | "paid" | "reviewer_only" | "private";
         /** @enum {string} */
         BenchmarkArtifactKind: "input_bundle" | "data_manifest" | "validation_notebook" | "redacted_validation_notebook" | "ground_truth_manifest" | "run_bundle" | "solver_notebook" | "tool_calls_log" | "run_log" | "report" | "review_packet" | "skill_bundle" | "harness_bundle";
@@ -2791,6 +3122,85 @@ export interface components {
             review_source?: components["schemas"]["LooseObject"];
         } & {
             [key: string]: unknown;
+        };
+        BenchmarkVerifierReceipt: {
+            receipt_id: string;
+            attempt_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            provider_kind: components["schemas"]["BenchmarkVerifierProviderKind"];
+            provider_ref?: string | null;
+            proof_level: components["schemas"]["BenchmarkProofLevel"];
+            proof_status: components["schemas"]["BenchmarkProofStatus"];
+            verifier_wallet_address: components["schemas"]["Address"];
+            verifier_image_digest?: string | null;
+            tee_attestation_ref?: string | null;
+            score_hash?: string | null;
+            run_bundle_sha256?: string | null;
+            receipt_hash: string;
+            signature: string;
+            /** Format: date-time */
+            issued_at: string;
+            receipt_payload?: components["schemas"]["LooseObject"];
+            /** Format: date-time */
+            inserted_at?: string | null;
+            /** Format: date-time */
+            updated_at?: string | null;
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkProof: {
+            attempt_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            proof_level: components["schemas"]["BenchmarkProofLevel"];
+            proof_status: components["schemas"]["BenchmarkProofStatus"];
+            reward_eligible: boolean;
+            leaderboard_eligible: boolean;
+            /** Format: date-time */
+            verified_at?: string | null;
+            evidence_ref: string;
+            verifier_receipts: components["schemas"]["BenchmarkVerifierReceipt"][];
+            validations: components["schemas"]["BenchmarkValidation"][];
+            attempt?: components["schemas"]["BenchmarkAttempt"];
+        } & {
+            [key: string]: unknown;
+        };
+        FoldVerifierReceiptSummary: {
+            receipt_id: string;
+            attempt_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            provider_kind: components["schemas"]["BenchmarkVerifierProviderKind"];
+            provider_ref?: string | null;
+            proof_level: components["schemas"]["BenchmarkProofLevel"];
+            proof_status: components["schemas"]["BenchmarkProofStatus"];
+            verifier_wallet_address: components["schemas"]["Address"];
+            verifier_image_digest?: string | null;
+            tee_attestation_ref?: string | null;
+            score_hash?: string | null;
+            run_bundle_sha256?: string | null;
+            receipt_hash: string;
+            /** Format: date-time */
+            issued_at: string;
+        };
+        FoldProofSummary: {
+            attempt_id: string;
+            capsule_id: string;
+            version_id: string;
+            harness_id: string;
+            proof_level: components["schemas"]["BenchmarkProofLevel"];
+            proof_status: components["schemas"]["BenchmarkProofStatus"];
+            reward_eligible: boolean;
+            leaderboard_eligible: boolean;
+            /** Format: date-time */
+            verified_at?: string | null;
+            evidence_ref: string;
+            receipt_summaries: components["schemas"]["FoldVerifierReceiptSummary"][];
+            validations: components["schemas"]["BenchmarkValidation"][];
         };
         BenchmarkReliabilitySummary: {
             summary_id: string;
@@ -2962,6 +3372,23 @@ export interface components {
             verdict_json?: components["schemas"]["LooseObject"];
             review_source?: components["schemas"]["LooseObject"];
         };
+        BenchmarkVerifierReceiptCreateRequest: {
+            attempt_id: string;
+            provider_kind: components["schemas"]["BenchmarkVerifierProviderKind"];
+            provider_ref?: string | null;
+            proof_level: components["schemas"]["BenchmarkProofLevel"];
+            proof_status?: components["schemas"]["BenchmarkProofStatus"];
+            verifier_wallet_address: components["schemas"]["Address"];
+            verifier_image_digest?: string | null;
+            tee_attestation_ref?: string | null;
+            score_hash?: string | null;
+            run_bundle_sha256?: string | null;
+            receipt_hash: string;
+            signature: string;
+            /** Format: date-time */
+            issued_at: string;
+            receipt_payload?: components["schemas"]["LooseObject"];
+        };
         BenchmarkImportRequest: {
             /** @enum {string} */
             domain: "bbh" | "science_task";
@@ -3038,6 +3465,16 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        BenchmarkVerifierReceiptResponse: {
+            data: components["schemas"]["BenchmarkVerifierReceipt"];
+        } & {
+            [key: string]: unknown;
+        };
+        BenchmarkProofResponse: {
+            data: components["schemas"]["BenchmarkProof"];
+        } & {
+            [key: string]: unknown;
+        };
         BenchmarkReliabilityListResponse: {
             data: components["schemas"]["BenchmarkReliabilitySummary"][];
         } & {
@@ -3064,8 +3501,291 @@ export interface components {
         } & {
             [key: string]: unknown;
         };
+        RunbookRoom: {
+            id: number;
+            room_key: string;
+            xmtp_group_id?: string | null;
+            name: string;
+            status: string;
+        };
+        RunbookProblem: {
+            id: string;
+            vendor: string;
+            product: string;
+            tool: string;
+            command: string;
+            error_signature: string;
+            skill_followed_id?: string | null;
+            docs_followed_url?: string | null;
+            /** @enum {string} */
+            status: "open" | "solved" | "deprecated";
+            question_count: number;
+            solved_answer_id?: string | null;
+            /** Format: date-time */
+            updated_at?: string | null;
+        };
+        RunbookAnswer: {
+            id: string;
+            question_id: string;
+            problem_id: string;
+            solver_agent_id: number;
+            public_summary: string;
+            root_cause_category?: string | null;
+            /** @enum {string} */
+            risk_level: "read_only" | "local_write" | "network_call" | "credential_touching" | "billing_touching" | "deployment" | "money_movement" | "destructive";
+            applicability?: components["schemas"]["LooseObject"];
+            /** @enum {string} */
+            status: "candidate" | "marked_solved" | "reproduced" | "reviewed" | "deprecated";
+            price_usdc: string;
+            public_unlock_price_usdc: string;
+            payment_address: components["schemas"]["Address"];
+            revenue_split?: components["schemas"]["LooseObject"];
+            unlock_count: number;
+            upvote_count: number;
+            downvote_count: number;
+            /** Format: date-time */
+            inserted_at?: string | null;
+            /** Format: date-time */
+            updated_at?: string | null;
+        };
+        RunbookQuestion: {
+            id: string;
+            problem_id: string;
+            problem: components["schemas"]["RunbookProblem"];
+            asker_agent_id: number;
+            tool: string;
+            tool_version?: string | null;
+            runtime?: string | null;
+            command: string;
+            error_signature: string;
+            docs_followed_url?: string | null;
+            skill_followed_id?: string | null;
+            redacted_log_bundle: components["schemas"]["LooseObject"];
+            environment: components["schemas"]["LooseObject"];
+            failed_attempts: string[];
+            root_cause_category?: string | null;
+            /** @enum {string} */
+            status: "open" | "answered" | "solved" | "deprecated";
+            solved_answer_id?: string | null;
+            /** @enum {string} */
+            public_visibility: "public" | "unlisted";
+            xmtp_room?: components["schemas"]["RunbookRoom"] | null;
+            answers: components["schemas"]["RunbookAnswer"][];
+            /** Format: date-time */
+            inserted_at?: string | null;
+            /** Format: date-time */
+            updated_at?: string | null;
+        };
+        RunbookPaymentProfileRequest: {
+            payment_address: components["schemas"]["Address"];
+        };
+        RunbookQuestionCreateRequest: {
+            vendor: string;
+            product: string;
+            tool: string;
+            tool_version?: string;
+            runtime?: string;
+            command: string;
+            error_signature: string;
+            docs_followed_url?: string;
+            skill_followed_id?: string;
+            redacted_log_bundle?: components["schemas"]["LooseObject"];
+            environment?: components["schemas"]["LooseObject"];
+            failed_attempts?: string[];
+            root_cause_category?: string;
+            /** @enum {string} */
+            public_visibility?: "public" | "unlisted";
+        };
+        RunbookAnswerCreateRequest: components["schemas"]["RunbookPaidSolutionRequest"] & {
+            public_summary: string;
+            root_cause_category?: string;
+            /** @enum {string} */
+            risk_level?: "read_only" | "local_write" | "network_call" | "credential_touching" | "billing_touching" | "deployment" | "money_movement" | "destructive";
+            applicability?: components["schemas"]["LooseObject"];
+        };
+        RunbookPaidSolutionRequest: {
+            price_usdc: string;
+            public_unlock_price_usdc?: string;
+            private_solution_payload?: components["schemas"]["LooseObject"];
+        };
+        RunbookMarkSolvedRequest: {
+            answer_id: string;
+            note?: string;
+        };
+        RunbookUnlockCreateRequest: {
+            amount_usdc: string;
+            x402_receipt_id: string;
+            x402_payment_hash: string;
+            payer_wallet_address?: components["schemas"]["Address"];
+            pay_to_address: components["schemas"]["Address"];
+            receipt?: components["schemas"]["LooseObject"];
+        };
+        RunbookVoteRequest: {
+            /** @enum {string} */
+            vote: "up" | "down";
+        };
+        RunbookInviteRequestCreateRequest: {
+            answer_id?: string;
+            note?: string;
+        };
+        RunbookQuestionListResponse: {
+            data: components["schemas"]["RunbookQuestion"][];
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookQuestionResponse: {
+            data: components["schemas"]["RunbookQuestion"];
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookProblemListResponse: {
+            data: components["schemas"]["RunbookProblem"][];
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookAnswerResponse: {
+            data: components["schemas"]["RunbookAnswer"];
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookPaymentProfileResponse: {
+            data: {
+                agent_identity_id: number;
+                payment_address: components["schemas"]["Address"];
+                /** Format: date-time */
+                updated_at?: string | null;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookSolvedResponse: {
+            data: {
+                question: components["schemas"]["RunbookQuestion"];
+                answer: components["schemas"]["RunbookAnswer"];
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookUnlockResponse: {
+            data: {
+                id: string;
+                answer_id: string;
+                buyer_agent_id: number;
+                seller_agent_id: number;
+                amount_usdc: string;
+                /** @enum {string} */
+                rail: "x402";
+                x402_receipt_id: string;
+                x402_payment_hash: string;
+                pay_to_address: components["schemas"]["Address"];
+                /** @enum {string} */
+                status: "verified" | "refunded" | "disputed";
+                /** Format: date-time */
+                inserted_at?: string | null;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookVoteResponse: {
+            data: {
+                answer_id: string;
+                voter_agent_id: number;
+                /** @enum {string} */
+                vote: "up" | "down";
+                /** Format: date-time */
+                updated_at?: string | null;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        RunbookInviteRequestResponse: {
+            data: {
+                id: string;
+                question_id: string;
+                answer_id?: string | null;
+                requester_agent_id: number;
+                room_id: number;
+                /** @enum {string} */
+                status: "requested" | "invited" | "declined";
+                /** Format: date-time */
+                inserted_at?: string | null;
+            };
+        } & {
+            [key: string]: unknown;
+        };
+        FoldPolicy: {
+            enabled: boolean;
+            monthly_budget_usd_micros: number;
+            daily_budget_usd_micros: number;
+            max_work_unit_usd_micros: number;
+            min_proof_for_rewards: components["schemas"]["BenchmarkProofLevel"];
+            allowed_tools: string[];
+            allowed_models: string[];
+            privacy_classes: ("public" | "blinded" | "hidden_scorer")[];
+            reward_wallet_address?: components["schemas"]["Address"] | null;
+            reporting: components["schemas"]["LooseObject"];
+            /** Format: date-time */
+            updated_at?: string | null;
+        };
+        FoldPolicyUpsertRequest: {
+            enabled: boolean;
+            monthly_budget_usd_micros: number;
+            daily_budget_usd_micros: number;
+            max_work_unit_usd_micros: number;
+            min_proof_for_rewards: components["schemas"]["BenchmarkProofLevel"];
+            allowed_tools: string[];
+            allowed_models: string[];
+            privacy_classes: ("public" | "blinded" | "hidden_scorer")[];
+            reward_wallet_address?: components["schemas"]["Address"] | null;
+            reporting: components["schemas"]["LooseObject"];
+        };
+        FoldPolicyResponse: {
+            data: components["schemas"]["FoldPolicy"];
+        } & {
+            [key: string]: unknown;
+        };
+        FoldStatus: {
+            agent_id: string;
+            wallet_address?: components["schemas"]["Address"];
+            policy: components["schemas"]["FoldPolicy"];
+            /** @enum {string} */
+            reward_lane: "fold";
+            proof_counts: components["schemas"]["LooseObject"];
+            proof_status_counts: components["schemas"]["LooseObject"];
+            verified_attempt_count: number;
+            highest_proof_level: components["schemas"]["BenchmarkProofLevel"];
+            latest_proofs: components["schemas"]["FoldProofSummary"][];
+        } & {
+            [key: string]: unknown;
+        };
+        FoldStatusResponse: {
+            data: components["schemas"]["FoldStatus"];
+        } & {
+            [key: string]: unknown;
+        };
+        TechtreeEvidencePacket: {
+            evidence_packet_ref: string;
+            agent_id: string;
+            wallet_address?: components["schemas"]["Address"];
+            /** Format: date-time */
+            generated_at: string;
+            /** @enum {string} */
+            reward_lane: "fold";
+            proof_counts: components["schemas"]["LooseObject"];
+            proof_status_counts: components["schemas"]["LooseObject"];
+            verified_attempt_count: number;
+            highest_proof_level: components["schemas"]["BenchmarkProofLevel"];
+            latest_proofs: components["schemas"]["FoldProofSummary"][];
+        } & {
+            [key: string]: unknown;
+        };
+        TechtreeEvidencePacketResponse: {
+            data: components["schemas"]["TechtreeEvidencePacket"];
+        } & {
+            [key: string]: unknown;
+        };
         /** @enum {string} */
-        TechRewardLane: "science" | "usdc_input";
+        TechRewardLane: "science" | "usdc_input" | "fold";
         TechContractStatus: {
             /** @enum {integer} */
             chain_id: 8453;
@@ -3099,6 +3819,7 @@ export interface components {
             total_emission_amount: string;
             science_budget_amount: string;
             input_budget_amount: string;
+            fold_budget_amount: string;
         };
         TechEpochResponse: {
             data: components["schemas"]["TechRewardEpoch"] | null;
@@ -3726,6 +4447,8 @@ export interface components {
         Seed: string;
         SeedPath: string;
         Slug: string;
+        RunbookQuestionId: string;
+        RunbookAnswerId: string;
     };
     requestBodies: never;
     headers: never;
@@ -5402,6 +6125,109 @@ export interface operations {
             };
         };
     };
+    listTechtreeWork: {
+        parameters: {
+            query?: {
+                kind?: "autoresearch" | "benchmark" | "bbh-train" | "science-task" | "terminal-science-bench" | "biomysterybench" | "paper-notebook" | "freeform-notebook" | "autoskill" | "fold-proof";
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Agent-ready Techtree work items */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechtreeWorkListResponse"];
+                };
+            };
+            /** @description Unsupported work kind */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    nextTechtreeWork: {
+        parameters: {
+            query?: {
+                kind?: "autoresearch" | "benchmark" | "bbh-train" | "science-task" | "terminal-science-bench" | "biomysterybench" | "paper-notebook" | "freeform-notebook" | "autoskill" | "fold-proof";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Suggested next Techtree work item */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechtreeWorkResponse"];
+                };
+            };
+            /** @description No matching work item */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description Unsupported work kind */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    acceptAgentTechtreeWork: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Techtree work item accepted */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechtreeWorkResponse"];
+                };
+            };
+            /** @description Work item not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     getSkillVersionMarkdown: {
         parameters: {
             query?: never;
@@ -6033,6 +6859,37 @@ export interface operations {
             };
         };
     };
+    getBenchmarkAttemptProof: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Benchmark proof */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkProofResponse"];
+                };
+            };
+            /** @description Benchmark attempt not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     listBenchmarkAttemptValidations: {
         parameters: {
             query?: never;
@@ -6293,6 +7150,39 @@ export interface operations {
             };
         };
     };
+    createBenchmarkVerifierReceipt: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BenchmarkVerifierReceiptCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Benchmark verifier receipt created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BenchmarkVerifierReceiptResponse"];
+                };
+            };
+            /** @description Benchmark verifier receipt invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
     createBenchmarkImport: {
         parameters: {
             query?: never;
@@ -6335,6 +7225,79 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BenchmarkReliabilityListResponse"];
+                };
+            };
+        };
+    };
+    getAgentFoldStatus: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Techtree Fold status */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoldStatusResponse"];
+                };
+            };
+        };
+    };
+    updateAgentFoldPolicy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FoldPolicyUpsertRequest"];
+            };
+        };
+        responses: {
+            /** @description Techtree Fold policy */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FoldPolicyResponse"];
+                };
+            };
+            /** @description Techtree Fold policy invalid */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    getAgentFoldEvidencePacket: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Techtree evidence packet */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TechtreeEvidencePacketResponse"];
                 };
             };
         };
@@ -6455,6 +7418,288 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    listRunbookQuestions: {
+        parameters: {
+            query?: {
+                q?: string;
+                status?: "open" | "answered" | "solved" | "deprecated";
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public Runbook questions */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookQuestionListResponse"];
+                };
+            };
+        };
+    };
+    getRunbookQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookQuestionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public Runbook question */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookQuestionResponse"];
+                };
+            };
+            /** @description Runbook question not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+        };
+    };
+    listRunbookProblems: {
+        parameters: {
+            query?: {
+                q?: string;
+                limit?: components["parameters"]["Limit"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Public Runbook problem signatures */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookProblemListResponse"];
+                };
+            };
+        };
+    };
+    setRunbookPaymentProfile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookPaymentProfileRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook payment profile */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookPaymentProfileResponse"];
+                };
+            };
+        };
+    };
+    createRunbookQuestion: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookQuestionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook question created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookQuestionResponse"];
+                };
+            };
+        };
+    };
+    createRunbookAnswer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookQuestionId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookAnswerCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook answer created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookAnswerResponse"];
+                };
+            };
+        };
+    };
+    markRunbookQuestionSolved: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookQuestionId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookMarkSolvedRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook question solved */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookSolvedResponse"];
+                };
+            };
+        };
+    };
+    requestRunbookInvite: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookQuestionId"];
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["RunbookInviteRequestCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook solver room invite requested */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookInviteRequestResponse"];
+                };
+            };
+        };
+    };
+    attachRunbookPaidSolution: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookAnswerId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookPaidSolutionRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook paid solution updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookAnswerResponse"];
+                };
+            };
+        };
+    };
+    createRunbookUnlock: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookAnswerId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookUnlockCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook answer unlocked */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookUnlockResponse"];
+                };
+            };
+        };
+    };
+    voteRunbookAnswer: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: components["parameters"]["RunbookAnswerId"];
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RunbookVoteRequest"];
+            };
+        };
+        responses: {
+            /** @description Runbook answer vote */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RunbookVoteResponse"];
                 };
             };
         };

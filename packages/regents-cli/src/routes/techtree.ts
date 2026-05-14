@@ -41,6 +41,13 @@ import {
   runTechtreeScienceTasksReviewLoop,
   runTechtreeScienceTasksReviewUpdate,
   runTechtreeScienceTasksSubmit,
+  runTechtreeWorkAccept,
+  runTechtreeWorkList,
+  runTechtreeWorkNext,
+  runTechtreeWorkPublish,
+  runTechtreeNotebooksInit,
+  runTechtreeNotebooksPair,
+  runTechtreeNotebooksPublish,
   runTechtreeWatch,
   runTechtreeWatchList,
   runTechtreeWatchTail,
@@ -55,6 +62,16 @@ import {
   runTechtreeBenchmarksRunSubmit,
   runTechtreeBenchmarksScoreboard,
   runTechtreeBenchmarksValidate,
+  runTechtreeRunbookAnswerAttachPaidSolution,
+  runTechtreeRunbookAnswerPost,
+  runTechtreeRunbookAnswerVote,
+  runTechtreeRunbookInviteRequest,
+  runTechtreeRunbookMarkSolved,
+  runTechtreeRunbookPaymentAddressSet,
+  runTechtreeRunbookQuestionPost,
+  runTechtreeRunbookQuestionsGet,
+  runTechtreeRunbookQuestionsList,
+  runTechtreeRunbookUnlock,
   runTechtreeTechEpochCurrent,
   runTechtreeTechLeaderboardsConfirm,
   runTechtreeTechLeaderboardsList,
@@ -67,6 +84,11 @@ import {
   runTechtreeTechStatus,
   runTechtreeTechWithdraw,
 } from "../commands/techtree.js";
+import {
+  runTechtreeFoldPolicyInit,
+  runTechtreeFoldProof,
+  runTechtreeFoldStatus,
+} from "../commands/techtree-fold.js";
 import {
   runTechtreeIdentitiesList,
   runTechtreeIdentitiesMint,
@@ -338,6 +360,34 @@ export const techtreeRoutes: readonly CliRoute[] = [
     await runTechtreeScienceTasksReviewLoop(parsedArgs, configPath);
     return 0;
   }),
+  route("techtree work list", async ({ parsedArgs, configPath }) => {
+    await runTechtreeWorkList(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree work next", async ({ parsedArgs, configPath }) => {
+    await runTechtreeWorkNext(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree work accept", async ({ parsedArgs, configPath }) => {
+    await runTechtreeWorkAccept(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree work publish", async ({ parsedArgs, configPath }) => {
+    await runTechtreeWorkPublish(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree notebooks init", async ({ parsedArgs, configPath }) => {
+    await runTechtreeNotebooksInit(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree notebooks pair", async ({ parsedArgs, configPath }) => {
+    await runTechtreeNotebooksPair(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree notebooks publish", async ({ parsedArgs, configPath }) => {
+    await runTechtreeNotebooksPublish(parsedArgs, configPath);
+    return 0;
+  }),
   route("techtree benchmarks list", async ({ parsedArgs, configPath }) => {
     await runTechtreeBenchmarksList(parsedArgs, configPath);
     return 0;
@@ -380,6 +430,58 @@ export const techtreeRoutes: readonly CliRoute[] = [
   }),
   route("techtree benchmarks validate", async ({ parsedArgs, configPath }) => {
     await runTechtreeBenchmarksValidate(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree fold policy init", async ({ parsedArgs, configPath }) => {
+    await runTechtreeFoldPolicyInit(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree fold status", async ({ parsedArgs, configPath }) => {
+    await runTechtreeFoldStatus(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree fold proof", async ({ parsedArgs, configPath }) => {
+    await runTechtreeFoldProof(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook questions list", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookQuestionsList(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook questions get <id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookQuestionsGet(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook payment-address set", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookPaymentAddressSet(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook question post", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookQuestionPost(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook answer post <question_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookAnswerPost(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook answer attach-paid-solution <answer_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookAnswerAttachPaidSolution(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook answer vote <answer_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookAnswerVote(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook mark-solved <question_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookMarkSolved(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook unlock <answer_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookUnlock(parsedArgs, configPath);
+    return 0;
+  }),
+  route("techtree runbook invite-request <question_id>", async ({ parsedArgs, configPath }) => {
+    await runTechtreeRunbookInviteRequest(parsedArgs, configPath);
     return 0;
   }),
   route("techtree tech status", async ({ parsedArgs, configPath }) => {

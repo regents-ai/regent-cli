@@ -127,7 +127,11 @@ export const CLI_COMMANDS = [
   "identity graph",
   "identity status",
   "init",
+  "mcp doctor",
+  "mcp export codex",
   "mcp export hermes",
+  "mcp serve",
+  "mcp tools list",
   "platform auth login",
   "platform auth logout",
   "platform auth status",
@@ -142,6 +146,9 @@ export const CLI_COMMANDS = [
   "platform projection",
   "platform sprite pause",
   "platform sprite resume",
+  "plugin doctor",
+  "plugin install",
+  "plugin status",
   "regent-staking account",
   "regent-staking claim-and-restake-regent",
   "regent-staking claim-regent",
@@ -160,6 +167,7 @@ export const CLI_COMMANDS = [
   "runtime services",
   "search",
   "security-report",
+  "setup",
   "setup skills",
   "status",
   "techtree activity",
@@ -209,6 +217,9 @@ export const CLI_COMMANDS = [
   "techtree benchmarks validate",
   "techtree certificate verify",
   "techtree comment add",
+  "techtree fold policy init",
+  "techtree fold proof",
+  "techtree fold status",
   "techtree identities list",
   "techtree identities mint",
   "techtree inbox",
@@ -240,6 +251,9 @@ export const CLI_COMMANDS = [
   "techtree node lineage withdraw",
   "techtree node work-packet <id>",
   "techtree nodes list",
+  "techtree notebooks init",
+  "techtree notebooks pair",
+  "techtree notebooks publish",
   "techtree opportunities",
   "techtree review claim",
   "techtree review list",
@@ -248,6 +262,16 @@ export const CLI_COMMANDS = [
   "techtree reviewer apply",
   "techtree reviewer orcid link",
   "techtree reviewer status",
+  "techtree runbook answer attach-paid-solution <answer_id>",
+  "techtree runbook answer post <question_id>",
+  "techtree runbook answer vote <answer_id>",
+  "techtree runbook invite-request <question_id>",
+  "techtree runbook mark-solved <question_id>",
+  "techtree runbook payment-address set",
+  "techtree runbook question post",
+  "techtree runbook questions get <id>",
+  "techtree runbook questions list",
+  "techtree runbook unlock <answer_id>",
   "techtree science-tasks checklist",
   "techtree science-tasks evidence",
   "techtree science-tasks export",
@@ -277,6 +301,10 @@ export const CLI_COMMANDS = [
   "techtree watch <id>",
   "techtree watch list",
   "techtree watch tail",
+  "techtree work accept",
+  "techtree work list",
+  "techtree work next",
+  "techtree work publish",
   "wallet setup",
   "wallet status",
   "whoami",
@@ -286,6 +314,11 @@ export const CLI_COMMANDS = [
   "work local-loop",
   "work run",
   "work watch",
+  "x402 details",
+  "x402 fetch",
+  "x402 prepare",
+  "x402 quote",
+  "x402 receipts get",
   "xmtp doctor",
   "xmtp group add-admin",
   "xmtp group add-member",
@@ -478,7 +511,11 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "init"
   ],
   "mcp": [
-    "mcp export hermes"
+    "mcp doctor",
+    "mcp export codex",
+    "mcp export hermes",
+    "mcp serve",
+    "mcp tools list"
   ],
   "platform": [
     "platform auth login",
@@ -495,6 +532,11 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "platform projection",
     "platform sprite pause",
     "platform sprite resume"
+  ],
+  "plugin": [
+    "plugin doctor",
+    "plugin install",
+    "plugin status"
   ],
   "regent-staking": [
     "regent-staking account",
@@ -525,6 +567,7 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "security-report"
   ],
   "setup": [
+    "setup",
     "setup skills"
   ],
   "status": [
@@ -578,6 +621,9 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree benchmarks validate",
     "techtree certificate verify",
     "techtree comment add",
+    "techtree fold policy init",
+    "techtree fold proof",
+    "techtree fold status",
     "techtree identities list",
     "techtree identities mint",
     "techtree inbox",
@@ -609,6 +655,9 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree node lineage withdraw",
     "techtree node work-packet <id>",
     "techtree nodes list",
+    "techtree notebooks init",
+    "techtree notebooks pair",
+    "techtree notebooks publish",
     "techtree opportunities",
     "techtree review claim",
     "techtree review list",
@@ -617,6 +666,16 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree reviewer apply",
     "techtree reviewer orcid link",
     "techtree reviewer status",
+    "techtree runbook answer attach-paid-solution <answer_id>",
+    "techtree runbook answer post <question_id>",
+    "techtree runbook answer vote <answer_id>",
+    "techtree runbook invite-request <question_id>",
+    "techtree runbook mark-solved <question_id>",
+    "techtree runbook payment-address set",
+    "techtree runbook question post",
+    "techtree runbook questions get <id>",
+    "techtree runbook questions list",
+    "techtree runbook unlock <answer_id>",
     "techtree science-tasks checklist",
     "techtree science-tasks evidence",
     "techtree science-tasks export",
@@ -645,7 +704,11 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "techtree unwatch <id>",
     "techtree watch <id>",
     "techtree watch list",
-    "techtree watch tail"
+    "techtree watch tail",
+    "techtree work accept",
+    "techtree work list",
+    "techtree work next",
+    "techtree work publish"
   ],
   "wallet": [
     "wallet setup",
@@ -661,6 +724,13 @@ export const CLI_COMMANDS_BY_TOP_LEVEL_GROUP = {
     "work local-loop",
     "work run",
     "work watch"
+  ],
+  "x402": [
+    "x402 details",
+    "x402 fetch",
+    "x402 prepare",
+    "x402 quote",
+    "x402 receipts get"
   ],
   "xmtp": [
     "xmtp doctor",
@@ -885,7 +955,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -910,7 +982,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1021,7 +1095,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1046,7 +1122,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1071,7 +1149,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -1096,7 +1176,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -2407,7 +2489,7 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
           "base-sepolia"
         ],
         "default": "base-sepolia",
-        "description": "Chain for the prelaunch wizard. Base Sepolia is the only enabled wizard chain for now."
+        "description": "Chain for the prelaunch wizard. Base is the only enabled wizard chain for now."
       },
       {
         "name": "--agent-safe-address",
@@ -3200,10 +3282,40 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
         "description": "Token factory address."
       },
       {
+        "name": "--token-factory-data",
+        "type": "bytes",
+        "required": false,
+        "description": "Optional token factory call data."
+      },
+      {
+        "name": "--token-factory-salt",
+        "type": "bytes32",
+        "required": false,
+        "description": "Optional deterministic token factory salt."
+      },
+      {
         "name": "--subject-label",
         "type": "string",
         "required": true,
         "description": "Subject label."
+      },
+      {
+        "name": "--identity-chain-id",
+        "type": "integer",
+        "required": false,
+        "description": "Optional ERC-8004 identity chain ID."
+      },
+      {
+        "name": "--identity-registry",
+        "type": "address",
+        "required": false,
+        "description": "Optional ERC-8004 registry address."
+      },
+      {
+        "name": "--identity-agent-id",
+        "type": "integer",
+        "required": false,
+        "description": "Optional ERC-8004 agent token ID."
       }
     ],
     "examples": [
@@ -3638,7 +3750,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3773,7 +3887,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3798,7 +3914,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3823,7 +3941,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -3848,7 +3968,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -4100,7 +4222,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -4199,7 +4323,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -4215,6 +4341,56 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "mcp doctor": {
+    "command": "mcp doctor",
+    "owner": "shared-services",
+    "group": "mcp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents mcp export hermes",
+      "regents mcp export codex",
+      "regents mcp tools list --json",
+      "regents mcp doctor --json",
+      "regents mcp serve --transport stdio"
+    ],
+    "agent_metadata": {
+      "category": "integration",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "mcp export codex": {
+    "command": "mcp export codex",
+    "owner": "shared-services",
+    "group": "mcp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents mcp export hermes",
+      "regents mcp export codex",
+      "regents mcp tools list --json",
+      "regents mcp doctor --json",
+      "regents mcp serve --transport stdio"
+    ],
+    "agent_metadata": {
+      "category": "integration",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
   "mcp export hermes": {
     "command": "mcp export hermes",
     "owner": "shared-services",
@@ -4223,7 +4399,61 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "auth_mode": "none",
     "output_envelope": "loose-object",
     "examples": [
-      "regents mcp export hermes"
+      "regents mcp export hermes",
+      "regents mcp export codex",
+      "regents mcp tools list --json",
+      "regents mcp doctor --json",
+      "regents mcp serve --transport stdio"
+    ],
+    "agent_metadata": {
+      "category": "integration",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "mcp serve": {
+    "command": "mcp serve",
+    "owner": "shared-services",
+    "group": "mcp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents mcp export hermes",
+      "regents mcp export codex",
+      "regents mcp tools list --json",
+      "regents mcp doctor --json",
+      "regents mcp serve --transport stdio"
+    ],
+    "agent_metadata": {
+      "category": "integration",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args"
+    }
+  },
+  "mcp tools list": {
+    "command": "mcp tools list",
+    "owner": "shared-services",
+    "group": "mcp",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents mcp export hermes",
+      "regents mcp export codex",
+      "regents mcp tools list --json",
+      "regents mcp doctor --json",
+      "regents mcp serve --transport stdio"
     ],
     "agent_metadata": {
       "category": "integration",
@@ -4892,6 +5122,108 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     },
     "summary": "Resume one owned company runtime from the saved platform session."
   },
+  "plugin doctor": {
+    "command": "plugin doctor",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--runtime",
+        "type": "enum",
+        "enum": [
+          "auto",
+          "hermes",
+          "openclaw"
+        ],
+        "required": false,
+        "description": "Runtime to diagnose. Defaults to auto."
+      }
+    ],
+    "examples": [
+      "regents plugin doctor --runtime auto"
+    ],
+    "agent_metadata": {
+      "category": "diagnostics",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "plugin install": {
+    "command": "plugin install",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--runtime",
+        "type": "enum",
+        "enum": [
+          "hermes",
+          "openclaw"
+        ],
+        "required": true,
+        "description": "Runtime that should receive the Regent plugin bridge."
+      }
+    ],
+    "examples": [
+      "regents plugin install --runtime hermes",
+      "regents plugin install --runtime openclaw"
+    ],
+    "agent_metadata": {
+      "category": "local-setup",
+      "prompt_behavior": "confirm_before_write",
+      "json_support": "supported",
+      "mutation_class": "local-write",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "plugin status": {
+    "command": "plugin status",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--runtime",
+        "type": "enum",
+        "enum": [
+          "auto",
+          "hermes",
+          "openclaw"
+        ],
+        "required": false,
+        "description": "Runtime to inspect. Defaults to auto."
+      }
+    ],
+    "examples": [
+      "regents plugin status --runtime auto"
+    ],
+    "agent_metadata": {
+      "category": "local-setup",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-read",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
   "regent-staking account": {
     "command": "regent-staking account",
     "owner": "platform",
@@ -5170,10 +5502,22 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
         "type": "boolean",
         "required": false,
         "description": "Print the local runtime summary as JSON."
+      },
+      {
+        "name": "--fold",
+        "type": "enum",
+        "enum": [
+          "starter",
+          "autoresearch",
+          "bbh-public-v1"
+        ],
+        "required": false,
+        "description": "Start Regent with a proof-producing Techtree Fold track."
       }
     ],
     "examples": [
       "regents run",
+      "regents run --fold autoresearch",
       "regents run --json"
     ],
     "agent_metadata": {
@@ -5772,6 +6116,47 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     },
     "summary": "Send a signed security report to Platform."
   },
+  "setup": {
+    "command": "setup",
+    "owner": "shared-services",
+    "group": "operator",
+    "interface": "runtime",
+    "auth_mode": "none",
+    "output_envelope": "operator-status-envelopes",
+    "flags": [
+      {
+        "name": "--runtime",
+        "type": "enum",
+        "enum": [
+          "auto",
+          "hermes",
+          "openclaw"
+        ],
+        "required": true,
+        "description": "Choose the local agent runtime to prepare."
+      },
+      {
+        "name": "--install-plugin",
+        "type": "boolean",
+        "required": false,
+        "description": "Install the Regent plugin bridge for the chosen runtime."
+      }
+    ],
+    "examples": [
+      "regents setup --runtime auto --install-plugin",
+      "regents setup --runtime hermes --install-plugin"
+    ],
+    "agent_metadata": {
+      "category": "local-setup",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "local-write",
+      "retry_behavior": "safe",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
   "setup skills": {
     "command": "setup skills",
     "owner": "shared-services",
@@ -5817,7 +6202,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     "output_envelope": "operator-status-envelopes",
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -6891,6 +7278,146 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "techtree fold policy init": {
+    "command": "techtree fold policy init",
+    "owner": "techtree",
+    "group": "fold",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "fold-proof-envelopes",
+    "flags": [
+      {
+        "name": "--enabled",
+        "type": "boolean",
+        "required": false
+      },
+      {
+        "name": "--monthly-budget-usd",
+        "type": "decimal-usd",
+        "required": false
+      },
+      {
+        "name": "--daily-budget-usd",
+        "type": "decimal-usd",
+        "required": false
+      },
+      {
+        "name": "--max-work-unit-usd",
+        "type": "decimal-usd",
+        "required": false
+      },
+      {
+        "name": "--min-proof-for-rewards",
+        "type": "enum",
+        "enum": [
+          "self_reported",
+          "external_eval",
+          "reproducible",
+          "tee_attested",
+          "cross_provider"
+        ],
+        "required": false
+      },
+      {
+        "name": "--allowed-tools",
+        "type": "csv-string",
+        "required": false
+      },
+      {
+        "name": "--allowed-models",
+        "type": "csv-string",
+        "required": false
+      },
+      {
+        "name": "--privacy-classes",
+        "type": "csv-enum",
+        "enum": [
+          "public",
+          "blinded",
+          "hidden_scorer"
+        ],
+        "required": false
+      },
+      {
+        "name": "--reward-wallet-address",
+        "type": "evm-address",
+        "required": false
+      },
+      {
+        "name": "--weekly-summary",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree fold policy init",
+      "regents techtree fold status",
+      "regents techtree fold proof --run run_..."
+    ],
+    "agent_metadata": {
+      "category": "fold",
+      "prompt_behavior": "confirm_before_policy_or_install",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_install",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree fold proof": {
+    "command": "techtree fold proof",
+    "owner": "techtree",
+    "group": "fold",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "fold-proof-envelopes",
+    "flags": [
+      {
+        "name": "--run",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "examples": [
+      "regents techtree fold policy init",
+      "regents techtree fold status",
+      "regents techtree fold proof --run run_..."
+    ],
+    "agent_metadata": {
+      "category": "fold",
+      "prompt_behavior": "confirm_before_policy_or_install",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_install",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree fold status": {
+    "command": "techtree fold status",
+    "owner": "techtree",
+    "group": "fold",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "fold-proof-envelopes",
+    "examples": [
+      "regents techtree fold policy init",
+      "regents techtree fold status",
+      "regents techtree fold proof --run run_..."
+    ],
+    "agent_metadata": {
+      "category": "fold",
+      "prompt_behavior": "confirm_before_policy_or_install",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_install",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
   "techtree identities list": {
     "command": "techtree identities list",
     "owner": "techtree",
@@ -7588,6 +8115,125 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "techtree notebooks init": {
+    "command": "techtree notebooks init",
+    "owner": "techtree",
+    "group": "notebooks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "notebook-publication-envelopes",
+    "flags": [
+      {
+        "name": "--kind",
+        "type": "enum",
+        "enum": [
+          "paper",
+          "freeform"
+        ],
+        "required": true
+      },
+      {
+        "name": "--workspace-path",
+        "type": "path",
+        "required": true
+      },
+      {
+        "name": "--title",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "--source",
+        "type": "string",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree notebooks init --kind paper --title \"Paper title\" --source arxiv:2401.00001 --workspace-path ./paper-note",
+      "regents techtree notebooks pair --workspace-path ./paper-note",
+      "regents techtree notebooks publish --workspace-path ./paper-note --parent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "notebooks",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree notebooks pair": {
+    "command": "techtree notebooks pair",
+    "owner": "techtree",
+    "group": "notebooks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "notebook-publication-envelopes",
+    "flags": [
+      {
+        "name": "--workspace-path",
+        "type": "path",
+        "required": true
+      },
+      {
+        "name": "--no-open",
+        "type": "boolean",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree notebooks init --kind paper --title \"Paper title\" --source arxiv:2401.00001 --workspace-path ./paper-note",
+      "regents techtree notebooks pair --workspace-path ./paper-note",
+      "regents techtree notebooks publish --workspace-path ./paper-note --parent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "notebooks",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree notebooks publish": {
+    "command": "techtree notebooks publish",
+    "owner": "techtree",
+    "group": "notebooks",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "notebook-publication-envelopes",
+    "flags": [
+      {
+        "name": "--workspace-path",
+        "type": "path",
+        "required": true
+      },
+      {
+        "name": "--parent-id",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree notebooks init --kind paper --title \"Paper title\" --source arxiv:2401.00001 --workspace-path ./paper-note",
+      "regents techtree notebooks pair --workspace-path ./paper-note",
+      "regents techtree notebooks publish --workspace-path ./paper-note --parent-id 1"
+    ],
+    "agent_metadata": {
+      "category": "notebooks",
+      "prompt_behavior": "confirm_before_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
   "techtree opportunities": {
     "command": "techtree opportunities",
     "owner": "techtree",
@@ -7769,6 +8415,226 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "retry_behavior": "retry_reads_and_local_runs",
       "pagination": "cursor",
       "async_behavior": "synchronous_or_local_run",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook answer attach-paid-solution <answer_id>": {
+    "command": "techtree runbook answer attach-paid-solution <answer_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook answer post <question_id>": {
+    "command": "techtree runbook answer post <question_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook answer vote <answer_id>": {
+    "command": "techtree runbook answer vote <answer_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook invite-request <question_id>": {
+    "command": "techtree runbook invite-request <question_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook mark-solved <question_id>": {
+    "command": "techtree runbook mark-solved <question_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook payment-address set": {
+    "command": "techtree runbook payment-address set",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook question post": {
+    "command": "techtree runbook question post",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook questions get <id>": {
+    "command": "techtree runbook questions get <id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook questions list": {
+    "command": "techtree runbook questions list",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree runbook unlock <answer_id>": {
+    "command": "techtree runbook unlock <answer_id>",
+    "owner": "techtree",
+    "group": "runbook",
+    "interface": "mixed",
+    "auth_mode": "agent-siwa",
+    "output_envelope": "runbook-envelopes",
+    "examples": [
+      "regents techtree runbook questions list",
+      "regents techtree runbook question post --tool shopify-cli --command \"shopify app dev\" --log ./error.log --confirm-redaction"
+    ],
+    "agent_metadata": {
+      "category": "runbook",
+      "prompt_behavior": "confirm_before_upload_or_purchase",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_only",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
       "input_mode": "args-and-flags"
     }
   },
@@ -8441,6 +9307,164 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     }
   },
+  "techtree work accept": {
+    "command": "techtree work accept",
+    "owner": "techtree",
+    "group": "work",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "techtree-work-envelopes",
+    "flags": [
+      {
+        "name": "--work-unit",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "--workspace-path",
+        "type": "path",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree work list",
+      "regents techtree work next --kind benchmark",
+      "regents techtree work accept --work-unit benchmark:bench_...",
+      "regents techtree work publish --workspace-path ./work"
+    ],
+    "agent_metadata": {
+      "category": "work",
+      "prompt_behavior": "confirm_before_accept_or_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree work list": {
+    "command": "techtree work list",
+    "owner": "techtree",
+    "group": "work",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "techtree-work-envelopes",
+    "flags": [
+      {
+        "name": "--kind",
+        "type": "enum",
+        "enum": [
+          "autoresearch",
+          "benchmark",
+          "bbh-train",
+          "science-task",
+          "terminal-science-bench",
+          "biomysterybench",
+          "paper-notebook",
+          "freeform-notebook",
+          "autoskill",
+          "fold-proof"
+        ],
+        "required": false
+      },
+      {
+        "name": "--limit",
+        "type": "integer",
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree work list",
+      "regents techtree work next --kind benchmark",
+      "regents techtree work accept --work-unit benchmark:bench_...",
+      "regents techtree work publish --workspace-path ./work"
+    ],
+    "agent_metadata": {
+      "category": "work",
+      "prompt_behavior": "confirm_before_accept_or_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree work next": {
+    "command": "techtree work next",
+    "owner": "techtree",
+    "group": "work",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "techtree-work-envelopes",
+    "flags": [
+      {
+        "name": "--kind",
+        "type": "enum",
+        "enum": [
+          "autoresearch",
+          "benchmark",
+          "bbh-train",
+          "science-task",
+          "terminal-science-bench",
+          "biomysterybench",
+          "paper-notebook",
+          "freeform-notebook",
+          "autoskill",
+          "fold-proof"
+        ],
+        "required": false
+      }
+    ],
+    "examples": [
+      "regents techtree work list",
+      "regents techtree work next --kind benchmark",
+      "regents techtree work accept --work-unit benchmark:bench_...",
+      "regents techtree work publish --workspace-path ./work"
+    ],
+    "agent_metadata": {
+      "category": "work",
+      "prompt_behavior": "confirm_before_accept_or_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
+  "techtree work publish": {
+    "command": "techtree work publish",
+    "owner": "techtree",
+    "group": "work",
+    "interface": "mixed",
+    "auth_mode": "mixed",
+    "output_envelope": "techtree-work-envelopes",
+    "flags": [
+      {
+        "name": "--workspace-path",
+        "type": "path",
+        "required": true
+      }
+    ],
+    "examples": [
+      "regents techtree work list",
+      "regents techtree work next --kind benchmark",
+      "regents techtree work accept --work-unit benchmark:bench_...",
+      "regents techtree work publish --workspace-path ./work"
+    ],
+    "agent_metadata": {
+      "category": "work",
+      "prompt_behavior": "confirm_before_accept_or_publish",
+      "json_support": "supported",
+      "mutation_class": "local-and-http-write",
+      "retry_behavior": "retry_reads_and_local_packaging",
+      "pagination": "bounded",
+      "async_behavior": "synchronous",
+      "input_mode": "args-and-flags"
+    }
+  },
   "wallet setup": {
     "command": "wallet setup",
     "owner": "shared-services",
@@ -8500,7 +9524,9 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
     ],
     "examples": [
       "regents status",
+      "regents setup --runtime auto --install-plugin",
       "regents setup skills",
+      "regents plugin status --runtime auto",
       "regents agent-context",
       "regents config get",
       "regents agent profile get"
@@ -8946,6 +9972,131 @@ export const CLI_COMMAND_DETAILS_BY_COMMAND = {
       "input_mode": "args-and-flags"
     },
     "summary": "Watch events for one work run."
+  },
+  "x402 details": {
+    "command": "x402 details",
+    "owner": "shared-services",
+    "group": "x402",
+    "interface": "runtime",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents x402 details --url https://api.example.com/paid --json",
+      "regents x402 quote --url https://api.example.com/paid --json",
+      "regents x402 prepare --url https://api.example.com/paid --approve --json",
+      "regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json",
+      "regents x402 receipts get --id x402_receipt_... --json"
+    ],
+    "agent_metadata": {
+      "category": "paid-api",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "payment-prepare-or-fetch",
+      "retry_behavior": "never_retry_payments",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "x402 fetch": {
+    "command": "x402 fetch",
+    "owner": "shared-services",
+    "group": "x402",
+    "interface": "runtime",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents x402 details --url https://api.example.com/paid --json",
+      "regents x402 quote --url https://api.example.com/paid --json",
+      "regents x402 prepare --url https://api.example.com/paid --approve --json",
+      "regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json",
+      "regents x402 receipts get --id x402_receipt_... --json"
+    ],
+    "agent_metadata": {
+      "category": "paid-api",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "payment-prepare-or-fetch",
+      "retry_behavior": "never_retry_payments",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "x402 prepare": {
+    "command": "x402 prepare",
+    "owner": "shared-services",
+    "group": "x402",
+    "interface": "runtime",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents x402 details --url https://api.example.com/paid --json",
+      "regents x402 quote --url https://api.example.com/paid --json",
+      "regents x402 prepare --url https://api.example.com/paid --approve --json",
+      "regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json",
+      "regents x402 receipts get --id x402_receipt_... --json"
+    ],
+    "agent_metadata": {
+      "category": "paid-api",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "payment-prepare-or-fetch",
+      "retry_behavior": "never_retry_payments",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "x402 quote": {
+    "command": "x402 quote",
+    "owner": "shared-services",
+    "group": "x402",
+    "interface": "runtime",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents x402 details --url https://api.example.com/paid --json",
+      "regents x402 quote --url https://api.example.com/paid --json",
+      "regents x402 prepare --url https://api.example.com/paid --approve --json",
+      "regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json",
+      "regents x402 receipts get --id x402_receipt_... --json"
+    ],
+    "agent_metadata": {
+      "category": "paid-api",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "payment-prepare-or-fetch",
+      "retry_behavior": "never_retry_payments",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
+  },
+  "x402 receipts get": {
+    "command": "x402 receipts get",
+    "owner": "shared-services",
+    "group": "x402",
+    "interface": "runtime",
+    "auth_mode": "local-wallet",
+    "output_envelope": "loose-object",
+    "examples": [
+      "regents x402 details --url https://api.example.com/paid --json",
+      "regents x402 quote --url https://api.example.com/paid --json",
+      "regents x402 prepare --url https://api.example.com/paid --approve --json",
+      "regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json",
+      "regents x402 receipts get --id x402_receipt_... --json"
+    ],
+    "agent_metadata": {
+      "category": "paid-api",
+      "prompt_behavior": "never_prompt",
+      "json_support": "supported",
+      "mutation_class": "payment-prepare-or-fetch",
+      "retry_behavior": "never_retry_payments",
+      "pagination": "none",
+      "async_behavior": "synchronous",
+      "input_mode": "flags"
+    }
   },
   "xmtp doctor": {
     "command": "xmtp doctor",

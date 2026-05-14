@@ -41,7 +41,7 @@ afterEach(() => {
 });
 
 describe("regents run presenter", () => {
-  it("explains what the local runtime makes available", () => {
+  it("explains what local Regent access makes available", () => {
     setStdoutTty(true);
     setStdoutColumns(88);
     delete process.env.NO_COLOR;
@@ -62,13 +62,13 @@ describe("regents run presenter", () => {
         capabilities: [
           {
             state: "ready",
-            label: "Local Regent runtime started",
+            label: "Regent is running locally",
             detail: "Keep this terminal open.",
           },
           {
             state: "waiting",
             label: "Agent identity checked",
-            detail: "Run regents identity ensure after this runtime is running.",
+            detail: "Run regents identity ensure after Regent is running.",
           },
           {
             state: "off",
@@ -95,7 +95,7 @@ describe("regents run presenter", () => {
       }),
     );
 
-    expect(output).toContain("REGENT LOCAL RUNTIME");
+    expect(output).toContain("REGENT IS RUNNING");
     expect(output).toContain("Keep this terminal open. Use another terminal for Regent commands.");
     expect(output).toContain("WHAT IS READY");
     expect(output).toContain("Agent identity checked");
@@ -104,5 +104,6 @@ describe("regents run presenter", () => {
     expect(output).toContain("regents search <query>");
     expect(output).toContain("It does not start hosted Regent.");
     expect(output).toContain("It does not move funds.");
+    expect(output).not.toContain("local runtime");
   });
 });

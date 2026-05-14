@@ -1,8 +1,9 @@
 import fs from "node:fs";
 
 import { RegentRuntime, defaultConfigPath } from "../internal-runtime/index.js";
+import { pluginStatus } from "../internal-runtime/plugin-bridge.js";
 import type { RegentConfig } from "../internal-types/index.js";
-import { getBooleanFlag, type ParsedCliArgs } from "../parse.js";
+import { getBooleanFlag, getFlag, type ParsedCliArgs } from "../parse.js";
 import { CLI_PALETTE, isHumanTerminal, printJson, printText, renderPanel, tone } from "../printer.js";
 
 export type RuntimeCapabilityState = "ready" | "waiting" | "off";
@@ -31,6 +32,8 @@ export interface RuntimeRunReport {
     readonly autolaunch: string;
   };
   readonly capabilities: readonly RuntimeCapability[];
+  readonly foldTrack: string | null;
+  readonly plugin: ReturnType<typeof pluginStatus>;
   readonly nextCommands: readonly RuntimeNextCommand[];
   readonly safetyNotes: readonly string[];
 }
@@ -77,7 +80,7 @@ const enabledHarnessNames = (config: RegentConfig): string[] =>
     .filter(([, harness]) => harness.enabled)
     .map(([name]) => name);
 
-const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
+const buildRuntimeRunReport = (runtime: RegentRuntime, args: ParsedCliArgs): RuntimeRunReport => {
   const config = runtime.config;
   const state = runtime.stateStore.read();
   const identity = state.agent;
@@ -86,6 +89,8 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
   const walletEnvSet = Boolean(process.env[config.wallet.privateKeyEnv]);
   const walletFileExists = fs.existsSync(config.wallet.keystorePath);
   const harnesses = enabledHarnessNames(config);
+  const foldTrack = getFlag(args, "fold") ?? null;
+  const plugin = pluginStatus("auto");
 
   return {
     ok: true,
@@ -98,16 +103,18 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
       platform: config.services.platform.baseUrl,
       autolaunch: config.services.autolaunch.baseUrl,
     },
+    foldTrack,
+    plugin,
     capabilities: [
       {
         state: "ready",
-        label: "Local Regent runtime started",
-        detail: `Keep this terminal open. Other terminals can now use the local runtime path ${config.runtime.socketPath}.`,
+        label: "Regent is running locally",
+        detail: `Keep this terminal open. Other terminals can now connect at ${config.runtime.socketPath}.`,
       },
       {
         state: "ready",
         label: "Local records opened",
-        detail: `Runtime notes, Agent identity, and saved sign-ins live under ${config.runtime.stateDir}.`,
+        detail: `Regent notes, Agent identity, and saved sign-ins live under ${config.runtime.stateDir}.`,
       },
       {
         state: walletEnvSet || walletFileExists ? "ready" : "waiting",
@@ -123,7 +130,7 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
         label: "Agent identity checked",
         detail: identity?.registryAddress && identity.tokenId
           ? `Agent token ${identity.tokenId} is saved for chain ${identity.chainId}.`
-          : "Run regents identity ensure after this runtime is running.",
+          : "Run regents identity ensure after Regent is running.",
       },
       {
         state: sessionReady ? "ready" : "waiting",
@@ -133,9 +140,16 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
           : "Run regents auth login --audience <platform|autolaunch|techtree|regent-services>.",
       },
       {
+        state: plugin.runtimes.some((entry) => entry.installed) ? "ready" : "waiting",
+        label: "Hermes/OpenClaw bridge checked",
+        detail: plugin.runtimes.some((entry) => entry.installed)
+          ? `Installed bridge: ${plugin.runtimes.filter((entry) => entry.installed).map((entry) => entry.runtime).join(", ")}.`
+          : "Run regents setup --runtime auto --install-plugin.",
+      },
+      {
         state: "ready",
-        label: "Techtree local work tools loaded",
-        detail: "Artifact, run, review, BBH, Science Task, Autoskill, notebook, pin, and publish commands can now use this runtime.",
+        label: "Techtree work tools loaded",
+        detail: "Work, benchmark, Science Task, notebook, Autoskill, Fold proof, and publish commands are ready in another terminal.",
       },
       {
         state: "ready",
@@ -171,9 +185,26 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
     ],
     nextCommands: [
       {
+        label: "Choose work",
+        command: "regents techtree work next --json",
+        when: "get the next agent-ready Techtree work item.",
+      },
+      {
+        label: "Accept work",
+        command: "regents techtree work accept --work-unit <id> --workspace-path ./work/<slug>",
+        when: "create the local folder for the selected work.",
+      },
+      ...(foldTrack
+        ? [{
+            label: "Fold track",
+            command: `regents techtree work next --kind ${foldTrack} --json`,
+            when: "start from the selected Fold-backed track.",
+          }]
+        : []),
+      {
         label: "Readiness",
         command: "regents status",
-        when: "see wallet, identity, runtime, Techtree, chatbox, and XMTP readiness.",
+        when: "see wallet, identity, Techtree, chatbox, and XMTP readiness.",
       },
       {
         label: "Account",
@@ -218,29 +249,28 @@ const buildRuntimeRunReport = (runtime: RegentRuntime): RuntimeRunReport => {
       {
         label: "Diagnostics",
         command: "regents doctor runtime",
-        when: "check this local runtime if a command cannot connect.",
+        when: "check local command access if a command cannot connect.",
       },
     ],
     safetyNotes: [
-      "This starts local control for Regent commands on this machine.",
+      "This lets Regent commands work from this machine.",
       "It does not start hosted Regent.",
       "It does not move funds.",
       "Wallet and transaction commands still require their own explicit signing or submit step.",
-      "Stop this process with Ctrl-C when you no longer need local commands to use it.",
+      "Stop this process with Ctrl-C when you no longer need Regent commands on this machine.",
     ],
   };
 };
 
 export const renderRuntimeRunScreen = (report: RuntimeRunReport): string =>
   [
-    renderPanel("◆ REGENT LOCAL RUNTIME", [
+    renderPanel("◆ REGENT IS RUNNING", [
       "Regent is running on this machine.",
       "Keep this terminal open. Use another terminal for Regent commands.",
-      "Stop this runtime with Ctrl-C.",
+      "Stop this with Ctrl-C.",
       "",
-      `${tone("config", CLI_PALETTE.secondary, true)} ${report.configPath}`,
-      `${tone("local runtime", CLI_PALETTE.secondary, true)} ${report.socketPath}`,
-      `${tone("state", CLI_PALETTE.secondary, true)} ${report.stateDir}`,
+      `${tone("settings", CLI_PALETTE.secondary, true)} ${report.configPath}`,
+      `${tone("records", CLI_PALETTE.secondary, true)} ${report.stateDir}`,
     ], {
       borderColor: CLI_PALETTE.emphasis,
       titleColor: CLI_PALETTE.title,
@@ -260,8 +290,8 @@ export const renderRuntimeRunScreen = (report: RuntimeRunReport): string =>
   ].join("\n\n");
 
 const renderRuntimeStoppedScreen = (): string =>
-  renderPanel("◆ REGENT LOCAL RUNTIME STOPPED", [
-    "The local runtime has stopped.",
+  renderPanel("◆ REGENT STOPPED", [
+    "Regent has stopped on this machine.",
     "Commands that need it will ask you to run regents run again.",
   ], {
     borderColor: CLI_PALETTE.accent,
@@ -271,7 +301,7 @@ const renderRuntimeStoppedScreen = (): string =>
 export async function runRuntime(args: ParsedCliArgs, configPath?: string): Promise<void> {
   const runtime = new RegentRuntime(configPath);
   await runtime.start();
-  const report = buildRuntimeRunReport(runtime);
+  const report = buildRuntimeRunReport(runtime, args);
   const humanOutput = isHumanTerminal() && !getBooleanFlag(args, "json");
   if (humanOutput) {
     printText(renderRuntimeRunScreen(report));

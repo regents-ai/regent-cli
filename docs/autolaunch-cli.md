@@ -10,7 +10,7 @@ The Platform-owned `regent-staking` rail uses [`../../platform/api-contract.open
 
 Chain language for this command group:
 
-- test and rehearsal launches use Base Sepolia
+- test and rehearsal launches use Base
 - production launches use Base mainnet
 - the `autolaunch` contract-linked path is Base only
 
@@ -34,6 +34,7 @@ The product rules for this CLI surface are:
 - that revenue only counts once it reaches the subject splitter
 - launch operators should use the CLI-first flow
 - launch participants should use the browser for auctions, claims, staking, and subject rewards
+- Techtree evidence packets can support prelaunch readiness, but they do not decide launch eligibility in this version
 - ingress is a receive-and-sweep wrapper, not a second accounting system
 - the Regent-side fee lane is a treasury payout path, not part of the active launch rewards path
 - subject output includes public revenue proof when available: source, chain, ingress account, revsplit contract, block number, amount, recipient lane, and whether the proof is fresh or stale
@@ -179,6 +180,8 @@ regents autolaunch prelaunch publish [--plan <id>]
 
 `prelaunch wizard` creates or updates the saved launch draft, uploads the hosted image if needed, validates the draft, and saves the canonical local copy under the CLI state directory.
 
+Prelaunch plans can carry a Techtree evidence packet reference. Readiness output should show that evidence as supporting context only; operators still decide whether the launch story is strong enough.
+
 ### Launch lifecycle
 
 ```bash
@@ -274,12 +277,7 @@ regents autolaunch launch create \
 regents autolaunch jobs watch <job-id> [--watch] [--interval <seconds>] [--json]
 ```
 
-`--chain` aliases are also accepted for launch creation:
-
-- `base-sepolia` -> `84532`
-- `base` / `base-mainnet` -> `8453`
-
-Autolaunch launch creation accepts only Base Sepolia and Base mainnet.
+Autolaunch launch creation accepts only Base.
 
 Successful launch output now includes the live V2 stack fields:
 

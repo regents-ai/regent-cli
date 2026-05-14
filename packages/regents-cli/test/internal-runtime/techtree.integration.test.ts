@@ -110,7 +110,7 @@ describe.skipIf(!integrationEnabled)("techtree integration", () => {
       registryAddress,
       tokenId,
       nonce: nonceResponse.data.nonce,
-      statement: "Sign in to Regents CLI.",
+      statement: "Sign in to techtree.",
     });
     const signature = await signPersonalMessage(wallet.privateKey, message);
 

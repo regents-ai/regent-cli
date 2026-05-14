@@ -139,6 +139,9 @@ export function renderUsageScreen(configPath: string): string {
       "regents autolaunch safe create",
       "regents regent-staking ...",
       "regents agentbook ...",
+      "regents x402 quote --url <paid-url>",
+      "regents x402 prepare --url <paid-url> --approve",
+      "regents x402 fetch --intent-id <intent-id> --url <paid-url>",
       "regents gossipsub status",
     ]),
     renderPanel("◆ BBH AFTER SETUP", [

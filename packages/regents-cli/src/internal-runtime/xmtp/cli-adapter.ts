@@ -52,22 +52,25 @@ const readRequiredFile = (filePath: string, kind: string): string => {
   return fs.readFileSync(filePath, "utf8").trim();
 };
 
-export const cliConnectionArgs = (config: RegentConfig["xmtp"]): string[] => {
+export const cliConnectionArgs = (config: RegentConfig["xmtp"]): string[] => [
+  "--env",
+  config.env,
+  "--db-path",
+  config.dbPath,
+  "--log-level",
+  "off",
+];
+
+export const cliConnectionEnv = (config: RegentConfig["xmtp"]): NodeJS.ProcessEnv => {
   const walletKey = readRequiredFile(config.walletKeyPath, "wallet key");
   const dbEncryptionKey = readRequiredFile(config.dbEncryptionKeyPath, "database encryption key");
 
-  return [
-    "--env",
-    config.env,
-    "--wallet-key",
-    walletKey,
-    "--db-encryption-key",
-    dbEncryptionKey,
-    "--db-path",
-    config.dbPath,
-    "--log-level",
-    "off",
-  ];
+  return {
+    ...process.env,
+    NO_COLOR: "1",
+    XMTP_WALLET_KEY: walletKey,
+    XMTP_DB_ENCRYPTION_KEY: dbEncryptionKey,
+  };
 };
 
 export const spawnXmtpCliProcess = (
@@ -75,22 +78,16 @@ export const spawnXmtpCliProcess = (
   args: string[],
 ): ChildProcessByStdio<null, import("node:stream").Readable, import("node:stream").Readable> => {
   return spawn(process.execPath, [resolveXmtpCliBinPath(), ...args, ...cliConnectionArgs(config)], {
-    env: {
-      ...process.env,
-      NO_COLOR: "1",
-    },
+    env: cliConnectionEnv(config),
     stdio: ["ignore", "pipe", "pipe"],
   });
 };
 
-export const runXmtpCli = async (args: string[]): Promise<string> => {
+export const runXmtpCli = async (args: string[], env: NodeJS.ProcessEnv = { ...process.env, NO_COLOR: "1" }): Promise<string> => {
   try {
     const { stdout } = await execFile(process.execPath, [resolveXmtpCliBinPath(), ...args], {
       encoding: "utf8",
-      env: {
-        ...process.env,
-        NO_COLOR: "1",
-      },
+      env,
       maxBuffer: 1024 * 1024 * 4,
     });
 
@@ -111,7 +108,7 @@ export const runXmtpCli = async (args: string[]): Promise<string> => {
 };
 
 export const runConnectedXmtpCli = async (config: RegentConfig["xmtp"], args: string[]): Promise<string> => {
-  return runXmtpCli([...args, ...cliConnectionArgs(config)]);
+  return runXmtpCli([...args, ...cliConnectionArgs(config)], cliConnectionEnv(config));
 };
 
 export const runConnectedXmtpCliJson = async <T>(config: RegentConfig["xmtp"], args: string[]): Promise<T> => {

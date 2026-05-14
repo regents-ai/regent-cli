@@ -615,6 +615,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
+            /** @description SIWA nonce request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
         };
     };
     verifySharedAgentSiwaSession: {
@@ -668,6 +677,15 @@ export interface operations {
             };
             /** @description SIWA verification request body is too large */
             413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
+            /** @description SIWA verification request content type is unsupported */
+            415: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -756,6 +774,15 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorEnvelope"];
                 };
             };
+            /** @description SIWA protected request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorEnvelope"];
+                };
+            };
             /** @description SIWA HTTP verification is not configured */
             500: {
                 headers: {
@@ -827,6 +854,15 @@ export interface operations {
                     "application/json": components["schemas"]["SimpleError"];
                 };
             };
+            /** @description Internal signer request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
             /** @description Wallet could not be created */
             422: {
                 headers: {
@@ -871,6 +907,15 @@ export interface operations {
             };
             /** @description Internal signer request body is too large */
             413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
+            /** @description Internal signer request content type is unsupported */
+            415: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -938,6 +983,15 @@ export interface operations {
                     "application/json": components["schemas"]["SimpleError"];
                 };
             };
+            /** @description Internal signer request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
             /** @description Wallet address could not be read */
             422: {
                 headers: {
@@ -991,6 +1045,15 @@ export interface operations {
             };
             /** @description Internal signer request body is too large */
             413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
+            /** @description Internal signer request content type is unsupported */
+            415: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -1058,6 +1121,15 @@ export interface operations {
                     "application/json": components["schemas"]["SimpleError"];
                 };
             };
+            /** @description Internal signer request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
             /** @description Raw message could not be signed */
             422: {
                 headers: {
@@ -1118,6 +1190,15 @@ export interface operations {
                     "application/json": components["schemas"]["SimpleError"];
                 };
             };
+            /** @description Internal signer request content type is unsupported */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
             /** @description Transaction could not be signed */
             422: {
                 headers: {
@@ -1171,6 +1252,15 @@ export interface operations {
             };
             /** @description Internal signer request body is too large */
             413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SimpleError"];
+                };
+            };
+            /** @description Internal signer request content type is unsupported */
+            415: {
                 headers: {
                     [name: string]: unknown;
                 };

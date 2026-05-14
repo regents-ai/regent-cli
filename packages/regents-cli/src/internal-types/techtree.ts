@@ -121,6 +121,167 @@ export interface NodePurchaseVerifyResponse {
   };
 }
 
+export interface RunbookQuestion {
+  id: string;
+  problem_id: string;
+  problem: RunbookProblem;
+  asker_agent_id: number;
+  tool: string;
+  tool_version: string | null;
+  runtime: string | null;
+  command: string;
+  error_signature: string;
+  docs_followed_url: string | null;
+  skill_followed_id: string | null;
+  redacted_log_bundle: Record<string, unknown>;
+  environment: Record<string, unknown>;
+  failed_attempts: string[];
+  root_cause_category: string | null;
+  status: "open" | "answered" | "solved" | "deprecated";
+  solved_answer_id: string | null;
+  public_visibility: "public" | "unlisted";
+  xmtp_room: Record<string, unknown> | null;
+  answers: RunbookAnswer[];
+  inserted_at: string | null;
+  updated_at: string | null;
+}
+
+export interface RunbookProblem {
+  id: string;
+  vendor: string;
+  product: string;
+  tool: string;
+  command: string;
+  error_signature: string;
+  skill_followed_id: string | null;
+  docs_followed_url: string | null;
+  status: "open" | "solved" | "deprecated";
+  question_count: number;
+  solved_answer_id: string | null;
+  updated_at: string | null;
+}
+
+export interface RunbookAnswer {
+  id: string;
+  question_id: string;
+  problem_id: string;
+  solver_agent_id: number;
+  public_summary: string;
+  root_cause_category: string | null;
+  risk_level:
+    | "read_only"
+    | "local_write"
+    | "network_call"
+    | "credential_touching"
+    | "billing_touching"
+    | "deployment"
+    | "money_movement"
+    | "destructive";
+  applicability: Record<string, unknown>;
+  status: "candidate" | "marked_solved" | "reproduced" | "reviewed" | "deprecated";
+  price_usdc: string;
+  public_unlock_price_usdc: string;
+  payment_address: `0x${string}`;
+  revenue_split: Record<string, unknown>;
+  unlock_count: number;
+  upvote_count: number;
+  downvote_count: number;
+  inserted_at: string | null;
+  updated_at: string | null;
+}
+
+export interface RunbookQuestionCreateInput {
+  vendor: string;
+  product: string;
+  tool: string;
+  tool_version?: string;
+  runtime?: string;
+  command: string;
+  error_signature: string;
+  docs_followed_url?: string;
+  skill_followed_id?: string;
+  redacted_log_bundle?: Record<string, unknown>;
+  environment?: Record<string, unknown>;
+  failed_attempts?: string[];
+  root_cause_category?: string;
+  public_visibility?: "public" | "unlisted";
+}
+
+export interface RunbookAnswerCreateInput {
+  public_summary: string;
+  price_usdc: string;
+  public_unlock_price_usdc?: string;
+  private_solution_payload?: Record<string, unknown>;
+  root_cause_category?: string;
+  risk_level?: RunbookAnswer["risk_level"];
+  applicability?: Record<string, unknown>;
+}
+
+export interface RunbookPaidSolutionInput {
+  price_usdc?: string;
+  public_unlock_price_usdc?: string;
+  private_solution_payload?: Record<string, unknown>;
+}
+
+export interface RunbookPaymentProfileInput {
+  payment_address: `0x${string}`;
+}
+
+export interface RunbookMarkSolvedInput {
+  answer_id: string;
+  note?: string;
+}
+
+export interface RunbookUnlockInput {
+  amount_usdc: string;
+  x402_receipt_id: string;
+  x402_payment_hash: string;
+  payer_wallet_address?: `0x${string}`;
+  pay_to_address: `0x${string}`;
+  receipt?: Record<string, unknown>;
+}
+
+export interface RunbookVoteInput {
+  vote: "up" | "down";
+}
+
+export interface RunbookInviteRequestInput {
+  answer_id?: string;
+  note?: string;
+}
+
+export interface RunbookQuestionListResponse {
+  data: RunbookQuestion[];
+}
+
+export interface RunbookQuestionResponse {
+  data: RunbookQuestion;
+}
+
+export interface RunbookAnswerResponse {
+  data: RunbookAnswer;
+}
+
+export interface RunbookPaymentProfileResponse {
+  data: {
+    agent_identity_id: number;
+    payment_address: `0x${string}`;
+    updated_at: string | null;
+  };
+}
+
+export interface RunbookUnlockResponse {
+  data: Record<string, unknown>;
+}
+
+export interface RunbookVoteResponse {
+  data: Record<string, unknown>;
+}
+
+export interface RunbookInviteRequestResponse {
+  data: Record<string, unknown>;
+}
+
 export interface AutoskillCreateSkillResponse {
   data: {
     node_id: number;
@@ -485,6 +646,9 @@ export type BenchmarkScoreStatus = "unscored" | "scored" | "rejected";
 export type BenchmarkValidationRole = "official" | "community" | "reviewer" | "author" | "oracle";
 export type BenchmarkValidationMethod = "replay" | "manual" | "replication" | "oracle" | "hidden_truth_check";
 export type BenchmarkValidationResult = "confirmed" | "rejected" | "mixed" | "needs_revision" | "inconclusive";
+export type BenchmarkProofLevel = "self_reported" | "external_eval" | "reproducible" | "tee_attested" | "cross_provider";
+export type BenchmarkProofStatus = "pending" | "verified" | "challenged" | "final" | "revoked";
+export type BenchmarkVerifierProviderKind = "prime_eval" | "ecloud_tdx" | "techtree_replay";
 
 export interface BenchmarkReliabilitySummary {
   summary_id: string;
@@ -609,6 +773,104 @@ export interface BenchmarkValidation {
   review_source: Record<string, unknown>;
 }
 
+export interface BenchmarkVerifierReceipt {
+  receipt_id: string;
+  attempt_id: string;
+  capsule_id: string;
+  version_id: string;
+  harness_id: string;
+  provider_kind: BenchmarkVerifierProviderKind;
+  provider_ref?: string | null;
+  proof_level: BenchmarkProofLevel;
+  proof_status: BenchmarkProofStatus;
+  verifier_wallet_address: string;
+  verifier_image_digest?: string | null;
+  tee_attestation_ref?: string | null;
+  score_hash?: string | null;
+  run_bundle_sha256?: string | null;
+  receipt_hash: string;
+  signature: string;
+  issued_at: string;
+  receipt_payload: Record<string, unknown>;
+  inserted_at?: string | null;
+  updated_at?: string | null;
+}
+
+export interface BenchmarkProof {
+  attempt_id: string;
+  capsule_id: string;
+  version_id: string;
+  harness_id: string;
+  proof_level: BenchmarkProofLevel;
+  proof_status: BenchmarkProofStatus;
+  reward_eligible: boolean;
+  leaderboard_eligible: boolean;
+  verified_at?: string | null;
+  evidence_ref: string;
+  verifier_receipts: BenchmarkVerifierReceipt[];
+  validations: BenchmarkValidation[];
+  attempt: BenchmarkAttempt;
+}
+
+export interface BenchmarkVerifierReceiptCreateInput {
+  attempt_id: string;
+  provider_kind: BenchmarkVerifierProviderKind;
+  provider_ref?: string | null;
+  proof_level: BenchmarkProofLevel;
+  proof_status?: BenchmarkProofStatus;
+  verifier_wallet_address: string;
+  verifier_image_digest?: string | null;
+  tee_attestation_ref?: string | null;
+  score_hash?: string | null;
+  run_bundle_sha256?: string | null;
+  receipt_hash: string;
+  signature: string;
+  issued_at: string;
+  receipt_payload?: Record<string, unknown>;
+}
+
+export interface FoldPolicyInput {
+  enabled: boolean;
+  monthly_budget_usd_micros: number;
+  daily_budget_usd_micros: number;
+  max_work_unit_usd_micros: number;
+  min_proof_for_rewards: BenchmarkProofLevel;
+  allowed_tools: string[];
+  allowed_models: string[];
+  privacy_classes: Array<"public" | "blinded" | "hidden_scorer">;
+  reward_wallet_address?: string | null;
+  reporting: Record<string, unknown>;
+}
+
+export interface FoldPolicy extends FoldPolicyInput {
+  updated_at?: string | null;
+}
+
+export interface FoldStatus {
+  agent_id: string;
+  wallet_address: string;
+  policy: FoldPolicy;
+  reward_lane: "fold";
+  proof_counts: Record<string, number>;
+  proof_status_counts: Record<string, number>;
+  verified_attempt_count: number;
+  highest_proof_level: BenchmarkProofLevel;
+  latest_proofs: BenchmarkProof[];
+}
+
+export interface TechtreeEvidencePacket {
+  evidence_packet_ref: string;
+  agent_id: string;
+  wallet_address: string;
+  generated_at: string;
+  reward_lane: "fold";
+  proof_counts: Record<string, number>;
+  proof_status_counts: Record<string, number>;
+  verified_attempt_count: number;
+  highest_proof_level: BenchmarkProofLevel;
+  latest_proofs: BenchmarkProof[];
+}
+
 export interface BenchmarkCapsuleCreateInput {
   capsule_id?: string;
   domain: BenchmarkDomain;
@@ -725,6 +987,26 @@ export interface BenchmarkValidationResponse {
   data: BenchmarkValidation;
 }
 
+export interface BenchmarkVerifierReceiptResponse {
+  data: BenchmarkVerifierReceipt;
+}
+
+export interface BenchmarkProofResponse {
+  data: BenchmarkProof;
+}
+
+export interface FoldPolicyResponse {
+  data: FoldPolicy;
+}
+
+export interface FoldStatusResponse {
+  data: FoldStatus;
+}
+
+export interface TechtreeEvidencePacketResponse {
+  data: TechtreeEvidencePacket;
+}
+
 export interface BenchmarkReliabilityListResponse {
   data: BenchmarkReliabilitySummary[];
 }
@@ -749,7 +1031,7 @@ export interface BenchmarkWorkspaceActionResult {
   manifest_sha256?: string;
 }
 
-export type TechRewardLane = "science" | "usdc_input";
+export type TechRewardLane = "science" | "usdc_input" | "fold";
 
 export interface TechContractStatus {
   chain_id: number;
@@ -771,6 +1053,7 @@ export interface TechRewardEpoch {
   total_emission_amount: string;
   science_budget_amount: string;
   input_budget_amount: string;
+  fold_budget_amount: string;
 }
 
 export interface TechStatusResponse {
@@ -1087,6 +1370,39 @@ export interface WorkPacketResponse {
   node: TreeNode;
   comments: TreeComment[];
   activity_events: ActivityEvent[];
+}
+
+export type TechtreeWorkKind =
+  | "autoresearch"
+  | "benchmark"
+  | "bbh-train"
+  | "science-task"
+  | "terminal-science-bench"
+  | "biomysterybench"
+  | "paper-notebook"
+  | "freeform-notebook"
+  | "autoskill"
+  | "fold-proof";
+
+export interface TechtreeWorkItem {
+  id: string;
+  kind: TechtreeWorkKind;
+  title: string;
+  summary: string;
+  branch: string;
+  href: string;
+  command: string;
+  expected_output: string;
+  publication_path: string;
+  accepted_at?: string;
+}
+
+export interface TechtreeWorkListResponse {
+  data: TechtreeWorkItem[];
+}
+
+export interface TechtreeWorkResponse {
+  data: TechtreeWorkItem;
 }
 
 export interface AgentInboxResponse {

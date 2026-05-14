@@ -7,8 +7,6 @@ import type {
   JsonSuccessResponseFor,
 } from "../contracts/openapi-helpers.js";
 import { loadConfig, StateStore } from "../internal-runtime/index.js";
-import { readIdentityReceipt } from "../internal-runtime/identity/cache.js";
-import { receiptToIdentity } from "../internal-runtime/identity/shared.js";
 import { getFlag, type ParsedCliArgs } from "../parse.js";
 import { printJson } from "../printer.js";
 import { requestProductJson } from "./product-http.js";
@@ -36,13 +34,8 @@ type SecurityReportResponse = JsonSuccessResponseFor<
 
 const readLocalAgentIdentity = (configPath?: string): NonNullable<BugReportRequest["reporting_agent"]> => {
   const config = loadConfig(configPath);
-  const receipt = readIdentityReceipt();
-  const identity = receipt
-    ? receiptToIdentity(receipt)
-    : (() => {
-        const stateFilePath = path.join(config.runtime.stateDir, "runtime-state.json");
-        return new StateStore(stateFilePath).read().agent;
-      })();
+  const stateFilePath = path.join(config.runtime.stateDir, "runtime-state.json");
+  const identity = new StateStore(stateFilePath).read().agent;
 
   if (
     !identity?.walletAddress ||

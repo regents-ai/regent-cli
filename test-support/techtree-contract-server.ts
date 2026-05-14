@@ -974,6 +974,9 @@ export class TechtreeContractServer {
         if (issuedNonce.expiresAtUnixSeconds <= currentUnixSeconds()) {
           issues.push("nonce is expired");
         }
+        if (payload.message && !payload.message.includes(`Sign in to ${issuedNonce.audience}.`)) {
+          issues.push("message does not include audience statement");
+        }
       }
 
       if (payload.message && payload.wallet_address && payload.chain_id && payload.nonce) {

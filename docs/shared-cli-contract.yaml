@@ -43,11 +43,25 @@ command_groups:
       input_mode: args-and-flags
       examples:
         - regents status
+        - regents setup --runtime auto --install-plugin
         - regents setup skills
+        - regents plugin status --runtime auto
         - regents agent-context
         - regents config get
         - regents agent profile get
       commands:
+        setup:
+          category: local-setup
+          prompt_behavior: never_prompt
+          json_support: supported
+          mutation_class: local-write
+          retry_behavior: safe
+          pagination: none
+          async_behavior: synchronous
+          input_mode: flags
+          examples:
+            - regents setup --runtime auto --install-plugin
+            - regents setup --runtime hermes --install-plugin
         setup skills:
           category: local-setup
           prompt_behavior: never_prompt
@@ -71,14 +85,53 @@ command_groups:
           input_mode: flags
           examples:
             - regents run
+            - regents run --fold autoresearch
             - regents run --json
+        plugin status:
+          category: local-setup
+          prompt_behavior: never_prompt
+          json_support: supported
+          mutation_class: local-read
+          retry_behavior: safe
+          pagination: none
+          async_behavior: synchronous
+          input_mode: flags
+          examples:
+            - regents plugin status --runtime auto
+        plugin install:
+          category: local-setup
+          prompt_behavior: confirm_before_write
+          json_support: supported
+          mutation_class: local-write
+          retry_behavior: safe
+          pagination: none
+          async_behavior: synchronous
+          input_mode: flags
+          examples:
+            - regents plugin install --runtime hermes
+            - regents plugin install --runtime openclaw
+        plugin doctor:
+          category: diagnostics
+          prompt_behavior: never_prompt
+          json_support: supported
+          mutation_class: local-read
+          retry_behavior: safe
+          pagination: none
+          async_behavior: synchronous
+          input_mode: flags
+          examples:
+            - regents plugin doctor --runtime auto
     commands:
       - init
       - status
       - whoami
       - balance
       - agent-context
+      - setup
       - setup skills
+      - plugin status
+      - plugin install
+      - plugin doctor
       - run
       - config get
       - config write
@@ -105,11 +158,44 @@ command_groups:
           type: boolean
           required: false
           description: Print the installed skill summary as JSON.
+      setup:
+        - name: --runtime
+          type: enum
+          enum: [auto, hermes, openclaw]
+          required: true
+          description: Choose the local agent runtime to prepare.
+        - name: --install-plugin
+          type: boolean
+          required: false
+          description: Install the Regent plugin bridge for the chosen runtime.
       run:
         - name: --json
           type: boolean
           required: false
           description: Print the local runtime summary as JSON.
+        - name: --fold
+          type: enum
+          enum: [starter, autoresearch, bbh-public-v1]
+          required: false
+          description: Start Regent with a proof-producing Techtree Fold track.
+      plugin status:
+        - name: --runtime
+          type: enum
+          enum: [auto, hermes, openclaw]
+          required: false
+          description: Runtime to inspect. Defaults to auto.
+      plugin install:
+        - name: --runtime
+          type: enum
+          enum: [hermes, openclaw]
+          required: true
+          description: Runtime that should receive the Regent plugin bridge.
+      plugin doctor:
+        - name: --runtime
+          type: enum
+          enum: [auto, hermes, openclaw]
+          required: false
+          description: Runtime to diagnose. Defaults to auto.
   - name: wallet
     interface: runtime
     auth_mode: none
@@ -192,8 +278,121 @@ command_groups:
       input_mode: args
       examples:
         - regents mcp export hermes
+        - regents mcp export codex
+        - regents mcp tools list --json
+        - regents mcp doctor --json
+        - regents mcp serve --transport stdio
     commands:
       - mcp export hermes
+      - mcp export codex
+      - mcp tools list
+      - mcp doctor
+      - mcp serve
+    command_flags:
+    mcp serve:
+      - name: transport
+        required: true
+        description: MCP transport to start. Use stdio locally or streamable-http for a bearer-protected sidecar.
+      - name: host
+        required: false
+        description: Host for streamable-http MCP.
+      - name: port
+        required: false
+        description: Port for streamable-http MCP.
+  - name: x402
+    interface: runtime
+    auth_mode: local-wallet
+    output_envelope: loose-object
+    agent_metadata:
+      category: paid-api
+      prompt_behavior: never_prompt
+      json_support: supported
+      mutation_class: payment-prepare-or-fetch
+      retry_behavior: never_retry_payments
+      pagination: none
+      async_behavior: synchronous
+      input_mode: flags
+      examples:
+        - regents x402 details --url https://api.example.com/paid --json
+        - regents x402 quote --url https://api.example.com/paid --json
+        - regents x402 prepare --url https://api.example.com/paid --approve --json
+        - regents x402 fetch --intent-id x402_intent_... --url https://api.example.com/paid --json
+        - regents x402 receipts get --id x402_receipt_... --json
+    commands:
+      - x402 details
+      - x402 quote
+      - x402 prepare
+      - x402 fetch
+      - x402 receipts get
+    command_flags:
+    x402 details:
+      - name: url
+        required: true
+        description: Protected resource URL to inspect.
+      - name: method
+        required: false
+        description: HTTP method for the protected resource request.
+      - name: body
+        required: false
+        description: Request body used while inspecting the protected resource.
+      - name: header
+        required: false
+        description: Repeatable request header in Name/value form.
+    x402 quote:
+      - name: url
+        required: true
+        description: Protected resource URL to quote.
+      - name: method
+        required: false
+        description: HTTP method for the protected resource request.
+      - name: body
+        required: false
+        description: Request body used while quoting the protected resource.
+      - name: header
+        required: false
+        description: Repeatable request header in Name/value form.
+      - name: max-amount
+        required: false
+        description: Maximum accepted atomic token amount.
+    x402 prepare:
+      - name: url
+        required: true
+        description: Protected resource URL to prepare.
+      - name: method
+        required: false
+        description: HTTP method for the protected resource request.
+      - name: body
+        required: false
+        description: Request body used while preparing the protected resource.
+      - name: header
+        required: false
+        description: Repeatable request header in Name/value form.
+      - name: max-amount
+        required: false
+        description: Maximum accepted atomic token amount.
+      - name: approve
+        required: false
+        description: Record explicit local operator approval for the prepared x402 request.
+    x402 fetch:
+      - name: intent-id
+        required: true
+        description: Approved x402 intent to use.
+      - name: url
+        required: true
+        description: Protected resource URL to fetch.
+      - name: method
+        required: false
+        description: HTTP method for the protected resource request.
+      - name: body
+        required: false
+        description: Request body used while fetching the protected resource.
+      - name: header
+        required: false
+        description: Repeatable request header in Name/value form.
+    x402 receipts get:
+      - name: id
+        required: true
+        description: x402 receipt id to read from the local Regent receipt store.
   - name: feynman
     interface: local-process
     auth_mode: none

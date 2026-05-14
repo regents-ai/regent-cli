@@ -2529,6 +2529,32 @@ export interface components {
             } | null;
             prepared: components["schemas"]["PreparedAction"];
         };
+        SupportingEvidence: {
+            /** @enum {string} */
+            kind: "techtree_evidence_packet";
+            label: string;
+            ref: string;
+            /** @enum {string} */
+            source: "techtree";
+        };
+        AgentReadinessEnvelope: {
+            /** @enum {boolean} */
+            ok: true;
+            agent_id: string;
+            agent_name?: string | null;
+            launch_eligible: boolean;
+            launch_blockers: string[];
+            existing_token?: {
+                [key: string]: unknown;
+            } | null;
+            supported_chains: string[];
+            readiness: {
+                [key: string]: unknown;
+            };
+            supporting_evidence: components["schemas"]["SupportingEvidence"][];
+        } & {
+            [key: string]: unknown;
+        };
         PrelaunchMetadataDraft: {
             title?: string | null;
             subtitle?: string | null;
@@ -2545,6 +2571,7 @@ export interface components {
             agent_safe_address: components["schemas"]["Address"];
             launch_notes?: string | null;
             metadata_draft?: components["schemas"]["PrelaunchMetadataDraft"] | null;
+            techtree_evidence_packet_ref?: string | null;
             minimum_raise_usdc: components["schemas"]["DecimalString"];
             minimum_raise_usdc_raw: string;
             status?: string | null;
@@ -2558,6 +2585,7 @@ export interface components {
             agent_safe_address: components["schemas"]["Address"];
             launch_notes?: string | null;
             metadata_draft?: components["schemas"]["PrelaunchMetadataDraft"] | null;
+            techtree_evidence_packet_ref?: string | null;
             minimum_raise_usdc: components["schemas"]["DecimalString"];
         };
         PrelaunchPlanEnvelope: {
@@ -4233,7 +4261,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["AgentReadinessEnvelope"];
                 };
             };
         };
@@ -5759,7 +5787,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LooseObject"];
+                    "application/json": components["schemas"]["AgentReadinessEnvelope"];
                 };
             };
         };

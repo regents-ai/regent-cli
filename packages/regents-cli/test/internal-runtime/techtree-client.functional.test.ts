@@ -95,7 +95,7 @@ const authenticate = async ({ client, stateStore, sessionStore }: ClientHarness)
     tokenId: "99",
     nonce: nonce.data.nonce,
     issuedAt: "2026-03-10T00:00:00.000Z",
-    statement: "Sign in to Regents CLI.",
+    statement: "Sign in to techtree.",
   });
 
   const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
@@ -532,7 +532,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
       tokenId: "99",
       nonce: nonce.data.nonce,
       issuedAt: "2026-03-10T00:00:00.000Z",
-      statement: "Sign in to Regents CLI.",
+      statement: "Sign in to techtree.",
     });
     const signature = await signPersonalMessage(TEST_PRIVATE_KEY, message);
     const verify = await harness.client.siwaVerify({
@@ -609,7 +609,7 @@ describeNetwork("TechtreeClient functional coverage", () => {
           tokenId: "99",
           nonce: "doctor-invalid-nonce",
           issuedAt: "2026-03-10T00:00:00.000Z",
-          statement: "Sign in to Regents CLI.",
+          statement: "Sign in to techtree.",
         }),
         signature: `0x${"00".repeat(65)}`,
       }),

@@ -163,6 +163,15 @@ export const autolaunchChainId = (args: ParsedCliArgs): AutolaunchChainId => {
   throw new Error("autolaunch only supports Base Sepolia (84532) and Base mainnet (8453)");
 };
 
+export const requireLaunchChainId = (args: ParsedCliArgs): AutolaunchChainId => {
+  const resolved = requireArg(getFlag(args, "chain-id"), "chain-id");
+  if (resolved === "84532" || resolved === "8453") {
+    return resolved;
+  }
+
+  throw new Error("autolaunch launch supports only Base Sepolia (84532) and Base mainnet (8453)");
+};
+
 export const configuredPrivateKey = async (
   configPath?: string,
 ): Promise<`0x${string}`> => {
@@ -326,7 +335,7 @@ export const submitPreparedTxRequest = async (
 };
 
 export const requireLaunchIdentity = (args: ParsedCliArgs) => {
-  const chainId = autolaunchChainId(args);
+  const chainId = requireLaunchChainId(args);
   const agentSafeAddress = requireArg(getFlag(args, "agent-safe-address"), "agent-safe-address");
 
   return {

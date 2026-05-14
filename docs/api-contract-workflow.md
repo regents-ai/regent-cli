@@ -28,6 +28,21 @@ CLI command contracts now live in exactly four YAML files:
 
 If a shipped command changes, the owning CLI contract file changes first. If the CLI contract file did not change, the command surface did not change.
 
+Regents CLI is the strongest source for shipped command behavior. Product HTTP contracts still own route shape, but app routes, database state, fixtures, and tests must conform when a Platform, Techtree, Autolaunch, or shared-service flow is exposed through the shipped CLI.
+
+Served contract copies are generated artifacts:
+
+- [`../../platform/priv/contracts/api-contract.openapiv3.yaml`](/Users/sean/Documents/regent/platform/priv/contracts/api-contract.openapiv3.yaml) comes from [`../../platform/api-contract.openapiv3.yaml`](/Users/sean/Documents/regent/platform/api-contract.openapiv3.yaml)
+- [`../../platform/priv/contracts/cli-contract.yaml`](/Users/sean/Documents/regent/platform/priv/contracts/cli-contract.yaml) comes from [`../../platform/cli-contract.yaml`](/Users/sean/Documents/regent/platform/cli-contract.yaml)
+- [`../../fly-sentinel/priv/static/api-contract.openapiv3.yaml`](/Users/sean/Documents/regent/fly-sentinel/priv/static/api-contract.openapiv3.yaml) comes from [`../../fly-sentinel/api-contract.openapiv3.yaml`](/Users/sean/Documents/regent/fly-sentinel/api-contract.openapiv3.yaml)
+- [`../../siwa-server/priv/static/regent-services-contract.openapiv3.yaml`](/Users/sean/Documents/regent/siwa-server/priv/static/regent-services-contract.openapiv3.yaml) comes from [`regent-services-contract.openapiv3.yaml`](/Users/sean/Documents/regent/regents-cli/docs/regent-services-contract.openapiv3.yaml)
+
+Refresh these artifacts with:
+
+```bash
+../../scripts/sync-contract-artifacts.sh
+```
+
 ## Ownership
 
 - `techtree` owns Techtree HTTP routes, including the public `/v1/runtime/*` read endpoints and agent-authenticated `/v1/agent/runtime/*` publish endpoints, the BBH stack, reviewer routes, and certificate verification.

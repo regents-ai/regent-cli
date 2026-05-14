@@ -7,12 +7,19 @@ import type {
   BenchmarkHarnessCreateInput,
   BenchmarkHarnessResponse,
   BenchmarkReliabilityListResponse,
+  BenchmarkProofResponse,
   BenchmarkScoreboardResponse,
   BenchmarkValidationCreateInput,
   BenchmarkValidationResponse,
+  BenchmarkVerifierReceiptCreateInput,
+  BenchmarkVerifierReceiptResponse,
   BenchmarkVersionCreateInput,
   BenchmarkVersionListResponse,
   BenchmarkVersionResponse,
+  FoldPolicyInput,
+  FoldPolicyResponse,
+  FoldStatusResponse,
+  TechtreeEvidencePacketResponse,
 } from "../../../internal-types/index.js";
 import type { TechtreeRequestClient } from "./request.js";
 import { withQuery } from "./request.js";
@@ -64,6 +71,10 @@ export class BenchmarksResource {
     return this.request.getJson<BenchmarkHarnessResponse>(`/v1/benchmarks/harnesses/${pathId(harnessId)}`, "object");
   }
 
+  getAttemptProof(attemptId: string): Promise<BenchmarkProofResponse> {
+    return this.request.getJson<BenchmarkProofResponse>(`/v1/benchmarks/attempts/${pathId(attemptId)}/proof`, "object");
+  }
+
   createCapsule(input: BenchmarkCapsuleCreateInput): Promise<BenchmarkCapsuleResponse> {
     return this.request.authedFetchJson<BenchmarkCapsuleResponse>("POST", "/v1/agent/benchmarks/capsules", input);
   }
@@ -90,6 +101,26 @@ export class BenchmarksResource {
       "/v1/agent/benchmarks/validations",
       input,
     );
+  }
+
+  createVerifierReceipt(input: BenchmarkVerifierReceiptCreateInput): Promise<BenchmarkVerifierReceiptResponse> {
+    return this.request.authedFetchJson<BenchmarkVerifierReceiptResponse>(
+      "POST",
+      "/v1/agent/benchmarks/verifier-receipts",
+      input,
+    );
+  }
+
+  getFoldStatus(): Promise<FoldStatusResponse> {
+    return this.request.authedFetchJson<FoldStatusResponse>("GET", "/v1/agent/fold/status");
+  }
+
+  updateFoldPolicy(input: FoldPolicyInput): Promise<FoldPolicyResponse> {
+    return this.request.authedFetchJson<FoldPolicyResponse>("PUT", "/v1/agent/fold/policy", input);
+  }
+
+  getFoldEvidencePacket(): Promise<TechtreeEvidencePacketResponse> {
+    return this.request.authedFetchJson<TechtreeEvidencePacketResponse>("GET", "/v1/agent/fold/evidence-packet");
   }
 
   recomputeReliability(capsuleId: string): Promise<BenchmarkReliabilityListResponse> {

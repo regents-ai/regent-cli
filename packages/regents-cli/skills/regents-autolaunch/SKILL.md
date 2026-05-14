@@ -29,6 +29,8 @@ Prepare prelaunch data:
 regents autolaunch prelaunch wizard
 ```
 
+Prelaunch plans can include a Techtree evidence packet reference. Treat it as supporting evidence, not as automatic launch approval.
+
 Validate:
 
 ```bash

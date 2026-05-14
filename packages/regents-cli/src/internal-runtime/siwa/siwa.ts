@@ -11,8 +11,12 @@ import { ProductHttpError, requestProductResponse } from "../product-http-client
 
 const DEFAULT_DOMAIN = "regent.cx";
 const DEFAULT_URI = "https://regent.cx/v1/agent/siwa/verify";
-const DEFAULT_STATEMENT = "Sign in to Regents CLI.";
+const DEFAULT_STATEMENT = siwaAudienceStatement("Regents CLI");
 type SiwaRequestBody = NonNullable<Parameters<typeof fetch>[1]> extends { readonly body?: infer Body } ? Body : never;
+
+export function siwaAudienceStatement(audience: string): string {
+  return `Sign in to ${audience}.`;
+}
 
 export function buildSiwaMessage(input: {
   domain: string;

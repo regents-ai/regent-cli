@@ -3659,7 +3659,7 @@ export interface operations {
         };
         requestBody?: never;
         responses: {
-            /** @description Discovery card for the Regents MCP-related public resources */
+            /** @description Discovery card for the Regents MCP resources and, when configured, the authenticated remote MCP endpoint */
             200: {
                 headers: {
                     [name: string]: unknown;
@@ -3979,8 +3979,8 @@ export interface operations {
                     address: string;
                     label: string;
                     signature: string;
-                    timestamp: number | string;
-                    useCredit?: boolean | string;
+                    timestamp: number;
+                    useCredit?: boolean;
                     paymentTxHash?: string;
                     paymentChainId?: number;
                 };
@@ -4018,7 +4018,7 @@ export interface operations {
                     label: string;
                     timestamp: number;
                     signature: string;
-                    isRandom?: boolean | string;
+                    isRandom?: boolean;
                 };
             };
         };

@@ -10,7 +10,13 @@ import { runConfigGet, runConfigWrite } from "../commands/config.js";
 import { runCreateInit, runCreateWallet } from "../commands/create.js";
 import { runDoctorCommand, runDoctorContractsCommand, runDoctorWorkspaceCommand } from "../commands/doctor.js";
 import { runGossipsubStatus } from "../commands/gossipsub.js";
-import { runMcpExportHermes } from "../commands/mcp.js";
+import {
+  runMcpDoctor,
+  runMcpExportCodex,
+  runMcpExportHermes,
+  runMcpServe,
+  runMcpToolsList,
+} from "../commands/mcp.js";
 import {
   runOperatorBalance,
   runOperatorInit,
@@ -18,8 +24,17 @@ import {
   runOperatorStatus,
   runOperatorWhoami,
 } from "../commands/operator.js";
+import { runPluginDoctor, runPluginInstall, runPluginStatus } from "../commands/plugin.js";
 import { runRuntime } from "../commands/run.js";
+import { runSetup } from "../commands/setup.js";
 import { runSetupSkills } from "../commands/setup-skills.js";
+import {
+  runX402Details,
+  runX402Fetch,
+  runX402Prepare,
+  runX402Quote,
+  runX402ReceiptsGet,
+} from "../commands/x402.js";
 import { route, type CliRoute } from "./shared.js";
 
 export const coreRoutes: readonly CliRoute[] = [
@@ -29,6 +44,22 @@ export const coreRoutes: readonly CliRoute[] = [
   route("balance", async ({ parsedArgs, configPath }) => runOperatorBalance(parsedArgs, configPath)),
   route("agent-context", async ({ configPath }) => {
     await runAgentContext(configPath);
+    return 0;
+  }),
+  route("setup", async ({ parsedArgs }) => {
+    await runSetup(parsedArgs);
+    return 0;
+  }),
+  route("plugin status", async ({ parsedArgs }) => {
+    await runPluginStatus(parsedArgs);
+    return 0;
+  }),
+  route("plugin install", async ({ parsedArgs }) => {
+    await runPluginInstall(parsedArgs);
+    return 0;
+  }),
+  route("plugin doctor", async ({ parsedArgs }) => {
+    await runPluginDoctor(parsedArgs);
     return 0;
   }),
   route("setup skills", async ({ parsedArgs }) => {
@@ -68,6 +99,15 @@ export const coreRoutes: readonly CliRoute[] = [
     await runMcpExportHermes(parsedArgs);
     return 0;
   }),
+  route("mcp export codex", async () => runMcpExportCodex()),
+  route("mcp tools list", async () => runMcpToolsList()),
+  route("mcp doctor", async ({ parsedArgs, configPath }) => runMcpDoctor(parsedArgs, configPath)),
+  route("mcp serve", async ({ parsedArgs, configPath }) => runMcpServe(parsedArgs, configPath)),
+  route("x402 details", async ({ parsedArgs, configPath }) => runX402Details(parsedArgs, configPath)),
+  route("x402 quote", async ({ parsedArgs, configPath }) => runX402Quote(parsedArgs, configPath)),
+  route("x402 prepare", async ({ parsedArgs, configPath }) => runX402Prepare(parsedArgs, configPath)),
+  route("x402 fetch", async ({ parsedArgs, configPath }) => runX402Fetch(parsedArgs, configPath)),
+  route("x402 receipts get", async ({ parsedArgs, configPath }) => runX402ReceiptsGet(parsedArgs, configPath)),
   route("agent init", async ({ configPath }) => {
     await runAgentInit(configPath);
     return 0;

@@ -4,7 +4,7 @@ This file lists the full command surface shipped by the standalone Regents CLI i
 
 Source used: CLI contract YAML files via `scripts/generate-cli-command-metadata.mjs`.
 
-Total commands: 315.
+Total commands: 348.
 
 ## Full Command List
 
@@ -183,7 +183,11 @@ Total commands: 315.
 
 ### Mcp
 
+- `regents mcp doctor`
+- `regents mcp export codex`
 - `regents mcp export hermes`
+- `regents mcp serve`
+- `regents mcp tools list`
 
 ### Platform
 
@@ -201,6 +205,12 @@ Total commands: 315.
 - `regents platform projection` - Show the canonical Platform projection for product and mobile clients.
 - `regents platform sprite pause` - Pause one owned company runtime from the saved platform session.
 - `regents platform sprite resume` - Resume one owned company runtime from the saved platform session.
+
+### Plugin
+
+- `regents plugin doctor`
+- `regents plugin install`
+- `regents plugin status`
 
 ### Regent Staking
 
@@ -237,6 +247,7 @@ Total commands: 315.
 
 ### Setup
 
+- `regents setup`
 - `regents setup skills`
 
 ### Status
@@ -292,6 +303,9 @@ Total commands: 315.
 - `regents techtree benchmarks validate`
 - `regents techtree certificate verify`
 - `regents techtree comment add`
+- `regents techtree fold policy init`
+- `regents techtree fold proof`
+- `regents techtree fold status`
 - `regents techtree identities list`
 - `regents techtree identities mint`
 - `regents techtree inbox`
@@ -323,6 +337,9 @@ Total commands: 315.
 - `regents techtree node lineage withdraw`
 - `regents techtree node work-packet <id>`
 - `regents techtree nodes list`
+- `regents techtree notebooks init`
+- `regents techtree notebooks pair`
+- `regents techtree notebooks publish`
 - `regents techtree opportunities`
 - `regents techtree review claim`
 - `regents techtree review list`
@@ -331,6 +348,16 @@ Total commands: 315.
 - `regents techtree reviewer apply`
 - `regents techtree reviewer orcid link`
 - `regents techtree reviewer status`
+- `regents techtree runbook answer attach-paid-solution <answer_id>`
+- `regents techtree runbook answer post <question_id>`
+- `regents techtree runbook answer vote <answer_id>`
+- `regents techtree runbook invite-request <question_id>`
+- `regents techtree runbook mark-solved <question_id>`
+- `regents techtree runbook payment-address set`
+- `regents techtree runbook question post`
+- `regents techtree runbook questions get <id>`
+- `regents techtree runbook questions list`
+- `regents techtree runbook unlock <answer_id>`
 - `regents techtree science-tasks checklist`
 - `regents techtree science-tasks evidence`
 - `regents techtree science-tasks export`
@@ -360,6 +387,10 @@ Total commands: 315.
 - `regents techtree watch <id>`
 - `regents techtree watch list`
 - `regents techtree watch tail`
+- `regents techtree work accept`
+- `regents techtree work list`
+- `regents techtree work next`
+- `regents techtree work publish`
 
 ### Wallet
 
@@ -378,6 +409,14 @@ Total commands: 315.
 - `regents work local-loop` - Let one local worker check for assigned Regent work.
 - `regents work run` - Start a run for one work item.
 - `regents work watch` - Watch events for one work run.
+
+### X402
+
+- `regents x402 details`
+- `regents x402 fetch`
+- `regents x402 prepare`
+- `regents x402 quote`
+- `regents x402 receipts get`
 
 ### Xmtp
 

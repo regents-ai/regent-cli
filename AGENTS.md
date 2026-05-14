@@ -34,6 +34,7 @@ The Regent dependency skills are installed in `/Users/sean/Documents/regent/.age
   - `/Users/sean/Documents/regent/regents-cli/packages/regents-cli/src/contracts/api-ownership.ts`
   - `/Users/sean/Documents/regent/regents-cli/packages/regents-cli/src/generated/`
 - Do not treat backend route files or old markdown notes as the source of truth for HTTP behavior. Change the CLI-owned contract surface first, then make backend code and CLI command code match it.
+- For Techtree Fold work, keep CLI commands, Techtree contracts, generated OpenAPI, `README.md`, `docs/techtree-api-contract.md`, and `packages/regents-cli/skills/regents-techtree/SKILL.md` aligned. Fold installs local Hermes/OpenClaw skills and checks proof; it must not touch Platform worker registration.
 - Shared SIWA code lives in `/Users/sean/Documents/regent/elixir-utils/siwa/siwa-elixir`. Do not present Platform, Techtree, or Autolaunch as the code owner for shared SIWA behavior.
 - If work changes code in `/Users/sean/Documents/regent/techtree`, `/Users/sean/Documents/regent/regents-cli`, or `/Users/sean/Documents/regent/techtree/contracts`, it is not done until validation has been run in all three repos. Run `mix precommit` in `techtree`, `pnpm build`, `pnpm typecheck`, `pnpm test`, and `pnpm test:pack-smoke` in `regents-cli`, and `forge test --offline` from `/Users/sean/Documents/regent/techtree/contracts` for the Techtree contracts workspace.
 - Prefer repository-local, versioned docs over off-repo context.

@@ -93,10 +93,29 @@ import type {
   BenchmarkAttemptResponse,
   BenchmarkCapsuleListResponse,
   BenchmarkCapsuleResponse,
+  BenchmarkProofResponse,
   BenchmarkReliabilityListResponse,
   BenchmarkScoreboardResponse,
   BenchmarkValidationResponse,
   BenchmarkWorkspaceActionResult,
+  FoldPolicyInput,
+  FoldPolicyResponse,
+  FoldStatusResponse,
+  RunbookAnswerCreateInput,
+  RunbookAnswerResponse,
+  RunbookInviteRequestInput,
+  RunbookInviteRequestResponse,
+  RunbookMarkSolvedInput,
+  RunbookPaidSolutionInput,
+  RunbookPaymentProfileInput,
+  RunbookPaymentProfileResponse,
+  RunbookQuestionCreateInput,
+  RunbookQuestionListResponse,
+  RunbookQuestionResponse,
+  RunbookUnlockInput,
+  RunbookUnlockResponse,
+  RunbookVoteInput,
+  RunbookVoteResponse,
   TechEpochResponse,
   TechLeaderboardConfirmInput,
   TechLeaderboardConfirmResponse,
@@ -111,6 +130,10 @@ import type {
   TechRewardsResponse,
   TechStatusResponse,
   TechWithdrawPrepareInput,
+  TechtreeEvidencePacketResponse,
+  TechtreeWorkKind,
+  TechtreeWorkListResponse,
+  TechtreeWorkResponse,
   WatchRecord,
   WorkPacketResponse,
 } from "./techtree.js";
@@ -144,6 +167,18 @@ import type {
   TechtreeV1WorkspaceParams,
   TechtreeWorkspaceActionResult,
 } from "./techtree-v1.js";
+import type {
+  X402DetailsResponse,
+  X402FetchParams,
+  X402FetchResponse,
+  X402PrepareParams,
+  X402PrepareResponse,
+  X402QuoteParams,
+  X402QuoteResponse,
+  X402ReceiptGetParams,
+  X402ReceiptGetResponse,
+  X402RequestInput,
+} from "./x402.js";
 import type { XmtpStatus } from "./xmtp-status.js";
 
 export interface JsonRpcRequest<T = unknown> {
@@ -216,6 +251,13 @@ export type RegentRpcMethod =
   | "techtree.scienceTasks.submit"
   | "techtree.scienceTasks.reviewUpdate"
   | "techtree.scienceTasks.reviewLoop"
+  | "techtree.work.list"
+  | "techtree.work.next"
+  | "techtree.work.accept"
+  | "techtree.work.publish"
+  | "techtree.notebooks.init"
+  | "techtree.notebooks.pair"
+  | "techtree.notebooks.publish"
   | "techtree.benchmarks.capsules.list"
   | "techtree.benchmarks.capsules.get"
   | "techtree.benchmarks.scoreboard"
@@ -227,6 +269,10 @@ export type RegentRpcMethod =
   | "techtree.benchmarks.run.submit"
   | "techtree.benchmarks.run.repeat"
   | "techtree.benchmarks.validate"
+  | "techtree.fold.policy.init"
+  | "techtree.fold.status"
+  | "techtree.fold.evidencePacket"
+  | "techtree.fold.proof"
   | "techtree.tech.status"
   | "techtree.tech.epochs.current"
   | "techtree.tech.leaderboards.list"
@@ -238,6 +284,16 @@ export type RegentRpcMethod =
   | "techtree.tech.rewards.root.prepare"
   | "techtree.tech.rewards.root.confirm"
   | "techtree.tech.withdraw"
+  | "techtree.runbook.questions.list"
+  | "techtree.runbook.questions.get"
+  | "techtree.runbook.question.post"
+  | "techtree.runbook.answer.post"
+  | "techtree.runbook.answer.attachPaidSolution"
+  | "techtree.runbook.answer.vote"
+  | "techtree.runbook.markSolved"
+  | "techtree.runbook.unlock"
+  | "techtree.runbook.paymentAddress.set"
+  | "techtree.runbook.inviteRequest"
   | "techtree.autoskill.initSkill"
   | "techtree.autoskill.initEval"
   | "techtree.autoskill.notebook.pair"
@@ -298,6 +354,11 @@ export type RegentRpcMethod =
   | "techtree.v1.review.pull"
   | "techtree.v1.review.submit"
   | "techtree.v1.certificate.verify"
+  | "x402.details"
+  | "x402.quote"
+  | "x402.prepare"
+  | "x402.fetch"
+  | "x402.receipts.get"
   | "xmtp.status"
   | "gossipsub.status";
 
@@ -382,6 +443,18 @@ export interface RegentRpcParamsMap {
     harbor_pr_url: string;
     timeout_seconds?: number;
   };
+  "techtree.work.list": { kind?: TechtreeWorkKind; limit?: number } | undefined;
+  "techtree.work.next": { kind?: TechtreeWorkKind } | undefined;
+  "techtree.work.accept": { work_unit: string; workspace_path?: string };
+  "techtree.work.publish": { workspace_path: string };
+  "techtree.notebooks.init": {
+    workspace_path: string;
+    kind: "paper" | "freeform";
+    title: string;
+    source?: string;
+  };
+  "techtree.notebooks.pair": { workspace_path: string };
+  "techtree.notebooks.publish": { workspace_path: string; parent_id?: number };
   "techtree.benchmarks.capsules.list":
     | {
         domain?: string;
@@ -414,6 +487,10 @@ export interface RegentRpcParamsMap {
   "techtree.benchmarks.run.submit": { workspace_path: string };
   "techtree.benchmarks.run.repeat": { workspace_path: string; n?: number; submit?: boolean };
   "techtree.benchmarks.validate": { workspace_path: string };
+  "techtree.fold.policy.init": FoldPolicyInput;
+  "techtree.fold.status": undefined;
+  "techtree.fold.evidencePacket": undefined;
+  "techtree.fold.proof": { run_id: string };
   "techtree.tech.status": undefined;
   "techtree.tech.epochs.current": undefined;
   "techtree.tech.leaderboards.list": { status?: string; limit?: number } | undefined;
@@ -425,6 +502,16 @@ export interface RegentRpcParamsMap {
   "techtree.tech.rewards.root.prepare": TechRewardRootPrepareInput;
   "techtree.tech.rewards.root.confirm": TechRewardRootConfirmInput;
   "techtree.tech.withdraw": TechWithdrawPrepareInput;
+  "techtree.runbook.questions.list": { q?: string; status?: string; limit?: number } | undefined;
+  "techtree.runbook.questions.get": { id: string };
+  "techtree.runbook.question.post": RunbookQuestionCreateInput;
+  "techtree.runbook.answer.post": { question_id: string; input: RunbookAnswerCreateInput };
+  "techtree.runbook.answer.attachPaidSolution": { answer_id: string; input: RunbookPaidSolutionInput };
+  "techtree.runbook.answer.vote": { answer_id: string; input: RunbookVoteInput };
+  "techtree.runbook.markSolved": { question_id: string; input: RunbookMarkSolvedInput };
+  "techtree.runbook.unlock": { answer_id: string; input: RunbookUnlockInput };
+  "techtree.runbook.paymentAddress.set": RunbookPaymentProfileInput;
+  "techtree.runbook.inviteRequest": { question_id: string; input: RunbookInviteRequestInput };
   "techtree.autoskill.initSkill": { workspace_path: string };
   "techtree.autoskill.initEval": { workspace_path: string };
   "techtree.autoskill.notebook.pair": AutoskillNotebookPairParams;
@@ -497,6 +584,11 @@ export interface RegentRpcParamsMap {
   "techtree.v1.review.pull": TechtreeV1ReviewPullParams;
   "techtree.v1.review.submit": TechtreeV1ReviewSubmitParams;
   "techtree.v1.certificate.verify": TechtreeV1CertificateVerifyParams;
+  "x402.details": X402RequestInput;
+  "x402.quote": X402QuoteParams;
+  "x402.prepare": X402PrepareParams;
+  "x402.fetch": X402FetchParams;
+  "x402.receipts.get": X402ReceiptGetParams;
   "xmtp.status": undefined;
   "gossipsub.status": undefined;
 }
@@ -583,6 +675,13 @@ export interface RegentRpcResultMap {
     log_path: string;
     workflow_state: string;
   };
+  "techtree.work.list": TechtreeWorkListResponse;
+  "techtree.work.next": TechtreeWorkResponse;
+  "techtree.work.accept": TechtreeWorkResponse | Record<string, unknown>;
+  "techtree.work.publish": Record<string, unknown>;
+  "techtree.notebooks.init": Record<string, unknown>;
+  "techtree.notebooks.pair": Record<string, unknown>;
+  "techtree.notebooks.publish": Record<string, unknown>;
   "techtree.benchmarks.capsules.list": BenchmarkCapsuleListResponse;
   "techtree.benchmarks.capsules.get": BenchmarkCapsuleResponse;
   "techtree.benchmarks.scoreboard": BenchmarkScoreboardResponse;
@@ -594,6 +693,10 @@ export interface RegentRpcResultMap {
   "techtree.benchmarks.run.submit": BenchmarkAttemptResponse;
   "techtree.benchmarks.run.repeat": BenchmarkWorkspaceActionResult & { attempts?: BenchmarkAttemptResponse[] };
   "techtree.benchmarks.validate": BenchmarkValidationResponse;
+  "techtree.fold.policy.init": FoldPolicyResponse;
+  "techtree.fold.status": FoldStatusResponse;
+  "techtree.fold.evidencePacket": TechtreeEvidencePacketResponse;
+  "techtree.fold.proof": BenchmarkProofResponse;
   "techtree.tech.status": TechStatusResponse;
   "techtree.tech.epochs.current": TechEpochResponse;
   "techtree.tech.leaderboards.list": TechLeaderboardListResponse;
@@ -605,6 +708,16 @@ export interface RegentRpcResultMap {
   "techtree.tech.rewards.root.prepare": TechPreparedTransactionResponse;
   "techtree.tech.rewards.root.confirm": TechRewardRootConfirmResponse;
   "techtree.tech.withdraw": TechPreparedTransactionResponse;
+  "techtree.runbook.questions.list": RunbookQuestionListResponse;
+  "techtree.runbook.questions.get": RunbookQuestionResponse;
+  "techtree.runbook.question.post": RunbookQuestionResponse;
+  "techtree.runbook.answer.post": RunbookAnswerResponse;
+  "techtree.runbook.answer.attachPaidSolution": RunbookAnswerResponse;
+  "techtree.runbook.answer.vote": RunbookVoteResponse;
+  "techtree.runbook.markSolved": Record<string, unknown>;
+  "techtree.runbook.unlock": RunbookUnlockResponse;
+  "techtree.runbook.paymentAddress.set": RunbookPaymentProfileResponse;
+  "techtree.runbook.inviteRequest": RunbookInviteRequestResponse;
   "techtree.autoskill.initSkill": {
     ok: true;
     entrypoint: "autoskill.init.skill";
@@ -699,6 +812,11 @@ export interface RegentRpcResultMap {
   "techtree.v1.review.pull": BbhReviewPullResponse;
   "techtree.v1.review.submit": BbhReviewSubmitResponse;
   "techtree.v1.certificate.verify": BbhCertificateVerifyResponse;
+  "x402.details": X402DetailsResponse;
+  "x402.quote": X402QuoteResponse;
+  "x402.prepare": X402PrepareResponse;
+  "x402.fetch": X402FetchResponse;
+  "x402.receipts.get": X402ReceiptGetResponse;
   "xmtp.status": XmtpStatus;
   "gossipsub.status": GossipsubStatus;
 }

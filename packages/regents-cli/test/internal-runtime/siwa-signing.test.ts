@@ -6,7 +6,10 @@ import {
   buildAuthenticatedFetchInit,
   buildProtectedAgentAuthDebugSnapshot,
 } from "../../src/internal-runtime/siwa/request-builder.js";
-import { buildSiwaMessage } from "../../src/internal-runtime/siwa/siwa.js";
+import {
+  buildSiwaMessage,
+  siwaAudienceStatement,
+} from "../../src/internal-runtime/siwa/siwa.js";
 import {
   coveredComponentsForAgentHeaders,
   buildHttpSignatureSigningMessage,
@@ -45,6 +48,10 @@ describe("siwa message construction", () => {
         "Issued At: 2026-03-10T00:00:00.000Z",
       ].join("\n"),
     );
+  });
+
+  it("formats the shared service audience statement", () => {
+    expect(siwaAudienceStatement("techtree")).toBe("Sign in to techtree.");
   });
 });
 

@@ -5,7 +5,7 @@ import { loadConfig } from "./config.js";
 import type { RegentConfig } from "../internal-types/config.js";
 
 export type ProductServiceName = "siwa" | "platform" | "autolaunch" | "techtree";
-export type ProductHttpMethod = "GET" | "POST" | "PATCH" | "DELETE";
+export type ProductHttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type ProductHttpHeaders = ConstructorParameters<typeof Headers>[0];
 type ProductHttpBody = NonNullable<Parameters<typeof fetch>[1]> extends { readonly body?: infer Body } ? Body : never;
 

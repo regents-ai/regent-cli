@@ -1524,7 +1524,7 @@ describe("autolaunch CLI command group", () => {
     });
   });
 
-  it("maps Base chain names to chain ids and signs launch preview requests", async () => {
+  it("uses the launch chain id when signing launch preview requests", async () => {
     fetchMock.mockResolvedValue(
       new Response(
         JSON.stringify({ ok: true, preview: { launch_ready: true } }),
@@ -1541,8 +1541,8 @@ describe("autolaunch CLI command group", () => {
         "preview",
         "--agent",
         "ag_123",
-        "--chain",
-        "base-sepolia",
+        "--chain-id",
+        "84532",
         "--name",
         "Agent Coin",
         "--symbol",

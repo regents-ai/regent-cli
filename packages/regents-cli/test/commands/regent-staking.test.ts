@@ -83,12 +83,13 @@ describe("regent-staking CLI command group", () => {
     risk_copy: "Claims available staking rewards.",
   });
 
-  const writeAgentAuthState = (baseUrl = expectedBaseUrl) => {
+  const writeAgentAuthState = (platformBaseUrl = expectedBaseUrl) => {
     writeInitialConfig(configPath);
     const config = JSON.parse(fs.readFileSync(configPath, "utf8")) as {
-      services: { siwa: { baseUrl: string } };
+      services: { siwa: { baseUrl: string }; platform: { baseUrl: string } };
     };
-    config.services.siwa.baseUrl = baseUrl;
+    config.services.siwa.baseUrl = "https://siwa.regents.test";
+    config.services.platform.baseUrl = platformBaseUrl;
     fs.writeFileSync(configPath, `${JSON.stringify(config, null, 2)}\n`, "utf8");
 
     const receiptPath = path.join(homeDir, ".regent", "identity", "receipt-v1.json");

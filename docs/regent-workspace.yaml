@@ -287,6 +287,27 @@ repos:
     acceptance_commands: []
 
 shared_contract_pairs:
+  - id: platform_api_release_artifact
+    source:
+      repo: platform
+      path: api-contract.openapiv3.yaml
+    mirror:
+      repo: platform
+      path: priv/contracts/api-contract.openapiv3.yaml
+  - id: platform_cli_release_artifact
+    source:
+      repo: platform
+      path: cli-contract.yaml
+    mirror:
+      repo: platform
+      path: priv/contracts/cli-contract.yaml
+  - id: fly_sentinel_api_release_artifact
+    source:
+      repo: fly-sentinel
+      path: api-contract.openapiv3.yaml
+    mirror:
+      repo: fly-sentinel
+      path: priv/static/api-contract.openapiv3.yaml
   - id: shared_services_contract
     source:
       repo: regents-cli

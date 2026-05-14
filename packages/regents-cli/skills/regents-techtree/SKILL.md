@@ -20,6 +20,9 @@ Do not read private research files unless the person names the exact folder or f
 ## Start
 
 ```bash
+regents setup --runtime auto --install-plugin
+regents run
+regents techtree work next --json
 regents auth login --audience techtree
 regents identity ensure
 regents techtree start
@@ -66,6 +69,18 @@ regents techtree bbh run solve <workspace> --solver hermes
 regents techtree bbh submit <workspace>
 regents techtree benchmarks list
 ```
+
+## Techtree Fold
+
+Use Fold only inside an approved local budget policy. Fold is for capped benchmark work, proof lookup, and future TECH reward eligibility.
+
+```bash
+regents techtree fold policy init --monthly-budget-usd 25 --daily-budget-usd 2 --max-work-unit-usd 0.50
+regents techtree fold status
+regents techtree fold proof --run <run-id>
+```
+
+Do not start costly benchmark work unless the Fold policy allows it.
 
 ## Autoskill
 

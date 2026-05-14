@@ -1,7 +1,7 @@
 import { getCurrentAgentIdentity, getMissingAgentIdentityFields } from "../../agent/profile.js";
 import { resolveAuthenticatedAgentSigningContext } from "../../techtree/auth.js";
 import { buildAuthenticatedFetchInit } from "../../siwa/request-builder.js";
-import { buildSiwaMessage, SiwaClient } from "../../siwa/siwa.js";
+import { buildSiwaMessage, siwaAudienceStatement, SiwaClient } from "../../siwa/siwa.js";
 import {
   coveredComponentsForAgentHeaders,
   parseSignatureInputHeader,
@@ -221,7 +221,7 @@ export function authChecks(): DoctorCheckDefinition[] {
           registryAddress: identity.registryAddress,
           tokenId: identity.tokenId,
           nonce,
-          statement: "Sign in to Regents CLI.",
+          statement: siwaAudienceStatement(ctx.config.auth.audience),
         });
 
         try {

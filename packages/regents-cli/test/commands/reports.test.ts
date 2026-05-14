@@ -125,7 +125,7 @@ describe("reporting CLI commands", () => {
               chain_id: 8453,
               registry_address: TEST_REGISTRY,
               token_id: "99",
-              label: "Coinbase wallet",
+              label: "Hermes operator",
             },
             created_at: "2026-04-01T18:40:00Z",
           },
@@ -157,7 +157,7 @@ describe("reporting CLI commands", () => {
         chain_id: 8453,
         registry_address: TEST_REGISTRY,
         token_id: "99",
-        label: "Coinbase wallet",
+        label: "Hermes operator",
       },
     });
     expect(parsePrintedJson<{ public_url: string; report: { report_id: string } }>(output.stdout)).toMatchObject({
@@ -183,7 +183,7 @@ describe("reporting CLI commands", () => {
               chain_id: 8453,
               registry_address: TEST_REGISTRY,
               token_id: "99",
-              label: "Coinbase wallet",
+              label: "Hermes operator",
             },
             created_at: "2026-04-01T18:45:00Z",
           },
@@ -218,7 +218,7 @@ describe("reporting CLI commands", () => {
         chain_id: 8453,
         registry_address: TEST_REGISTRY,
         token_id: "99",
-        label: "Coinbase wallet",
+        label: "Hermes operator",
       },
     });
     expect(parsePrintedJson<{ report: { report_id: string; contact: string } }>(output.stdout)).toMatchObject({
@@ -240,7 +240,7 @@ describe("reporting CLI commands", () => {
     );
 
     expect(output.result).toBe(1);
-    expect(output.stderr).toContain("Run `regents auth login --audience regent-services` before using this command.");
+    expect(output.stderr).toContain("Run `regents identity ensure` first.");
     expect(fetchMock).not.toHaveBeenCalled();
   });
 

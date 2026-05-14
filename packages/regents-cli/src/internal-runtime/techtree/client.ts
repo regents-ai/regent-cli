@@ -22,13 +22,34 @@ import type {
   BenchmarkCapsuleResponse,
   BenchmarkHarnessCreateInput,
   BenchmarkHarnessResponse,
+  BenchmarkProofResponse,
   BenchmarkReliabilityListResponse,
   BenchmarkScoreboardResponse,
   BenchmarkValidationCreateInput,
   BenchmarkValidationResponse,
+  BenchmarkVerifierReceiptCreateInput,
+  BenchmarkVerifierReceiptResponse,
   BenchmarkVersionCreateInput,
   BenchmarkVersionListResponse,
   BenchmarkVersionResponse,
+  FoldPolicyInput,
+  FoldPolicyResponse,
+  FoldStatusResponse,
+  RunbookAnswerCreateInput,
+  RunbookAnswerResponse,
+  RunbookInviteRequestInput,
+  RunbookInviteRequestResponse,
+  RunbookMarkSolvedInput,
+  RunbookPaidSolutionInput,
+  RunbookPaymentProfileInput,
+  RunbookPaymentProfileResponse,
+  RunbookQuestionCreateInput,
+  RunbookQuestionListResponse,
+  RunbookQuestionResponse,
+  RunbookUnlockInput,
+  RunbookUnlockResponse,
+  RunbookVoteInput,
+  RunbookVoteResponse,
   TechEpochResponse,
   TechLeaderboardConfirmInput,
   TechLeaderboardConfirmResponse,
@@ -43,6 +64,10 @@ import type {
   TechRewardsResponse,
   TechStatusResponse,
   TechWithdrawPrepareInput,
+  TechtreeEvidencePacketResponse,
+  TechtreeWorkKind,
+  TechtreeWorkListResponse,
+  TechtreeWorkResponse,
   BbhAssignmentResponse,
   BbhCapsuleGetResponse,
   BbhCapsuleListResponse,
@@ -113,10 +138,12 @@ import { BbhResource } from "./client/bbh.js";
 import { ChatboxResource } from "./client/chatbox.js";
 import { TechtreeRequestClient } from "./client/request.js";
 import { ReviewsResource } from "./client/reviews.js";
+import { RunbookResource } from "./client/runbook.js";
 import { ScienceTasksResource } from "./client/science-tasks.js";
 import { TechResource } from "./client/tech.js";
 import { TransportResource } from "./client/transport.js";
 import { TreeResource } from "./client/tree.js";
+import { WorkResource } from "./client/work.js";
 import type { SiwaClient } from "../siwa/siwa.js";
 
 export class TechtreeClient {
@@ -135,10 +162,12 @@ export class TechtreeClient {
   private readonly bbh: BbhResource;
   private readonly chatbox: ChatboxResource;
   private readonly reviews: ReviewsResource;
+  private readonly runbook: RunbookResource;
   private readonly scienceTasks: ScienceTasksResource;
   private readonly tech: TechResource;
   private readonly transport: TransportResource;
   private readonly tree: TreeResource;
+  private readonly work: WorkResource;
 
   constructor(args: {
     config: RegentConfig;
@@ -167,10 +196,12 @@ export class TechtreeClient {
     this.bbh = new BbhResource(this.request);
     this.chatbox = new ChatboxResource(this.request);
     this.reviews = new ReviewsResource(this.request);
+    this.runbook = new RunbookResource(this.request);
     this.scienceTasks = new ScienceTasksResource(this.request);
     this.tech = new TechResource(this.request);
     this.transport = new TransportResource(this.request);
     this.tree = new TreeResource(this.request, this.stateStore);
+    this.work = new WorkResource(this.request);
     this.siwaClient = this.auth.siwaClient;
   }
 
@@ -228,6 +259,18 @@ export class TechtreeClient {
 
   listActivity(params?: { limit?: number }): Promise<ActivityListResponse> {
     return this.tree.listActivity(params);
+  }
+
+  listWork(params?: { kind?: TechtreeWorkKind; limit?: number }): Promise<TechtreeWorkListResponse> {
+    return this.work.list(params);
+  }
+
+  nextWork(params?: { kind?: TechtreeWorkKind }): Promise<TechtreeWorkResponse> {
+    return this.work.next(params);
+  }
+
+  acceptWork(workUnitId: string): Promise<TechtreeWorkResponse> {
+    return this.work.accept(workUnitId);
   }
 
   listScienceTasks(params?: {
@@ -303,6 +346,10 @@ export class TechtreeClient {
     return this.benchmarks.getHarness(harnessId);
   }
 
+  getBenchmarkAttemptProof(attemptId: string): Promise<BenchmarkProofResponse> {
+    return this.benchmarks.getAttemptProof(attemptId);
+  }
+
   createBenchmarkCapsule(input: BenchmarkCapsuleCreateInput): Promise<BenchmarkCapsuleResponse> {
     return this.benchmarks.createCapsule(input);
   }
@@ -321,6 +368,22 @@ export class TechtreeClient {
 
   createBenchmarkValidation(input: BenchmarkValidationCreateInput): Promise<BenchmarkValidationResponse> {
     return this.benchmarks.createValidation(input);
+  }
+
+  createBenchmarkVerifierReceipt(input: BenchmarkVerifierReceiptCreateInput): Promise<BenchmarkVerifierReceiptResponse> {
+    return this.benchmarks.createVerifierReceipt(input);
+  }
+
+  getFoldStatus(): Promise<FoldStatusResponse> {
+    return this.benchmarks.getFoldStatus();
+  }
+
+  updateFoldPolicy(input: FoldPolicyInput): Promise<FoldPolicyResponse> {
+    return this.benchmarks.updateFoldPolicy(input);
+  }
+
+  getFoldEvidencePacket(): Promise<TechtreeEvidencePacketResponse> {
+    return this.benchmarks.getFoldEvidencePacket();
   }
 
   recomputeBenchmarkReliability(capsuleId: string): Promise<BenchmarkReliabilityListResponse> {
@@ -373,6 +436,50 @@ export class TechtreeClient {
 
   confirmTechRewardRoot(input: TechRewardRootConfirmInput): Promise<TechRewardRootConfirmResponse> {
     return this.tech.confirmRewardRoot(input);
+  }
+
+  listRunbookQuestions(params?: {
+    q?: string;
+    status?: string;
+    limit?: number;
+  }): Promise<RunbookQuestionListResponse> {
+    return this.runbook.listQuestions(params);
+  }
+
+  getRunbookQuestion(id: string): Promise<RunbookQuestionResponse> {
+    return this.runbook.getQuestion(id);
+  }
+
+  setRunbookPaymentProfile(input: RunbookPaymentProfileInput): Promise<RunbookPaymentProfileResponse> {
+    return this.runbook.setPaymentProfile(input);
+  }
+
+  createRunbookQuestion(input: RunbookQuestionCreateInput): Promise<RunbookQuestionResponse> {
+    return this.runbook.createQuestion(input);
+  }
+
+  createRunbookAnswer(questionId: string, input: RunbookAnswerCreateInput): Promise<RunbookAnswerResponse> {
+    return this.runbook.createAnswer(questionId, input);
+  }
+
+  attachRunbookPaidSolution(answerId: string, input: RunbookPaidSolutionInput): Promise<RunbookAnswerResponse> {
+    return this.runbook.attachPaidSolution(answerId, input);
+  }
+
+  markRunbookSolved(questionId: string, input: RunbookMarkSolvedInput): Promise<Record<string, unknown>> {
+    return this.runbook.markSolved(questionId, input);
+  }
+
+  createRunbookUnlock(answerId: string, input: RunbookUnlockInput): Promise<RunbookUnlockResponse> {
+    return this.runbook.createUnlock(answerId, input);
+  }
+
+  voteRunbookAnswer(answerId: string, input: RunbookVoteInput): Promise<RunbookVoteResponse> {
+    return this.runbook.vote(answerId, input);
+  }
+
+  requestRunbookInvite(questionId: string, input: RunbookInviteRequestInput): Promise<RunbookInviteRequestResponse> {
+    return this.runbook.requestInvite(questionId, input);
   }
 
   getLatestSkill(slug: string): Promise<SkillTextResponse> {

@@ -99,6 +99,37 @@ const requestAgentbookJson = async <TResponse>(
     commandName: "regents agentbook",
   });
 
+export async function lookupAgentbookTrust(configPath?: string): Promise<AgentbookLookupResponse> {
+  requireAgentAuthState(configPath, { audience: "platform" });
+
+  return requestAgentbookJson<AgentbookLookupResponse>("GET", "/api/agentbook/lookup", {
+    configPath,
+  });
+}
+
+export async function prepareAgentbookRegistration(
+  configPath?: string,
+  source = "regents-cli",
+): Promise<AgentbookSessionResponse> {
+  requireSavedIdentityReceipt();
+  requireAgentAuthState(configPath, { audience: "platform" });
+
+  const payload: CreateAgentbookTrustSessionRequest = {
+    source,
+  };
+
+  const created = await requestAgentbookJson<AgentbookSessionResponse>("POST", "/api/agentbook/sessions", {
+    body: payload,
+    configPath,
+  });
+
+  if (created.session) {
+    syncWorldTrustFromSession(created.session);
+  }
+
+  return created;
+}
+
 const requireSavedIdentityReceipt = () => {
   const receipt = readIdentityReceipt();
 
@@ -178,22 +209,11 @@ const printSessionWatchUpdate = (args: ParsedCliArgs, payload: AgentbookSessionR
 };
 
 export async function runAgentbookRegister(args: ParsedCliArgs, configPath?: string): Promise<void> {
-  requireSavedIdentityReceipt();
-  requireAgentAuthState(configPath, { audience: "platform" });
-
-  const payload: CreateAgentbookTrustSessionRequest = {
-    source: "regents-cli",
-  };
-
-  const created = await requestAgentbookJson<AgentbookSessionResponse>("POST", "/api/agentbook/sessions", {
-    body: payload,
-    configPath,
-  });
+  const created = await prepareAgentbookRegistration(configPath);
 
   const createdSession = created.session;
 
   if (createdSession) {
-    syncWorldTrustFromSession(createdSession);
     printApprovalHint(createdSession);
   }
 
@@ -256,11 +276,5 @@ export async function runAgentbookSessionsWatch(args: ParsedCliArgs, configPath?
 }
 
 export async function runAgentbookLookup(_args: ParsedCliArgs, configPath?: string): Promise<void> {
-  requireAgentAuthState(configPath, { audience: "platform" });
-
-  const payload = await requestAgentbookJson<AgentbookLookupResponse>("GET", "/api/agentbook/lookup", {
-    configPath,
-  });
-
-  printJson(payload);
+  printJson(await lookupAgentbookTrust(configPath));
 }
